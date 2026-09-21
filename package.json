@@ -1,0 +1,18 @@
+{
+  "name": "fork-storefront",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@netlify/database": "latest",
+    "@netlify/functions": "latest",
+    "drizzle-kit": "beta",
+    "drizzle-orm": "beta"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.2",
+    "typescript": "latest"
+  }
+}
