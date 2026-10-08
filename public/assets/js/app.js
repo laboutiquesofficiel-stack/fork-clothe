@@ -179,7 +179,7 @@
     el.classList.toggle("err", isError);
     el.hidden = false;
     clearTimeout(toast.timer);
-    toast.timer = setTimeout(() => (el.hidden = true), 3200);
+    toast.timer = setTimeout(() => (el.hidden = true), isError ? 9000 : 3200);
   }
 
   // ---------------------------------------------------------------------------
@@ -992,19 +992,20 @@
     const login = params.get("login");
     const payment = params.get("payment");
     const order = params.get("order");
+    const reason = params.get("reason");
     if (login || payment) {
       const clean = new URL(window.location.href);
-      ["login", "payment", "order"].forEach((k) => clean.searchParams.delete(k));
+      ["login", "payment", "order", "reason"].forEach((k) => clean.searchParams.delete(k));
       history.replaceState(null, "", clean.pathname + clean.search + clean.hash);
     }
-    return { login, payment, order };
+    return { login, payment, order, reason };
   }
 
   async function start() {
     $("#year").textContent = String(new Date().getFullYear());
     saveCart();
     renderGrid();
-    const { login, payment, order } = consumeUrlParams();
+    const { login, payment, order, reason } = consumeUrlParams();
     await loadMe();
     if (me) fetchAddresses();
 
@@ -1021,7 +1022,8 @@
         unverified: "Ton adresse Google n'est pas vérifiée.",
         failed: "La connexion Google a échoué. Réessaie.",
       };
-      toast(messages[login] || messages.failed, true);
+      // « reason » n'est fourni que par les préversions, pour le diagnostic.
+      toast(`${messages[login] || messages.failed}${reason ? ` (${reason.slice(0, 200)})` : ""}`, true);
     }
   }
 

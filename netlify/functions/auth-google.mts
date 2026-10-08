@@ -1,4 +1,5 @@
 import { randomBytes, timingSafeEqual } from "node:crypto";
+import type { Context } from "@netlify/functions";
 import { and, eq } from "drizzle-orm";
 import { db } from "../../db/index.js";
 import { userIdentities, users } from "../../db/schema.js";
@@ -52,7 +53,7 @@ type GoogleUser = {
   picture?: unknown;
 };
 
-export default async (req: Request) => {
+export default async (req: Request, context: Context) => {
   const clientId = process.env.GOOGLE_CLIENT_ID?.trim();
   const clientSecret = process.env.GOOGLE_CLIENT_SECRET?.trim();
   if (!clientId || !clientSecret) {
@@ -63,6 +64,12 @@ export default async (req: Request) => {
   const origin = url.origin;
   const redirectUri = `${origin}${CALLBACK_PATH}`;
   const clearState = stateCookie("", 0);
+  // Hors production, la raison d'un échec est ajoutée à l'adresse de retour (jamais de secret).
+  const failed = (reason: string) =>
+    redirectTo(
+      `${origin}/?login=failed${context?.deploy?.context !== "production" ? `&reason=${encodeURIComponent(reason.slice(0, 200))}` : ""}`,
+      [clearState],
+    );
 
   // Le client a refusé ou Google a renvoyé une erreur.
   if (url.searchParams.get("error")) {
@@ -107,13 +114,15 @@ export default async (req: Request) => {
     });
 
     if (!tokenResponse.ok) {
-      console.error("Google token exchange failed", tokenResponse.status);
-      return redirectTo(`${origin}/?login=failed`, [clearState]);
+      const detail = (await tokenResponse.json().catch(() => ({}))) as { error?: unknown; error_description?: unknown };
+      const reason = `Google ${tokenResponse.status} ${String(detail.error ?? "")} ${String(detail.error_description ?? "")}`.trim();
+      console.error("Google token exchange failed", reason);
+      return failed(reason);
     }
 
     const tokens = (await tokenResponse.json()) as { access_token?: unknown };
     if (typeof tokens.access_token !== "string") {
-      return redirectTo(`${origin}/?login=failed`, [clearState]);
+      return failed("jeton Google absent");
     }
 
     const userResponse = await fetch("https://openidconnect.googleapis.com/v1/userinfo", {
@@ -121,7 +130,7 @@ export default async (req: Request) => {
       signal: AbortSignal.timeout(8000),
     });
     if (!userResponse.ok) {
-      return redirectTo(`${origin}/?login=failed`, [clearState]);
+      return failed(`profil Google illisible (${userResponse.status})`);
     }
 
     const googleUser = (await userResponse.json()) as GoogleUser;
@@ -191,7 +200,8 @@ export default async (req: Request) => {
     const sessionToken = await createSession(userId);
     return redirectTo(`${origin}/?login=success`, [clearState, sessionCookie(sessionToken)]);
   } catch (error) {
-    console.error("Google sign-in failed", error instanceof Error ? error.message : "Unknown error");
-    return redirectTo(`${origin}/?login=failed`, [clearState]);
+    const message = error instanceof Error ? error.message : "Unknown error";
+    console.error("Google sign-in failed", message);
+    return failed(`erreur serveur : ${message}`);
   }
 };
