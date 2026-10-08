@@ -5,6 +5,7 @@ import { db } from "../../db/index.js";
 import { orders } from "../../db/schema.js";
 
 type SumUpCheckoutResponse = {
+  id?: unknown;
   hosted_checkout_url?: unknown;
 };
 
@@ -54,16 +55,30 @@ export default async (request: Request) => {
         currency: order.currency,
         description: `Commande FORK ${order.orderNumber}`,
         merchant_code: merchantCode,
+        return_url: `${origin}/api/sumup-webhook`,
         redirect_url: `${origin}/?payment=sumup&order=${encodeURIComponent(order.orderNumber)}`,
         hosted_checkout: { enabled: true },
       }),
     });
 
     const result = (await sumupResponse.json().catch(() => ({}))) as SumUpCheckoutResponse;
-    if (!sumupResponse.ok || typeof result.hosted_checkout_url !== "string") {
+    if (
+      !sumupResponse.ok ||
+      typeof result.id !== "string" ||
+      !result.id.trim() ||
+      typeof result.hosted_checkout_url !== "string"
+    ) {
       console.error("SumUp checkout creation failed", sumupResponse.status);
       return Response.json({ error: "Impossible de créer le paiement par carte." }, { status: 502 });
     }
+
+    await db
+      .update(orders)
+      .set({
+        paymentProvider: "sumup",
+        paymentReference: result.id,
+      })
+      .where(eq(orders.orderNumber, order.orderNumber));
 
     return Response.json({ checkoutUrl: result.hosted_checkout_url });
   } catch (error) {

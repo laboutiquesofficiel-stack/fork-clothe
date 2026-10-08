@@ -1,0 +1,33 @@
+functionsDirectory = "C:\\Users\\piala\\Downloads\\source-6aafa6f01b0a1500088eeb99-b36cfa63c792174e\\netlify\\functions"
+functionsDirectoryOrigin = "default"
+plugins = []
+headers = []
+redirects = []
+
+[build]
+publish = "C:\\Users\\piala\\Downloads\\source-6aafa6f01b0a1500088eeb99-b36cfa63c792174e"
+publishOrigin = "default"
+functions = "C:\\Users\\piala\\Downloads\\source-6aafa6f01b0a1500088eeb99-b36cfa63c792174e\\netlify\\functions"
+
+  [build.environment]
+
+  [build.processing]
+
+    [build.processing.css]
+
+    [build.processing.html]
+
+    [build.processing.images]
+
+    [build.processing.js]
+
+  [build.services]
+
+[database]
+
+  [database.migrations]
+  path = "C:\\Users\\piala\\Downloads\\source-6aafa6f01b0a1500088eeb99-b36cfa63c792174e\\netlify\\database\\migrations"
+
+[functions]
+
+  [functions."*"]
