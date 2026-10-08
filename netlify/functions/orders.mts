@@ -83,7 +83,8 @@ function getFormspreeEndpoint(): string | null {
     process.env.FORMSPREE_ENDPOINT?.trim() ||
     process.env.FORMSPREE_FORM_ID?.trim();
 
-  if (!configured) return "https://formspree.io/f/xnjygpqa";
+  // L'identifiant du formulaire vient de FORMSPREE_FORM_ID (ou FORMSPREE_ENDPOINT) sur Netlify.
+  if (!configured) return null;
 
   return configured.startsWith("https://formspree.io/")
     ? configured

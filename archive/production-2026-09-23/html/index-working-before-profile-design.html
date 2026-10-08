@@ -1801,7 +1801,7 @@
             pendingPayment = { total, orderNumber };
             localStorage.setItem(PENDING_PAYMENT_STORAGE_KEY, JSON.stringify(pendingPayment));
             const paypalUrl = new URL('https://www.paypal.com/cgi-bin/webscr');
-            paypalUrl.search = new URLSearchParams({ cmd: '_xclick', business: 'Pialat210@gmail.com', currency_code: 'EUR', amount: total.toFixed(2), item_name: `Commande FORK ${orderNumber}`, custom: orderNumber }).toString();
+            paypalUrl.search = new URLSearchParams({ cmd: '_xclick', business: '[adresse-retiree]', currency_code: 'EUR', amount: total.toFixed(2), item_name: `Commande FORK ${orderNumber}`, custom: orderNumber }).toString();
             const paypalLink = document.getElementById('paypal-link');
             paypalLink.href = paypalUrl.toString();
             paypalLink.textContent = `Payer avec PayPal (${formatPrice(total)})`;
