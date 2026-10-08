@@ -1,8 +1,9 @@
 import { randomBytes } from "node:crypto";
 import type { Config, Context } from "@netlify/functions";
-import { eq } from "drizzle-orm";
+import { and, desc, eq, ne } from "drizzle-orm";
 import { db } from "../../db/index.js";
 import { orders, payments } from "../../db/schema.js";
+import { confirmSumUpCheckout } from "../../lib/sumup.js";
 
 /**
  * Crée un paiement SumUp pour une commande existante.
@@ -17,6 +18,7 @@ type SumUpCheckoutResponse = {
   hosted_checkout_url?: unknown;
   error_code?: unknown;
   message?: unknown;
+  param?: unknown;
 };
 
 function cleanOrderNumber(value: unknown): string {
@@ -66,6 +68,20 @@ export default async (request: Request, context: Context) => {
       );
     }
 
+    // Avant d'ouvrir un nouveau paiement, on vérifie chez SumUp qu'aucun paiement
+    // déjà lancé pour cette commande n'a abouti : c'est ce qui évite un double paiement.
+    const previous = await db
+      .select({ checkoutId: payments.providerPaymentId })
+      .from(payments)
+      .where(and(eq(payments.orderId, order.id), eq(payments.provider, "sumup"), ne(payments.status, "paid")))
+      .orderBy(desc(payments.createdAt))
+      .limit(3);
+    for (const { checkoutId } of previous) {
+      if (checkoutId && (await confirmSumUpCheckout(checkoutId)) === "paid") {
+        return Response.json({ error: "Cette commande est déjà payée.", status: "paid" }, { status: 409 });
+      }
+    }
+
     const origin = new URL(request.url).origin;
     const checkoutReference = `${order.orderNumber}-${randomBytes(3).toString("hex")}`;
     const sumupResponse = await fetch("https://api.sumup.com/v0.1/checkouts", {
@@ -98,7 +114,7 @@ export default async (request: Request, context: Context) => {
     ) {
       // Code et message d'erreur de SumUp (jamais la clé) : visibles dans les logs, et
       // affichés au client uniquement hors production pour faciliter les tests.
-      const reason = `HTTP ${sumupResponse.status} ${String(result.error_code ?? "")} ${String(result.message ?? "")}`.trim();
+      const reason = `HTTP ${sumupResponse.status} ${String(result.error_code ?? "")} ${String(result.message ?? "")}${result.param ? ` (champ : ${String(result.param)})` : ""}`.trim();
       console.error("SumUp checkout creation failed", reason);
       const isProduction = context?.deploy?.context === "production";
       return Response.json(

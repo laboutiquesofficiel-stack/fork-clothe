@@ -620,7 +620,9 @@
       <div class="row"><span>Livraison</span><span>${pending.shippingCents ? euros(pending.shippingCents) : "Offerte"}</span></div>
       <div class="row total"><span>Total</span><span>${euros(pending.totalCents)}</span></div>
       <button type="button" class="btn full" id="payButton">Payer ${euros(pending.totalCents)} par carte</button>
+      <button type="button" class="btn out full" id="alreadyPaid">J'ai déjà payé : vérifier le paiement</button>
       <button type="button" class="link" id="editOrder">Modifier le panier ou l'adresse</button>`;
+    $("#alreadyPaid").addEventListener("click", () => checkPaymentStatus(pending.orderNumber));
     $("#payButton").addEventListener("click", startPayment);
     $("#editOrder").addEventListener("click", () => {
       // Une nouvelle commande sera créée : l'ancienne reste non payée.
