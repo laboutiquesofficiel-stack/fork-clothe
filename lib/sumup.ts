@@ -91,7 +91,7 @@ async function confirmInner(checkoutId: string): Promise<ConfirmResult> {
   }
   if (merchantCode && checkoutMerchant && checkoutMerchant !== merchantCode) {
     console.error("SumUp checkout belongs to another merchant", checkoutId);
-    note(`checkout d'un autre marchand (${checkoutMerchant} ≠ ${merchantCode})`);
+    note("le paiement appartient à un autre compte SumUp que celui configuré pour ce site (vérifier SUMUP_MERCHANT_CODE)");
     return "ignored";
   }
 
