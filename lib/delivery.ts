@@ -18,6 +18,7 @@ export type DeliveryZone =
   | "free_zone"
   | "outside_zone"
   | "needs_postcode"
+  | "outside_area"
   | "unresolved"
   | "geocoder_unavailable";
 
@@ -135,6 +136,19 @@ export async function quoteDelivery(address: string): Promise<DeliveryQuote> {
       precision: null,
       matchedLabel: null,
       message: "Ajoutez votre code postal à l’adresse pour calculer les frais de livraison.",
+    };
+  }
+
+  // Lancement : livraison en France métropolitaine uniquement (pas d'outre-mer ni de Monaco).
+  if (postcode.startsWith("97") || postcode.startsWith("98")) {
+    return {
+      zone: "outside_area",
+      feeCents: 0,
+      distanceKm: null,
+      distanceMeters: null,
+      precision: null,
+      matchedLabel: null,
+      message: "Nous livrons uniquement en France métropolitaine pour le moment.",
     };
   }
 

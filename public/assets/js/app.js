@@ -398,7 +398,7 @@
       })
       .join("");
     foot.innerHTML = `<div class="row"><span>Sous-total</span><span>${euros(subtotalCents())}</span></div>
-      <p class="hint">Frais de livraison calculés à l'étape suivante, à partir de ton adresse.</p>
+      <p class="hint">Frais de livraison calculés à l'étape suivante, à partir de ton adresse. Livraison en France métropolitaine. TVA non applicable, art. 293 B du CGI.</p>
       <button type="button" class="btn full" id="toDelivery">Passer à la livraison</button>`;
     $$("[data-line]", body).forEach((b) =>
       b.addEventListener("click", () => {
@@ -533,7 +533,7 @@
     if (seq !== quoteSeq) return;
     if (!ok) {
       Object.assign(quote, { state: "error", address, zone: null, feeCents: 0, message: data.error || "Impossible de calculer la livraison." });
-    } else if (data.zone === "needs_postcode" || data.zone === "unresolved") {
+    } else if (!["free_zone", "outside_zone", "geocoder_unavailable"].includes(data.zone)) {
       Object.assign(quote, { state: "error", address, zone: data.zone, feeCents: 0, message: data.message });
     } else {
       Object.assign(quote, { state: "ok", address, zone: data.zone, feeCents: Number(data.feeCents) || 0, message: data.message });

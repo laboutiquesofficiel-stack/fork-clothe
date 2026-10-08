@@ -320,7 +320,8 @@ export default async (request: Request) => {
 
     if (
       delivery.zone === "needs_postcode" ||
-      delivery.zone === "unresolved"
+      delivery.zone === "unresolved" ||
+      delivery.zone === "outside_area"
     ) {
       return Response.json(
         {
