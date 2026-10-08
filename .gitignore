@@ -2,4 +2,3 @@ node_modules/
 .netlify/
 .env
 .env.*
-# préversion
