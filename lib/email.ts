@@ -30,19 +30,25 @@ export async function sendEmail(message: EmailMessage): Promise<boolean> {
   }
 
   try {
+    // Préversions : EMAIL_REDIRECT_TO détourne tous les e-mails vers une adresse de test,
+    // pour qu'aucun vrai client ne reçoive un e-mail envoyé depuis une préversion.
+    const redirectTo = process.env.EMAIL_REDIRECT_TO?.trim();
+    const to = redirectTo || message.to;
+    const subject = redirectTo ? `[TEST pour ${message.to}] ${message.subject}` : message.subject;
+
     const headers: Record<string, string> = {
       Authorization: `Bearer ${apiKey}`,
       "Content-Type": "application/json",
     };
-    if (message.idempotencyKey) headers["Idempotency-Key"] = message.idempotencyKey;
+    if (message.idempotencyKey) headers["Idempotency-Key"] = `${redirectTo ? "test-" : ""}${message.idempotencyKey}`;
 
     const response = await fetch(RESEND_ENDPOINT, {
       method: "POST",
       headers,
       body: JSON.stringify({
         from,
-        to: [message.to],
-        subject: message.subject,
+        to: [to],
+        subject,
         html: message.html,
         text: message.text,
       }),
