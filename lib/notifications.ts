@@ -48,6 +48,9 @@ async function loadOrder(orderId: number): Promise<OrderForEmail | null> {
   return order ?? null;
 }
 
+/** Logo hébergé sur le site (les e-mails ne peuvent pas embarquer les fichiers du projet). */
+const LOGO_URL = "https://fork-clothe.com/logo.png";
+
 function firstName(name: string): string {
   return name.trim().split(/\s+/)[0] || name;
 }
@@ -56,7 +59,7 @@ function layout(title: string, bodyHtml: string): string {
   return `<!doctype html><html lang="fr"><body style="margin:0;background:#f3f3f1;font-family:Arial,Helvetica,sans-serif;color:#111">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f3f3f1;padding:24px 12px"><tr><td align="center">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#ffffff">
-<tr><td style="background:#111;color:#fff;padding:20px 24px;font-size:26px;font-weight:900;letter-spacing:2px">FORK<span style="color:#c8102e">.</span></td></tr>
+<tr><td style="background:#ffffff;padding:20px 24px;border-bottom:3px solid #111"><table role="presentation" cellpadding="0" cellspacing="0"><tr><td style="padding-right:10px;vertical-align:middle"><img src="${LOGO_URL}" width="44" height="44" alt="FORK" style="display:block;border:0"></td><td style="vertical-align:middle;font-size:26px;font-weight:900;letter-spacing:2px;color:#111">FORK</td></tr></table></td></tr>
 <tr><td style="padding:28px 24px 8px"><h1 style="margin:0 0 12px;font-size:20px;text-transform:uppercase;letter-spacing:1px">${escapeHtml(title)}</h1>${bodyHtml}</td></tr>
 <tr><td style="padding:20px 24px 28px;font-size:12px;color:#6b6b6b;border-top:1px solid #e4e4e2">FORK · Toulon · fork-clothe.com<br>Une question ? Réponds sur WhatsApp au 07 66 75 18 40.</td></tr>
 </table></td></tr></table></body></html>`;
