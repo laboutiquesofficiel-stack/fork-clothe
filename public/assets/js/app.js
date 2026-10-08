@@ -679,7 +679,7 @@
 
     body.innerHTML = `<div class="empty"><h4>Vérification du paiement…</h4><p class="muted">On attend la confirmation de SumUp pour la commande ${esc(orderNumber)}.</p></div>`;
     foot.innerHTML = "";
-    const { ok, data } = await api(`/api/order-status?order=${encodeURIComponent(orderNumber)}&token=${encodeURIComponent(pending.token)}`);
+    const { ok, status, data } = await api(`/api/order-status?order=${encodeURIComponent(orderNumber)}&token=${encodeURIComponent(pending.token)}`);
 
     if (ok && data.paymentStatus === "paid") {
       pending.paid = true;
@@ -702,7 +702,7 @@
       pollTimer = setTimeout(() => checkPaymentStatus(orderNumber, attempt + 1), 3000);
       return;
     }
-    body.innerHTML = `<div class="empty"><h4>Paiement pas encore confirmé</h4><p class="muted">SumUp ne nous a pas encore confirmé le paiement de la commande ${esc(orderNumber)}. Si tu as payé, la confirmation arrive en général en quelques instants et tu recevras un e-mail. Sinon, tu peux reprendre le paiement.</p><p class="notice err" id="payError" hidden></p></div>`;
+    body.innerHTML = `<div class="empty"><h4>Paiement pas encore confirmé</h4><p class="muted">SumUp ne nous a pas encore confirmé le paiement de la commande ${esc(orderNumber)}. Si tu as payé, la confirmation arrive en général en quelques instants et tu recevras un e-mail. Sinon, tu peux reprendre le paiement.</p>${ok && data.debug ? `<p class="hint">Diagnostic (préversion) : ${esc(data.debug)}</p>` : !ok ? `<p class="hint">Diagnostic (préversion) : statut indisponible (${esc(String(status))}${data.debug ? ` · ${esc(data.debug)}` : ""})</p>` : ""}<p class="notice err" id="payError" hidden></p></div>`;
     foot.innerHTML = `<button type="button" class="btn full" id="recheck">Vérifier à nouveau</button>
       <button type="button" class="btn out full" id="payButton">Reprendre le paiement · ${euros(pending.totalCents)}</button>`;
     $("#recheck").addEventListener("click", () => checkPaymentStatus(orderNumber, 0));

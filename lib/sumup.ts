@@ -40,14 +40,30 @@ export function isCheckoutId(value: string): boolean {
   return /^[A-Za-z0-9-]{1,100}$/.test(value);
 }
 
+/** Dernière raison détaillée, pour le diagnostic hors production (jamais de secret). */
+export let lastConfirmReason = "";
+
 export async function confirmSumUpCheckout(checkoutId: string): Promise<ConfirmResult> {
+  const result = await confirmInner(checkoutId);
+  return result;
+}
+
+function note(reason: string): void {
+  lastConfirmReason = reason;
+}
+
+async function confirmInner(checkoutId: string): Promise<ConfirmResult> {
   const apiKey = process.env.SUMUP_API_KEY?.trim();
   const merchantCode = process.env.SUMUP_MERCHANT_CODE?.trim();
   if (!apiKey) {
     console.error("SUMUP_API_KEY is not configured");
+    note("clé SumUp absente");
     return "retry";
   }
-  if (!isCheckoutId(checkoutId)) return "ignored";
+  if (!isCheckoutId(checkoutId)) {
+    note("identifiant de checkout invalide");
+    return "ignored";
+  }
 
   const sumupResponse = await fetch(`https://api.sumup.com/v0.1/checkouts/${encodeURIComponent(checkoutId)}`, {
     headers: { Authorization: `Bearer ${apiKey}`, Accept: "application/json" },
@@ -55,10 +71,12 @@ export async function confirmSumUpCheckout(checkoutId: string): Promise<ConfirmR
   });
   if (sumupResponse.status === 404) {
     console.warn("SumUp checkout not found", checkoutId);
+    note(`checkout ${checkoutId} introuvable chez SumUp (404)`);
     return "ignored";
   }
   if (!sumupResponse.ok) {
     console.error("SumUp checkout verification failed", sumupResponse.status);
+    note(`lecture du checkout ${checkoutId} refusée par SumUp (HTTP ${sumupResponse.status})`);
     return "retry";
   }
 
@@ -68,10 +86,12 @@ export async function confirmSumUpCheckout(checkoutId: string): Promise<ConfirmR
 
   if (cleanString(checkout.id, 100) !== checkoutId) {
     console.error("SumUp checkout id mismatch", checkoutId);
+    note("identifiant renvoyé par SumUp différent");
     return "ignored";
   }
   if (merchantCode && checkoutMerchant && checkoutMerchant !== merchantCode) {
     console.error("SumUp checkout belongs to another merchant", checkoutId);
+    note(`checkout d'un autre marchand (${checkoutMerchant} ≠ ${merchantCode})`);
     return "ignored";
   }
 
@@ -93,6 +113,7 @@ export async function confirmSumUpCheckout(checkoutId: string): Promise<ConfirmR
   }
   if (!orderId) {
     console.error("SumUp checkout order not found", checkoutId);
+    note("commande liée au checkout introuvable");
     return "ignored";
   }
 
@@ -101,7 +122,10 @@ export async function confirmSumUpCheckout(checkoutId: string): Promise<ConfirmR
     .from(orders)
     .where(eq(orders.id, orderId))
     .limit(1);
-  if (!order) return "ignored";
+  if (!order) {
+    note("commande introuvable");
+    return "ignored";
+  }
 
   if (status !== "PAID") {
     // PENDING, FAILED, EXPIRED… : on garde la trace, la commande reste à payer.
@@ -111,6 +135,7 @@ export async function confirmSumUpCheckout(checkoutId: string): Promise<ConfirmR
         .set({ status: status.toLowerCase(), updatedAt: new Date() })
         .where(and(eq(payments.provider, "sumup"), eq(payments.providerPaymentId, checkoutId), ne(payments.status, "paid")));
     }
+    note(`checkout ${checkoutId} au statut SumUp « ${status || "vide"} »`);
     return "not_paid";
   }
 
@@ -119,6 +144,7 @@ export async function confirmSumUpCheckout(checkoutId: string): Promise<ConfirmR
   const currency = cleanString(checkout.currency, 10).toUpperCase();
   if (!Number.isFinite(amount) || receivedCents !== order.totalCents || currency !== order.currency) {
     console.error("SumUp payment amount/currency mismatch", checkoutId);
+    note(`montant ou devise différents (${receivedCents} ${currency} ≠ ${order.totalCents} ${order.currency})`);
     return "ignored";
   }
 
@@ -161,5 +187,6 @@ export async function confirmSumUpCheckout(checkoutId: string): Promise<ConfirmR
       console.error("Second SumUp payment on an already paid order: refund needed", order.id, checkoutId);
     }
   }
+  note("payé");
   return "paid";
 }

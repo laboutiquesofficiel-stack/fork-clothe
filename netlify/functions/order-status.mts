@@ -1,8 +1,8 @@
-import type { Config } from "@netlify/functions";
+import type { Config, Context } from "@netlify/functions";
 import { and, desc, eq, ne } from "drizzle-orm";
 import { db } from "../../db/index.js";
 import { orders, payments } from "../../db/schema.js";
-import { confirmSumUpCheckout } from "../../lib/sumup.js";
+import { confirmSumUpCheckout, lastConfirmReason } from "../../lib/sumup.js";
 
 /**
  * Statut d'une commande pour la page de retour après paiement.
@@ -34,7 +34,7 @@ async function readOrder(orderNumber: string, token: string) {
   return order ?? null;
 }
 
-export default async (request: Request) => {
+export default async (request: Request, context: Context) => {
   const url = new URL(request.url);
   const orderNumber = (url.searchParams.get("order") ?? "").trim().slice(0, 80);
   const token = (url.searchParams.get("token") ?? "").trim();
@@ -44,6 +44,7 @@ export default async (request: Request) => {
   }
 
   try {
+    const diagnostics: string[] = [];
     let order = await readOrder(orderNumber, token);
     if (!order) {
       return Response.json({ error: "Commande introuvable." }, { status: 404 });
@@ -57,17 +58,25 @@ export default async (request: Request) => {
         .orderBy(desc(payments.createdAt))
         .limit(3);
 
+      if (pending.length === 0) diagnostics.push("aucun paiement SumUp en attente enregistré pour cette commande");
       for (const { checkoutId } of pending) {
-        if (checkoutId && (await confirmSumUpCheckout(checkoutId)) === "paid") break;
+        if (!checkoutId) continue;
+        const result = await confirmSumUpCheckout(checkoutId);
+        diagnostics.push(lastConfirmReason || result);
+        if (result === "paid") break;
       }
       order = (await readOrder(orderNumber, token)) ?? order;
     }
 
     const { id: _id, ...publicOrder } = order;
-    return Response.json(publicOrder, { headers: { "Cache-Control": "no-store" } });
+    // Raisons détaillées uniquement hors production, pour diagnostiquer depuis le téléphone.
+    const debug = context?.deploy?.context !== "production" && diagnostics.length ? diagnostics.join(" · ") : undefined;
+    return Response.json({ ...publicOrder, debug }, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
-    console.error("Order status failed", error instanceof Error ? error.message : "Unknown error");
-    return Response.json({ error: "Statut indisponible pour le moment." }, { status: 500 });
+    const message = error instanceof Error ? error.message : "Unknown error";
+    console.error("Order status failed", message);
+    const debug = context?.deploy?.context !== "production" ? message.slice(0, 300) : undefined;
+    return Response.json({ error: "Statut indisponible pour le moment.", debug }, { status: 500 });
   }
 };
 
