@@ -351,7 +351,7 @@
   // Parcours de commande
   // ---------------------------------------------------------------------------
   let step = "cart";
-  const form = { name: "", email: "", phone: "", address: "", saveAddress: false };
+  const form = { name: "", email: "", phone: "", address: "", saveAddress: false, acceptCgv: false };
   const quote = { state: "idle", address: "", zone: null, feeCents: 0, message: "" };
   let me = null;
   let savedAddresses = null;
@@ -446,6 +446,7 @@
           <p class="hint">Numéro, rue, code postal et ville. Le code postal sert à calculer la livraison.</p></div>
         ${me ? `<label class="check"><input type="checkbox" id="f-save" ${form.saveAddress ? "checked" : ""}> Enregistrer cette adresse dans mon compte</label>` : ""}
         <div id="quoteBox" aria-live="polite"></div>
+        <label class="check"><input type="checkbox" id="f-cgv" ${form.acceptCgv ? "checked" : ""}><span>J'accepte les <a class="link" href="cgv.html" target="_blank" rel="noopener">conditions générales de vente</a> et j'ai lu la <a class="link" href="confidentialite.html" target="_blank" rel="noopener">politique de confidentialité</a>.</span></label>
         <p class="notice err" id="deliveryError" hidden></p>
       </form>`;
 
@@ -460,6 +461,10 @@
     bind("#f-phone", "phone");
     bind("#f-address", "address");
     $("#f-save")?.addEventListener("change", (e) => (form.saveAddress = e.target.checked));
+    $("#f-cgv").addEventListener("change", (e) => {
+      form.acceptCgv = e.target.checked;
+      renderDeliveryFoot();
+    });
     $("#savedAddress")?.addEventListener("change", (e) => {
       const a = savedAddresses.find((x) => String(x.id) === e.target.value);
       if (!a) return;
@@ -495,7 +500,7 @@
     const usable = quoteIsUsable();
     const fee = usable ? quote.feeCents : null;
     const ready =
-      usable && form.name.trim() && /^\S+@\S+\.\S+$/.test(form.email.trim()) && form.phone.trim().length >= 6;
+      usable && form.acceptCgv && form.name.trim() && /^\S+@\S+\.\S+$/.test(form.email.trim()) && form.phone.trim().length >= 6;
     foot.innerHTML = `<div class="row"><span>Sous-total</span><span>${euros(subtotalCents())}</span></div>
       <div class="row"><span>Livraison</span><span>${fee === null ? "Saisis ton adresse" : fee ? euros(fee) : "Offerte"}</span></div>
       <div class="row total"><span>Total estimé</span><span>${fee === null ? "—" : euros(subtotalCents() + fee)}</span></div>
@@ -541,7 +546,7 @@
     const errorBox = $("#deliveryError");
     const button = $("#submitOrder");
     errorBox.hidden = true;
-    if (!quoteIsUsable()) return;
+    if (!quoteIsUsable() || !form.acceptCgv) return;
     button.disabled = true;
     button.textContent = "Enregistrement…";
 
@@ -754,6 +759,7 @@
             Continuer avec Google
           </a>
           <p class="hint">Pas besoin de compte pour commander. Si tu te connectes plus tard avec la même adresse e-mail, tes commandes apparaissent automatiquement.</p>
+          <p class="hint"><a class="link" href="confidentialite.html">Comment tes données sont utilisées</a></p>
         </div>`;
       return;
     }

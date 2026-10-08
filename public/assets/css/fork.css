@@ -245,3 +245,4 @@ h1, h2, h3, h4 { margin: 0; text-transform: uppercase; font-weight: 900; letter-
 .btn.light-out { color: var(--white); border-color: var(--white); }
 .btn.light-out:hover { background: var(--white); color: var(--ink); }
 .sheet-info p { margin: 0; }
+.flegal a { color: inherit; } .flegal a:hover { color: var(--white); text-decoration: underline; }
