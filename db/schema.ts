@@ -6,6 +6,7 @@ import {
   serial,
   text,
   timestamp,
+  unique,
 } from "drizzle-orm/pg-core";
 
 export type OrderItem = {
@@ -54,7 +55,10 @@ export const userIdentities = pgTable("user_identities", {
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
-});
+}, (table) => [
+  // Un compte Google ne peut être rattaché qu'à un seul client FORK.
+  unique("user_identities_provider_account_key").on(table.provider, table.providerAccountId),
+]);
 
 /**
  * Sessions de connexion.
@@ -202,4 +206,7 @@ export const payments = pgTable("payments", {
   updatedAt: timestamp("updated_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
-});
+}, (table) => [
+  // Un même checkout SumUp n'est enregistré qu'une fois, même si le webhook est rejoué.
+  unique("payments_provider_payment_key").on(table.provider, table.providerPaymentId),
+]);

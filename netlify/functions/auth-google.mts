@@ -1,219 +1,197 @@
-import { createHash, randomBytes } from "node:crypto";
+import { randomBytes, timingSafeEqual } from "node:crypto";
 import { and, eq } from "drizzle-orm";
 import { db } from "../../db/index.js";
-import { sessions, userIdentities, users } from "../../db/schema.js";
+import { userIdentities, users } from "../../db/schema.js";
+import { createSession, readCookie, sessionCookie } from "../../lib/auth.js";
 
-const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
-const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
+/**
+ * Connexion Google (OAuth 2.0, flux « authorization code »).
+ *
+ * 1. Sans `code` : on redirige vers Google avec un `state` aléatoire, aussi
+ *    posé dans un cookie HttpOnly limité à cette fonction.
+ * 2. Au retour : on exige que le `state` reçu soit identique au cookie
+ *    (protection contre la connexion forcée), puis on échange le code
+ *    côté serveur et on crée la session FORK.
+ *
+ * L'adresse de retour est construite à partir du domaine qui reçoit la
+ * requête : la connexion fonctionne sur fork-clothe.com comme sur une
+ * préversion, à condition que l'adresse soit autorisée dans Google Cloud.
+ */
 
-const REDIRECT_URI =
-  "https://fork-clothe.netlify.app/.netlify/functions/auth-google";
+const STATE_COOKIE = "fork_oauth_state";
+const CALLBACK_PATH = "/.netlify/functions/auth-google";
+const STATE_MAX_AGE_SECONDS = 600;
 
-const FORK_URL = "https://fork-clothe.netlify.app/";
+function stateCookie(value: string, maxAge: number): string {
+  return [
+    `${STATE_COOKIE}=${value}`,
+    `Path=${CALLBACK_PATH}`,
+    "HttpOnly",
+    "Secure",
+    "SameSite=Lax",
+    `Max-Age=${maxAge}`,
+  ].join("; ");
+}
 
-const createSession = async (userId: number) => {
-  const token = randomBytes(32).toString("hex");
-  const tokenHash = createHash("sha256").update(token).digest("hex");
+function sameState(received: string | null, expected: string | null): boolean {
+  if (!received || !expected || received.length !== expected.length) return false;
+  return timingSafeEqual(Buffer.from(received), Buffer.from(expected));
+}
 
-  const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+function redirectTo(location: string, cookies: string[] = []): Response {
+  const headers = new Headers({ Location: location, "Cache-Control": "no-store" });
+  for (const cookie of cookies) headers.append("Set-Cookie", cookie);
+  return new Response(null, { status: 302, headers });
+}
 
-  await db.insert(sessions).values({
-    userId,
-    tokenHash,
-    expiresAt,
-  });
-
-  return token;
+type GoogleUser = {
+  sub?: unknown;
+  email?: unknown;
+  email_verified?: unknown;
+  name?: unknown;
+  picture?: unknown;
 };
 
 export default async (req: Request) => {
-  if (!GOOGLE_CLIENT_ID || !GOOGLE_CLIENT_SECRET) {
-    return new Response("Configuration Google OAuth manquante.", {
-      status: 500,
-    });
+  const clientId = process.env.GOOGLE_CLIENT_ID?.trim();
+  const clientSecret = process.env.GOOGLE_CLIENT_SECRET?.trim();
+  if (!clientId || !clientSecret) {
+    return new Response("Configuration Google OAuth manquante.", { status: 500 });
   }
 
   const url = new URL(req.url);
+  const origin = url.origin;
+  const redirectUri = `${origin}${CALLBACK_PATH}`;
+  const clearState = stateCookie("", 0);
+
+  // Le client a refusé ou Google a renvoyé une erreur.
+  if (url.searchParams.get("error")) {
+    return redirectTo(`${origin}/?login=cancelled`, [clearState]);
+  }
+
   const code = url.searchParams.get("code");
 
   // Première étape : redirection vers Google.
   if (!code) {
+    const state = randomBytes(24).toString("hex");
     const params = new URLSearchParams({
-      client_id: GOOGLE_CLIENT_ID,
-      redirect_uri: REDIRECT_URI,
+      client_id: clientId,
+      redirect_uri: redirectUri,
       response_type: "code",
       scope: "openid email profile",
-      access_type: "offline",
       prompt: "select_account",
+      state,
     });
-
-    return new Response(null, {
-      status: 302,
-      headers: {
-        Location: `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`,
-      },
-    });
+    return redirectTo(`https://accounts.google.com/o/oauth2/v2/auth?${params}`, [
+      stateCookie(state, STATE_MAX_AGE_SECONDS),
+    ]);
   }
 
-  // Deuxième étape : échange du code contre un token Google.
-  const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    body: new URLSearchParams({
-      code,
-      client_id: GOOGLE_CLIENT_ID,
-      client_secret: GOOGLE_CLIENT_SECRET,
-      redirect_uri: REDIRECT_URI,
-      grant_type: "authorization_code",
-    }),
-  });
-
-if (!tokenResponse.ok) {
-    const errorText = await tokenResponse.text();
-
-    console.error(
-        "Google token exchange failed:",
-        tokenResponse.status,
-        errorText,
-    );
-
-    return new Response("Impossible de finaliser la connexion Google.", {
-        status: 502,
-    });
-}
-
-const tokens = await tokenResponse.json();
-
-  // Récupération des informations Google.
-  const userResponse = await fetch(
-    "https://openidconnect.googleapis.com/v1/userinfo",
-    {
-      headers: {
-        Authorization: `Bearer ${tokens.access_token}`,
-      },
-    },
-  );
-
-  if (!userResponse.ok) {
-    return new Response("Impossible de récupérer le compte Google.", {
-      status: 502,
-    });
+  if (!sameState(url.searchParams.get("state"), readCookie(req, STATE_COOKIE))) {
+    return redirectTo(`${origin}/?login=expired`, [clearState]);
   }
 
-  const googleUser = await userResponse.json();
-
-  if (
-    typeof googleUser.sub !== "string" ||
-    typeof googleUser.email !== "string" ||
-    googleUser.email_verified !== true
-  ) {
-    return new Response("Compte Google non vérifié.", {
-      status: 400,
+  try {
+    // Deuxième étape : échange du code contre un jeton, côté serveur.
+    const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({
+        code,
+        client_id: clientId,
+        client_secret: clientSecret,
+        redirect_uri: redirectUri,
+        grant_type: "authorization_code",
+      }),
+      signal: AbortSignal.timeout(8000),
     });
-  }
 
-  // Cherche d'abord l'identité Google existante.
-  const existingIdentity = await db
-    .select()
-    .from(userIdentities)
-    .where(
-      and(
-        eq(userIdentities.provider, "google"),
-        eq(userIdentities.providerAccountId, googleUser.sub),
-      ),
-    )
-    .limit(1);
+    if (!tokenResponse.ok) {
+      console.error("Google token exchange failed", tokenResponse.status);
+      return redirectTo(`${origin}/?login=failed`, [clearState]);
+    }
 
-  let userId: number;
+    const tokens = (await tokenResponse.json()) as { access_token?: unknown };
+    if (typeof tokens.access_token !== "string") {
+      return redirectTo(`${origin}/?login=failed`, [clearState]);
+    }
 
-  if (existingIdentity.length > 0) {
-    // Le compte Google existe déjà.
-    userId = existingIdentity[0].userId;
+    const userResponse = await fetch("https://openidconnect.googleapis.com/v1/userinfo", {
+      headers: { Authorization: `Bearer ${tokens.access_token}` },
+      signal: AbortSignal.timeout(8000),
+    });
+    if (!userResponse.ok) {
+      return redirectTo(`${origin}/?login=failed`, [clearState]);
+    }
 
-    await db
-      .update(users)
-      .set({
-        email: googleUser.email,
-        name: typeof googleUser.name === "string" ? googleUser.name : null,
-        avatarUrl:
-          typeof googleUser.picture === "string"
-            ? googleUser.picture
-            : null,
-        updatedAt: new Date(),
-      })
-      .where(eq(users.id, userId));
-  } else {
-    // Cherche un compte Fork existant avec cette adresse e-mail.
-    const existingUser = await db
-      .select()
-      .from(users)
-      .where(eq(users.email, googleUser.email))
+    const googleUser = (await userResponse.json()) as GoogleUser;
+    if (
+      typeof googleUser.sub !== "string" ||
+      typeof googleUser.email !== "string" ||
+      googleUser.email_verified !== true
+    ) {
+      return redirectTo(`${origin}/?login=unverified`, [clearState]);
+    }
+
+    const googleId = googleUser.sub;
+    const email = googleUser.email.trim().toLowerCase();
+    const googleName = typeof googleUser.name === "string" ? googleUser.name.trim().slice(0, 120) : null;
+    const avatarUrl = typeof googleUser.picture === "string" ? googleUser.picture : null;
+
+    const [identity] = await db
+      .select({ userId: userIdentities.userId })
+      .from(userIdentities)
+      .where(and(eq(userIdentities.provider, "google"), eq(userIdentities.providerAccountId, googleId)))
       .limit(1);
 
-    if (existingUser.length > 0) {
-      userId = existingUser[0].id;
+    let userId: number;
+
+    if (identity) {
+      userId = identity.userId;
+      const [current] = await db
+        .select({ name: users.name })
+        .from(users)
+        .where(eq(users.id, userId))
+        .limit(1);
+
+      // Le nom saisi dans « Mes informations » n'est jamais écrasé par celui de Google.
+      await db
+        .update(users)
+        .set({
+          email,
+          avatarUrl,
+          ...(current?.name ? {} : { name: googleName }),
+          updatedAt: new Date(),
+        })
+        .where(eq(users.id, userId));
+    } else {
+      const [existingUser] = await db
+        .select({ id: users.id })
+        .from(users)
+        .where(eq(users.email, email))
+        .limit(1);
+
+      if (existingUser) {
+        userId = existingUser.id;
+      } else {
+        const [newUser] = await db
+          .insert(users)
+          .values({ email, name: googleName, avatarUrl })
+          .returning({ id: users.id });
+        if (!newUser) throw new Error("USER_CREATE_FAILED");
+        userId = newUser.id;
+      }
 
       await db
         .insert(userIdentities)
-        .values({
-          userId,
-          provider: "google",
-          providerAccountId: googleUser.sub,
-        })
+        .values({ userId, provider: "google", providerAccountId: googleId })
         .onConflictDoNothing();
-    } else {
-      // Création du compte Fork.
-      const [newUser] = await db
-        .insert(users)
-        .values({
-          email: googleUser.email,
-          name: typeof googleUser.name === "string" ? googleUser.name : null,
-          avatarUrl:
-            typeof googleUser.picture === "string"
-              ? googleUser.picture
-              : null,
-        })
-        .returning();
-
-      if (!newUser) {
-        return new Response("Impossible de créer le compte Fork.", {
-          status: 500,
-        });
-      }
-
-      userId = newUser.id;
-
-      await db.insert(userIdentities).values({
-        userId,
-        provider: "google",
-        providerAccountId: googleUser.sub,
-      });
     }
+
+    const sessionToken = await createSession(userId);
+    return redirectTo(`${origin}/?login=success`, [clearState, sessionCookie(sessionToken)]);
+  } catch (error) {
+    console.error("Google sign-in failed", error instanceof Error ? error.message : "Unknown error");
+    return redirectTo(`${origin}/?login=failed`, [clearState]);
   }
-
-  // Création d'une session Fork.
-  const sessionToken = await createSession(userId);
-
-  const headers = new Headers({
-    Location: `${FORK_URL}?login=success`,
-  });
-
-  headers.append(
-    "Set-Cookie",
-    [
-      `fork_session=${sessionToken}`,
-      "Path=/",
-      "HttpOnly",
-      "Secure",
-      "SameSite=Lax",
-      "Max-Age=2592000",
-    ].join("; "),
-  );
-
-  return new Response(null, {
-    status: 302,
-    headers,
-  });
 };
