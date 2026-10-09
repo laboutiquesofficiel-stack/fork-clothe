@@ -23,10 +23,10 @@
       color: "Rouge & noir",
       category: "homme",
       priceCents: 3000,
-      sizes: ["S", "M", "L", "XL", "2XL", "3XL"],
+      sizes: ["S", "M", "L", "XL", "XXL"],
       available: true,
       isNew: false,
-      description: "Le classique rouge et noir : coupe droite, coton épais, impression « Chez nous à Toulon on craint degun ».",
+      description: "Le classique FORK. Au dos, un ballon ovale rouge et noir porte la devise « Chez nous à Toulon on craint degun ». Devant, le logo FORK. Un t-shirt blanc pour les jours de match comme pour tous les jours.",
       images: [
         { src: "assets/products/authentique/authentique-face-porte.jpg", alt: "L'Authentique rouge et noir porté de face devant la mer" },
         { src: "assets/products/authentique/authentique-dos-ancre.jpg", alt: "Dos de L'Authentique rouge et noir suspendu face à la rade" },
@@ -47,7 +47,7 @@
       sizes: ["S", "M", "L"],
       available: true,
       isNew: true,
-      description: "Le modèle léopard, pensé comme une pièce forte du vestiaire féminin.",
+      description: "Le Faron revisité en léopard, avec son téléphérique rouge et son altitude : 584 m. Devant, le logo FORK en motif léopard. Une pièce forte, imprimée sur un t-shirt blanc.",
       images: [
         { src: "assets/products/lou-faron/lou-faron-face-maison-bleue.jpg", alt: "Lou Faron porté de face devant une maison aux volets bleus" },
         { src: "assets/products/lou-faron/lou-faron-dos-faron.jpg", alt: "Dos du Lou Faron : le Faron en léopard, le téléphérique et « Alt. 584m »" },
@@ -67,10 +67,10 @@
       color: "Noir",
       category: "homme",
       priceCents: 3000,
-      sizes: ["S", "M", "L", "XL", "2XL", "3XL"],
+      sizes: ["S", "M", "L", "XL", "XXL"],
       available: true,
       isNew: true,
-      description: "Un noir profond et graphique, inspiré des expressions du Sud.",
+      description: "Calanque, fada, mistral, cigale, jaune, rade, pétanque : les mots du Sud, imprimés en blanc dans le dos d'un t-shirt noir. Devant, le logo FORK.",
       images: [
         { src: "assets/products/les-boutades/les-boutades-face-calanque.jpg", alt: "Les Boutades noir porté de face au-dessus de la calanque" },
         { src: "assets/products/les-boutades/les-boutades-dos-calanque.jpg", alt: "Dos des Boutades : Calanque, Fada, Mistral, Cigale, Jaune, Rade, Pétanque" },
@@ -275,12 +275,23 @@
           p.available
             ? `<div class="field"><span class="up">Taille</span><div class="sizes">${p.sizes
                 .map((s) => `<button type="button" class="size" data-size="${esc(s)}" aria-pressed="${sheet.size === s}">${esc(s)}</button>`)
-                .join("")}</div><p class="hint">Coupe droite : ta taille habituelle, ou une au-dessus pour un style oversize.</p></div>
+                .join("")}</div></div>
               <div class="field"><span class="up">Quantité</span><div class="qty"><button type="button" data-qty="-1" aria-label="Diminuer">−</button><span>${sheet.qty}</span><button type="button" data-qty="1" aria-label="Augmenter">+</button></div></div>
               <button type="button" class="btn full" id="addToCart" ${canBuy ? "" : "disabled"}>${sheet.size ? `Ajouter au panier · ${euros(p.priceCents * sheet.qty)}` : "Choisis ta taille"}</button>`
             : `<p class="notice">Ce modèle est épuisé pour le moment. Suis-nous sur Instagram pour être au courant de son retour.</p>`
         }
         <p class="hint">Livraison offerte à moins de 10 km de Toulon, 7,64 € au-delà. Le montant exact est calculé avant le paiement.</p>
+        <div class="pinfo">
+          <details><summary>Matière</summary><p>100 % coton, 120 g/m².</p></details>
+          <details><summary>Guide des tailles</summary>
+            <p>Tailles proposées pour ce modèle : <b>${p.sizes.map(esc).join(", ")}</b>.</p>
+            <p>Les mesures exactes de chaque taille, en centimètres, sont en cours de confirmation auprès de notre fournisseur et seront ajoutées ici. Un doute sur ta taille ? Écris-nous sur WhatsApp au 07 66 75 18 40.</p>
+          </details>
+          <details><summary>Entretien</summary>
+            <p class="hint">Conseils généraux pour garder ton t-shirt et son impression plus longtemps :</p>
+            <ul><li>Lavage à l'envers, à 30 °C.</li><li>Avec des couleurs similaires.</li><li>Éviter le sèche-linge.</li><li>Ne pas repasser directement sur l'impression.</li><li>Pas de produits blanchissants.</li></ul>
+          </details>
+        </div>
       </div>`;
 
     const gallery = $("#gallery");

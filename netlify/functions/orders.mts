@@ -23,7 +23,7 @@ const catalogue: Record<string, Product> = {
   "fork-authentique": {
     name: "L'Authentique",
     color: "Rouge & noir",
-    sizes: ["S", "M", "L", "XL", "2XL", "3XL"],
+    sizes: ["S", "M", "L", "XL", "XXL"],
     priceCents: 3000,
   },
   "fork-lou-faron": {
@@ -35,7 +35,7 @@ const catalogue: Record<string, Product> = {
   "fork-les-boutades": {
     name: "Les Boutades",
     color: "Noir",
-    sizes: ["S", "M", "L", "XL", "2XL", "3XL"],
+    sizes: ["S", "M", "L", "XL", "XXL"],
     priceCents: 3000,
   },
 };
