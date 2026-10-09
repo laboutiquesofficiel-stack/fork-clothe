@@ -28,11 +28,11 @@
       isNew: false,
       description: "Le classique rouge et noir : coupe droite, coton épais, impression « Chez nous à Toulon on craint degun ».",
       images: [
-        { src: "img_4222.jpeg", alt: "L'Authentique rouge et noir porté de face" },
-        { src: "img_4231.jpeg", alt: "Dos de L'Authentique rouge et noir" },
-        { src: "img_4227.jpeg", alt: "Détail du logo de L'Authentique" },
-        { src: "img_4228.jpeg", alt: "L'Authentique porté de dos sur le port de Toulon" },
-        { src: "img_4232.jpeg", alt: "L'Authentique porté de dos face aux bateaux" },
+        { src: "assets/products/authentique/authentique-face-porte.jpg", alt: "L'Authentique rouge et noir porté de face devant la mer" },
+        { src: "assets/products/authentique/authentique-dos-mer.jpg", alt: "Dos de L'Authentique rouge et noir tenu face à la mer" },
+        { src: "assets/products/authentique/authentique-detail-ballon.jpg", alt: "Détail du logo vibe toulonnaise de L'Authentique avec un ballon de rugby" },
+        { src: "assets/products/authentique/authentique-porte-sentier.jpg", alt: "L'Authentique porté sur le sentier du littoral" },
+        { src: "assets/products/authentique/authentique-face-mer.jpg", alt: "Face de L'Authentique tenu face à la mer" },
       ],
     },
     {
