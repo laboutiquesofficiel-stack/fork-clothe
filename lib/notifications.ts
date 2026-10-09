@@ -51,6 +51,12 @@ async function loadOrder(orderId: number): Promise<OrderForEmail | null> {
 /** Logo hébergé sur le site (les e-mails ne peuvent pas embarquer les fichiers du projet). */
 const LOGO_URL = "https://fork-clothe.com/logo.png";
 
+/** Mention imposée par CM2C (art. L641-1 du Code de la consommation), reprise mot pour mot. */
+const MEDIATION_TEXT =
+  "Conformément aux dispositions du Code de la consommation concernant « le processus de médiation des litiges de la consommation », après nous avoir sollicités et à défaut de réponse vous satisfaisant, vous avez la possibilité de recourir gratuitement à une procédure de médiation de la consommation auprès de :\n" +
+  "CM2C – 49 rue de Ponthieu – 75008 Paris\n" +
+  "Tél. : 01 89 47 00 14 · Site internet : https://www.cm2c.net/declarer-un-litige.php · Mail : litiges@cm2c.net";
+
 function firstName(name: string): string {
   return name.trim().split(/\s+/)[0] || name;
 }
@@ -106,9 +112,10 @@ export async function notifyOrderPaid(orderId: number): Promise<void> {
       `<p style="font-size:14px;line-height:1.6">Merci ${escapeHtml(firstName(order.customerName))} ! Ton paiement est bien reçu et ta commande <b>${escapeHtml(order.orderNumber)}</b> est confirmée.</p>
 ${itemsTable(order)}
 <p style="font-size:14px;line-height:1.6"><b>Livraison à :</b><br>${escapeHtml(order.customerName)}<br>${escapeHtml(order.shippingAddress)}</p>
-<p style="font-size:14px;line-height:1.6">On prépare ton colis. Tu recevras un e-mail avec le numéro de suivi dès l'expédition.</p>`,
+<p style="font-size:14px;line-height:1.6">On prépare ton colis. Tu recevras un e-mail avec le numéro de suivi dès l'expédition.</p>
+<p style="font-size:11px;line-height:1.5;color:#6b6b6b;margin-top:24px">${escapeHtml(MEDIATION_TEXT).replace(/\n/g, "<br>")}</p>`,
     );
-    const text = `Commande confirmée ${order.orderNumber}\n\nMerci ${firstName(order.customerName)} ! Ton paiement est bien reçu.\n\n${itemsText(order)}\nLivraison : ${order.shippingCents ? formatEuros(order.shippingCents) : "offerte"}\nTotal payé : ${formatEuros(order.totalCents)}\n\nLivraison à :\n${order.customerName}\n${order.shippingAddress}\n\nTu recevras le numéro de suivi dès l'expédition.\nFORK · Toulon`;
+    const text = `Commande confirmée ${order.orderNumber}\n\nMerci ${firstName(order.customerName)} ! Ton paiement est bien reçu.\n\n${itemsText(order)}\nLivraison : ${order.shippingCents ? formatEuros(order.shippingCents) : "offerte"}\nTotal payé : ${formatEuros(order.totalCents)}\n\nLivraison à :\n${order.customerName}\n${order.shippingAddress}\n\nTu recevras le numéro de suivi dès l'expédition.\nFORK · Toulon\n\n${MEDIATION_TEXT}`;
 
     await sendEmail({
       to: order.customerEmail,
