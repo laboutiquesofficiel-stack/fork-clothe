@@ -1,0 +1,14 @@
+.legal-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-block: 12px; }
+.legal-head .brand span { font-size: 1.3rem; }
+.legal { max-width: 760px; margin-inline: auto; padding: 32px 16px 72px; }
+.legal h1 { font-size: clamp(1.7rem, 4vw, 2.6rem); margin-bottom: 8px; }
+.legal h2 { font-size: 1rem; letter-spacing: .06em; margin-top: 36px; margin-bottom: 10px; }
+.legal p, .legal li { line-height: 1.65; }
+.legal ul { padding-left: 20px; }
+.legal a { text-decoration: underline; text-underline-offset: 3px; }
+.legal .updated { color: var(--muted); font-size: .85rem; }
+.legal table { width: 100%; border-collapse: collapse; font-size: .9rem; margin-block: 12px; }
+.legal th, .legal td { text-align: left; border-bottom: 1px solid var(--line); padding: 8px 6px; vertical-align: top; }
+.table-scroll { overflow-x: auto; }
+.todo { border: 2px dashed var(--red); color: var(--red); padding: 10px 12px; font-weight: 700; }
+.legal-nav { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--line); font-size: .85rem; }

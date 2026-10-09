@@ -1,8 +1,8 @@
-import { randomBytes } from "node:crypto";
+import { createHash, randomBytes } from "node:crypto";
 import type { Config } from "@netlify/functions";
 import { eq } from "drizzle-orm";
 import { db } from "../../db/index.js";
-import { orders, type OrderItem } from "../../db/schema.js";
+import { orders, sessions, type OrderItem } from "../../db/schema.js";
 import { quoteDelivery, type DeliveryQuote } from "../../lib/delivery.js";
 
 type Product = {
@@ -57,7 +57,6 @@ const orderSummary = {
   currency: orders.currency,
 };
 
-/** Détail de livraison renvoyé au client pour affichage du récapitulatif. */
 function deliverySummary(delivery: DeliveryQuote) {
   return {
     zone: delivery.zone,
@@ -67,18 +66,29 @@ function deliverySummary(delivery: DeliveryQuote) {
   };
 }
 
-/** Résumé lisible de la zone de livraison pour la notification au vendeur. */
 function describeDeliveryZone(delivery: DeliveryQuote): string {
-  const distance = delivery.distanceKm === null ? "distance inconnue" : `${delivery.distanceKm.toFixed(1)} km de Toulon centre`;
+  const distance =
+    delivery.distanceKm === null
+      ? "distance inconnue"
+      : `${delivery.distanceKm.toFixed(1)} km de Toulon centre`;
+
   if (delivery.zone === "free_zone") return `Zone offerte (${distance})`;
   if (delivery.zone === "outside_zone") return `Hors zone (${distance})`;
+
   return `À vérifier manuellement (${delivery.zone})`;
 }
 
 function getFormspreeEndpoint(): string | null {
-  const configured = process.env.FORMSPREE_ENDPOINT?.trim() || process.env.FORMSPREE_FORM_ID?.trim();
-  if (!configured) return "https://formspree.io/f/xnjygpqa";
-  return configured.startsWith("https://formspree.io/") ? configured : `https://formspree.io/f/${encodeURIComponent(configured)}`;
+  const configured =
+    process.env.FORMSPREE_ENDPOINT?.trim() ||
+    process.env.FORMSPREE_FORM_ID?.trim();
+
+  // L'identifiant du formulaire vient de FORMSPREE_FORM_ID (ou FORMSPREE_ENDPOINT) sur Netlify.
+  if (!configured) return null;
+
+  return configured.startsWith("https://formspree.io/")
+    ? configured
+    : `https://formspree.io/f/${encodeURIComponent(configured)}`;
 }
 
 async function sendFormspreeNotification(
@@ -90,6 +100,7 @@ async function sendFormspreeNotification(
   totalCents: number,
 ): Promise<boolean> {
   const endpoint = getFormspreeEndpoint();
+
   if (!endpoint) {
     console.warn("Formspree notification skipped: endpoint is not configured");
     return false;
@@ -97,11 +108,18 @@ async function sendFormspreeNotification(
 
   try {
     const articles = items
-      .map((item) => `${item.quantity} × ${item.name} — taille ${item.size} — couleur ${item.color}`)
+      .map(
+        (item) =>
+          `${item.quantity} × ${item.name} — taille ${item.size} — couleur ${item.color}`,
+      )
       .join("\n");
+
     const response = await fetch(endpoint, {
       method: "POST",
-      headers: { Accept: "application/json", "Content-Type": "application/json" },
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
       signal: AbortSignal.timeout(4000),
       body: JSON.stringify({
         _subject: `Nouvelle commande FORK ${orderNumber}`,
@@ -118,22 +136,93 @@ async function sendFormspreeNotification(
       }),
     });
 
-    if (!response.ok) console.warn("Formspree notification failed", response.status);
+    if (!response.ok) {
+      console.warn("Formspree notification failed", response.status);
+    }
+
     return response.ok;
   } catch (error) {
-    console.warn("Formspree notification failed", error instanceof Error ? error.message : "Unknown error");
+    console.warn(
+      "Formspree notification failed",
+      error instanceof Error ? error.message : "Unknown error",
+    );
+
     return false;
   }
 }
 
+/**
+ * Récupère l'utilisateur connecté à partir de la session sécurisée.
+ *
+ * Important :
+ * - On ne récupère jamais le userId depuis le navigateur.
+ * - Un client non connecté reste un client invité.
+ * - Une session expirée n'est pas utilisée.
+ */
+async function getAuthenticatedUserId(
+  request: Request,
+): Promise<number | null> {
+  const cookieHeader = request.headers.get("cookie");
+
+  if (!cookieHeader) return null;
+
+  const cookies = cookieHeader.split(";");
+
+  let sessionToken: string | null = null;
+
+  for (const cookie of cookies) {
+    const [key, ...valueParts] = cookie.trim().split("=");
+
+    if (key === "fork_session") {
+      sessionToken = decodeURIComponent(valueParts.join("="));
+      break;
+    }
+  }
+
+  if (!sessionToken) return null;
+
+  const tokenHash = createHash("sha256")
+    .update(sessionToken)
+    .digest("hex");
+
+  const [session] = await db
+    .select({
+      userId: sessions.userId,
+      expiresAt: sessions.expiresAt,
+    })
+    .from(sessions)
+    .where(eq(sessions.tokenHash, tokenHash))
+    .limit(1);
+
+  if (!session) return null;
+
+  if (session.expiresAt.getTime() <= Date.now()) {
+    return null;
+  }
+
+  return session.userId;
+}
+
 export default async (request: Request) => {
   if (request.method !== "POST") {
-    return Response.json({ error: "Méthode non autorisée." }, { status: 405 });
+    return Response.json(
+      { error: "Méthode non autorisée." },
+      { status: 405 },
+    );
   }
 
   try {
+    /*
+     * Le compte connecté est déterminé côté serveur grâce au cookie.
+     * Si aucun compte n'est connecté, userId reste null :
+     * le checkout invité continue donc de fonctionner.
+     */
+    const userId = await getAuthenticatedUserId(request);
+
     const body = await request.json();
+
     const checkoutToken = cleanText(body?.checkoutToken, 80);
+
     const customer: Customer = {
       name: cleanText(body?.customer?.name, 120),
       email: cleanText(body?.customer?.email, 200).toLowerCase(),
@@ -141,27 +230,61 @@ export default async (request: Request) => {
       address: cleanText(body?.customer?.address, 500),
     };
 
-    if (!customer.name || !customer.email.includes("@") || !customer.phone || !customer.address) {
-      return Response.json({ error: "Les coordonnées de livraison sont incomplètes." }, { status: 400 });
+    if (
+      !customer.name ||
+      !customer.email.includes("@") ||
+      !customer.phone ||
+      !customer.address
+    ) {
+      return Response.json(
+        { error: "Les coordonnées de livraison sont incomplètes." },
+        { status: 400 },
+      );
     }
 
-    if (!/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(checkoutToken)) {
-      return Response.json({ error: "La session de commande est invalide. Rechargez la page puis réessayez." }, { status: 400 });
+    if (
+      !/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+        checkoutToken,
+      )
+    ) {
+      return Response.json(
+        {
+          error:
+            "La session de commande est invalide. Rechargez la page puis réessayez.",
+        },
+        { status: 400 },
+      );
     }
 
-    if (!Array.isArray(body?.items) || body.items.length === 0 || body.items.length > 20) {
-      return Response.json({ error: "Le panier est vide ou invalide." }, { status: 400 });
+    if (
+      !Array.isArray(body?.items) ||
+      body.items.length === 0 ||
+      body.items.length > 20
+    ) {
+      return Response.json(
+        { error: "Le panier est vide ou invalide." },
+        { status: 400 },
+      );
     }
 
     const items: OrderItem[] = body.items.map((input: unknown) => {
       const item = input as Record<string, unknown>;
+
       const sku = cleanText(item.sku, 80);
       const size = cleanText(item.size, 10);
       const color = cleanText(item.color, 80);
       const quantity = Number(item.quantity);
+
       const product = catalogue[sku];
 
-      if (!product || !product.sizes.includes(size) || color !== product.color || !Number.isInteger(quantity) || quantity < 1 || quantity > 20) {
+      if (
+        !product ||
+        !product.sizes.includes(size) ||
+        color !== product.color ||
+        !Number.isInteger(quantity) ||
+        quantity < 1 ||
+        quantity > 20
+      ) {
         throw new Error("INVALID_ITEM");
       }
 
@@ -176,29 +299,57 @@ export default async (request: Request) => {
       };
     });
 
-    const itemCount = items.reduce((total, item) => total + item.quantity, 0);
-    const subtotalCents = items.reduce((total, item) => total + item.lineTotalCents, 0);
+    const itemCount = items.reduce(
+      (total, item) => total + item.quantity,
+      0,
+    );
+
+    const subtotalCents = items.reduce(
+      (total, item) => total + item.lineTotalCents,
+      0,
+    );
+
     if (itemCount > 50 || subtotalCents <= 0) {
-      return Response.json({ error: "La quantité commandée est invalide." }, { status: 400 });
+      return Response.json(
+        { error: "La quantité commandée est invalide." },
+        { status: 400 },
+      );
     }
 
-    // Les frais sont recalculés ici : le montant affiché côté client n'est jamais celui qui est facturé.
+    // Les frais sont recalculés côté serveur.
     const delivery = await quoteDelivery(customer.address);
-    if (delivery.zone === "needs_postcode" || delivery.zone === "unresolved") {
-      return Response.json({ error: delivery.message, delivery: { zone: delivery.zone } }, { status: 400 });
+
+    if (
+      delivery.zone === "needs_postcode" ||
+      delivery.zone === "unresolved" ||
+      delivery.zone === "outside_area"
+    ) {
+      return Response.json(
+        {
+          error: delivery.message,
+          delivery: { zone: delivery.zone },
+        },
+        { status: 400 },
+      );
     }
 
     const totalCents = subtotalCents + delivery.feeCents;
     const orderNumber = createOrderNumber();
+
     const [createdOrder] = await db
       .insert(orders)
       .values({
         orderNumber,
         checkoutToken,
+
+        // Compte Google connecté ou null pour un invité.
+        userId,
+
         customerName: customer.name,
         customerEmail: customer.email,
         customerPhone: customer.phone,
         shippingAddress: customer.address,
+
         items,
         itemCount,
         subtotalCents,
@@ -217,8 +368,16 @@ export default async (request: Request) => {
         .where(eq(orders.checkoutToken, checkoutToken))
         .limit(1);
 
-      if (!existingOrder) throw new Error("ORDER_RETRY_LOOKUP_FAILED");
-      return Response.json({ ...existingOrder, delivery: deliverySummary(delivery), notificationSent: null, reused: true });
+      if (!existingOrder) {
+        throw new Error("ORDER_RETRY_LOOKUP_FAILED");
+      }
+
+      return Response.json({
+        ...existingOrder,
+        delivery: deliverySummary(delivery),
+        notificationSent: null,
+        reused: true,
+      });
     }
 
     const notificationSent = await sendFormspreeNotification(
@@ -229,16 +388,33 @@ export default async (request: Request) => {
       subtotalCents,
       createdOrder.totalCents,
     );
+
     return Response.json(
-      { ...createdOrder, delivery: deliverySummary(delivery), notificationSent, reused: false },
+      {
+        ...createdOrder,
+        delivery: deliverySummary(delivery),
+        notificationSent,
+        reused: false,
+      },
       { status: 201 },
     );
   } catch (error) {
     if (error instanceof Error && error.message === "INVALID_ITEM") {
-      return Response.json({ error: "Un article du panier est invalide ou indisponible." }, { status: 400 });
+      return Response.json(
+        { error: "Un article du panier est invalide ou indisponible." },
+        { status: 400 },
+      );
     }
-    console.error("Order creation failed", error instanceof Error ? error.message : "Unknown error");
-    return Response.json({ error: "Impossible d’enregistrer la commande pour le moment." }, { status: 500 });
+
+    console.error(
+      "Order creation failed",
+      error instanceof Error ? error.message : "Unknown error",
+    );
+
+    return Response.json(
+      { error: "Impossible d’enregistrer la commande pour le moment." },
+      { status: 500 },
+    );
   }
 };
 

@@ -1,0 +1,15 @@
+.admin-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-block: 12px; flex-wrap: wrap; }
+.admin-head .brand span { font-size: 1.3rem; }
+.admin-main { padding-block: 28px 60px; }
+.admin-main h1 { font-size: clamp(1.5rem, 3vw, 2.2rem); }
+.admin-login { max-width: 420px; display: grid; gap: 18px; padding-top: 24px; }
+.admin-list { display: grid; gap: 14px; }
+.admin-order { display: grid; grid-template-columns: 1.3fr 1fr; gap: 18px; }
+.admin-order .col { display: grid; gap: 8px; align-content: start; min-width: 0; }
+.admin-order address { font-style: normal; overflow-wrap: anywhere; }
+.ship-form { display: grid; grid-template-columns: 1fr 1.4fr; gap: 10px; }
+.ship-form .field:last-of-type { grid-column: 1 / -1; }
+@media (max-width: 760px) {
+  .admin-order { grid-template-columns: 1fr; }
+  .ship-form { grid-template-columns: 1fr; }
+}

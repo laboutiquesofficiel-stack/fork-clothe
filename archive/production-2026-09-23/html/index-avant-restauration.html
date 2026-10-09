@@ -1,0 +1,2857 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FORK | L'Authentique Toulonnais ðŸŒ´</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --sunny-pink: #ff4d94;
+            --sunset-orange: #ff9a44;
+            --dark: #2d3436;
+            --whatsapp: #25D366;
+            --light-bg: #f3efe6;
+            --retro-blue: #145c73;
+            --retro-yellow: #f3c84b;
+            --paper-white: #fffdf8;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; scroll-behavior: smooth; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--light-bg);
+            background-image:
+                radial-gradient(circle at 18% 12%, rgba(255, 77, 148, 0.055) 0 2px, transparent 2.5px),
+                radial-gradient(circle at 82% 68%, rgba(20, 92, 115, 0.045) 0 1.5px, transparent 2px);
+            background-size: 34px 34px, 27px 27px;
+            color: var(--dark); line-height: 1.6; padding-top: 35px; overflow-x: hidden;
+        }
+
+        /* Frises graphiques inspirÃ©es des affiches sÃ©rigraphiÃ©es du Sud */
+        .art-direction-layer { position: fixed; inset: 35px 0 0; z-index: 0; pointer-events: none; overflow: hidden; }
+        .art-rail { position: absolute; top: 135px; bottom: 20px; width: max(105px, calc((100vw - 1240px) / 2)); color: var(--retro-blue); opacity: 0.82; }
+        .art-rail-left { left: 0; }
+        .art-rail-right { right: 0; }
+        .retro-stamp {
+            position: absolute; display: grid; place-items: center; width: 82px; height: 82px;
+            border: 3px solid currentColor; border-radius: 50%; color: var(--sunny-pink);
+            font-family: Georgia, serif; font-size: 0.68rem; font-weight: 900; line-height: 1.05;
+            letter-spacing: 1.6px; text-align: center; transform: rotate(-9deg);
+            box-shadow: inset 0 0 0 4px var(--light-bg), inset 0 0 0 6px currentColor;
+        }
+        .retro-stamp strong { display: block; font-size: 1.65rem; letter-spacing: -1px; }
+        .art-rail-left .retro-stamp { top: 7%; left: 14%; }
+        .art-rail-right .retro-stamp { top: 48%; right: 12%; color: var(--sunset-orange); transform: rotate(8deg); }
+        .doodle { position: absolute; overflow: visible; fill: none; stroke: currentColor; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+        .doodle-sun { width: 86px; height: 86px; top: 31%; left: 17%; color: var(--sunset-orange); animation: artFloat 7s ease-in-out infinite; }
+        .doodle-wave { width: 116px; height: 54px; top: 72%; left: 3%; color: var(--retro-blue); transform: rotate(-5deg); }
+        .doodle-fish { width: 104px; height: 58px; top: 18%; right: 4%; color: var(--retro-blue); transform: rotate(7deg); }
+        .doodle-arches { width: 98px; height: 74px; top: 78%; right: 8%; color: var(--sunny-pink); transform: rotate(4deg); }
+        .graphic-star { position: absolute; width: 34px; aspect-ratio: 1; background: var(--retro-yellow); clip-path: polygon(50% 0, 59% 38%, 100% 50%, 59% 61%, 50% 100%, 40% 61%, 0 50%, 40% 38%); filter: drop-shadow(3px 3px 0 rgba(45, 52, 54, 0.12)); }
+        .art-rail-left .graphic-star { top: 58%; left: 43%; transform: rotate(13deg); }
+        .art-rail-right .graphic-star { top: 35%; right: 38%; width: 25px; background: var(--sunny-pink); transform: rotate(-8deg); }
+        .checker-patch { position: absolute; width: 72px; height: 72px; top: 65%; right: 18%; transform: rotate(8deg); opacity: 0.65; background: conic-gradient(from 90deg, var(--retro-blue) 25%, transparent 0 50%, var(--retro-blue) 0 75%, transparent 0) 0 0 / 24px 24px; }
+        .sun-label { position: absolute; top: 8%; right: 12%; color: var(--retro-blue); font-size: 0.64rem; font-weight: 900; letter-spacing: 3px; writing-mode: vertical-rl; transform: rotate(180deg); }
+
+        .page, nav, .toulon-skyline { position: relative; z-index: 1; }
+        .product-container, .cart-section, .reviews-section, .faq-section { position: relative; }
+        .product-container::before {
+            content: ''; position: absolute; z-index: 2; pointer-events: none; width: 38px; aspect-ratio: 1;
+            top: -9px; right: -48px; background: var(--retro-yellow);
+            clip-path: polygon(50% 0, 59% 38%, 100% 50%, 59% 61%, 50% 100%, 40% 61%, 0 50%, 40% 38%);
+            transform: rotate(10deg); opacity: 0.9;
+        }
+        #second-article::before { left: -52px; right: auto; background: var(--sunny-pink); transform: rotate(-12deg); }
+        #third-article::before { background: var(--retro-blue); transform: rotate(20deg); }
+        .product-container::after {
+            content: ''; position: absolute; z-index: -1; pointer-events: none; width: 92px; height: 28px;
+            bottom: 8%; left: -72px; opacity: 0.55; transform: rotate(-7deg);
+            background: repeating-radial-gradient(ellipse at 50% 100%, transparent 0 8px, var(--retro-blue) 9px 11px, transparent 12px 18px);
+        }
+        #second-article::after { left: auto; right: -70px; background: repeating-radial-gradient(ellipse at 50% 100%, transparent 0 8px, var(--sunny-pink) 9px 11px, transparent 12px 18px); }
+        .cart-section::before, .reviews-section::after, .faq-section::before {
+            content: ''; position: absolute; pointer-events: none; width: 52px; height: 52px; opacity: 0.34;
+            background: conic-gradient(from 90deg, var(--sunset-orange) 25%, transparent 0 50%, var(--sunset-orange) 0 75%, transparent 0) 0 0 / 17px 17px;
+        }
+        .cart-section::before { top: -18px; left: -22px; transform: rotate(-8deg); }
+        .reviews-section::after { right: -18px; bottom: -16px; transform: rotate(9deg); background-image: conic-gradient(from 90deg, var(--retro-blue) 25%, transparent 0 50%, var(--retro-blue) 0 75%, transparent 0); }
+        .faq-section::before { top: -16px; right: 28px; transform: rotate(7deg); background-image: conic-gradient(from 90deg, var(--sunny-pink) 25%, transparent 0 50%, var(--sunny-pink) 0 75%, transparent 0); }
+
+        @keyframes artFloat { 0%, 100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-8px) rotate(3deg); } }
+
+        @media (min-width: 769px) and (max-width: 1399px) {
+            .art-direction-layer { display: none; }
+            .product-container::before { right: 10px; opacity: 0.5; }
+            #second-article::before { left: 10px; right: auto; }
+            .product-container::after { left: 4px; opacity: 0.24; }
+            #second-article::after { right: 4px; left: auto; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .doodle-sun { animation: none; }
+        }
+
+        /* Bandeau DÃ©filant */
+        .top-announcement-bar {
+            position: fixed; top: 0; left: 0; width: 100%; height: 35px;
+            background: #111; color: white; z-index: 2000;
+            display: flex; align-items: center; overflow: hidden;
+            font-size: 0.75rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+        }
+        .marquee-text {
+            display: inline-block; white-space: nowrap; padding-left: 100%;
+            animation: marqueeEffect 25s linear infinite;
+        }
+        @keyframes marqueeEffect {
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(-100%, 0, 0); }
+        }
+
+        /* Navigation */
+        nav { 
+            display: flex; justify-content: space-between; align-items: center; padding: 10px 5%; 
+            background: white; position: sticky; top: 35px; z-index: 1000; border-bottom: 1px solid #eee;
+            gap: 20px;
+        }
+        
+        .nav-left { display: flex; align-items: center; gap: 25px; flex-grow: 1; }
+        .logo-container { display: flex; align-items: center; cursor: pointer; flex-shrink: 0; }
+        .logo-img-nav { height: 50px; width: auto; object-fit: contain; }
+
+        /* Barre de recherche */
+        .search-container { position: relative; width: 100%; max-width: 280px; }
+        .search-box { display: flex; align-items: center; background: #f1f2f6; border-radius: 30px; padding: 6px 14px; border: 1px solid transparent; transition: all 0.2s ease; }
+        .search-box:focus-within { background: white; border-color: var(--sunny-pink); box-shadow: 0 0 8px rgba(255, 77, 148, 0.15); }
+        .search-box i { color: #a4b0be; margin-right: 8px; font-size: 0.95rem; }
+        .search-input { border: none; background: transparent; outline: none; width: 100%; font-family: 'Poppins', sans-serif; font-size: 0.85rem; color: var(--dark); }
+        .search-input::placeholder { color: #a4b0be; }
+        
+        .search-suggestions { position: absolute; top: 110%; left: 0; right: 0; background: white; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border: 1px solid #eee; overflow: hidden; display: none; z-index: 2000; }
+        .search-suggestions.active { display: block; }
+        .suggestion-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; cursor: pointer; transition: background 0.15s; text-decoration: none; color: var(--dark); }
+        .suggestion-item:hover { background: #fff0f5; }
+        .suggestion-img { width: 40px; height: 40px; object-fit: cover; border-radius: 6px; background: #f0f0f0; }
+        .suggestion-info { display: flex; flex-direction: column; }
+        .suggestion-title { font-size: 0.8rem; font-weight: 700; line-height: 1.2; }
+        .suggestion-price { font-size: 0.75rem; color: var(--sunny-pink); font-weight: 800; margin-top: 2px; }
+
+        nav ul { display: flex; list-style: none; gap: 20px; align-items: center; flex-shrink: 0; }
+        .nav-link { text-decoration: none; color: var(--dark); font-weight: 700; cursor: pointer; transition: color 0.2s; }
+        .nav-link:hover { color: var(--sunny-pink); }
+        .collections-nav-btn { border: 2px solid var(--dark); border-radius: 999px; background: var(--retro-yellow); color: var(--dark); padding: 10px 16px; font: inherit; font-size: 0.82rem; font-weight: 900; letter-spacing: 0.4px; cursor: pointer; box-shadow: 4px 4px 0 var(--sunny-pink); transition: transform 0.2s ease, box-shadow 0.2s ease; white-space: nowrap; }
+        .collections-nav-btn:hover, .collections-nav-btn:focus-visible { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--sunny-pink); }
+
+        /* Symboles de Toulon */
+        .toulon-skyline { background: white; display: flex; justify-content: center; gap: 50px; padding: 12px 0; border-bottom: 2px solid var(--sunny-pink); letter-spacing: 2px; }
+        .skyline-item { display: flex; flex-direction: column; align-items: center; gap: 5px; color: var(--dark); opacity: 0.7; font-size: 0.7rem; text-transform: uppercase; }
+        .skyline-item i { font-size: 1.3rem; color: var(--sunny-pink); }
+
+        /* Hero Section */
+        .hero { 
+            height: 50vh; 
+            background: linear-gradient(rgba(0,0,0,0.15), rgba(0,0,0,0.15)), url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1350&q=80');
+            background-size: cover; background-position: center;
+            display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
+            color: white; text-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+        }
+        .hero h1 { font-size: 4rem; letter-spacing: 5px; font-weight: 900; }
+        .hero p { font-weight: 800; font-size: 1.2rem; }
+
+        /* Structure Boutique agrandie (Passage Ã  1200px max et rÃ©partition 1.2fr / 0.8fr) */
+        .product-container { max-width: 1200px; margin: 50px auto; padding: 20px; display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 50px; align-items: start; }
+        
+        /* Wrapper global pour isoler les flÃ¨ches Ã  l'extÃ©rieur */
+        .carousel-outer-wrapper { display: flex; align-items: center; position: relative; width: 100%; gap: 15px; }
+
+        /* Zone d'affichage de la photo agrandie */
+        .product-image-box { 
+            flex-grow: 1; background: #fff; border-radius: 20px; aspect-ratio: 1/1; 
+            overflow: hidden; display: flex; align-items: center; justify-content: center; 
+            position: relative; cursor: zoom-in; box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+        
+        /* Image avec transition fluide de zoom */
+        .product-image-box img { 
+            width: 100%; height: 100%; object-fit: cover; display: none; 
+            transform-origin: center center;
+            transition: transform 0.15s ease-out; pointer-events: none;
+        }
+        .product-image-box img.active-slide { display: block; }
+        
+        /* Quand le mode zoom clic est actif */
+        .product-image-box.zoom-active { cursor: zoom-out; }
+
+        /* FlÃ¨ches dÃ©portÃ©es Ã  l'extÃ©rieur de l'image */
+        .slide-arrow { background: white; border: 1px solid #eee; border-radius: 50%; width: 44px; height: 44px; font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.08); transition: all 0.2s; color: var(--dark); flex-shrink: 0; }
+        .slide-arrow:hover { background: var(--dark); color: white; border-color: var(--dark); }
+        
+        .slide-dots { position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); display: flex; gap: 7px; z-index: 10; pointer-events: auto; }
+        .slide-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(0,0,0,0.2); border: none; cursor: pointer; padding: 0; transition: background 0.2s; }
+        .slide-dot.active-dot { background: var(--sunny-pink); width: 18px; border-radius: 4px; }
+        
+        /* Blocs d'informations produits mis en valeur sur fond blanc */
+        .product-info { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); border: 1px solid #eee; }
+
+        /* SÃ©lection Tailles / Couleurs */
+        .size-selector { display: flex; gap: 10px; margin: 10px 0 5px; flex-wrap: wrap; }
+        .size-btn { width: 52px; height: 52px; border: 2px solid #ddd; border-radius: 12px; background: white; font-weight: 800; font-size: 0.95rem; cursor: pointer; color: var(--dark); }
+        .size-btn.selected { background: linear-gradient(to right, var(--sunny-pink), var(--sunset-orange)); color: white; border-color: transparent; box-shadow: 0 4px 12px rgba(255,90,120,0.35); }
+        .size-btn.out-of-stock { opacity: 0.4; text-decoration: line-through; color: #999; cursor: not-allowed; }
+
+        .stock-warning { font-size: 0.85rem; color: #d63031; font-weight: 700; margin-top: 8px; display: none; align-items: center; gap: 6px; animation: fadeIn 0.3s ease; }
+
+        .color-selector { display: flex; gap: 12px; flex-wrap: wrap; }
+        .color-btn { display: flex; align-items: center; gap: 8px; padding: 10px 16px; border: 2px solid #ddd; border-radius: 12px; background: white; font-weight: 700; font-size: 0.9rem; cursor: pointer; color: var(--dark); }
+        .color-btn.selected { border-color: var(--sunny-pink); box-shadow: 0 4px 12px rgba(255,90,120,0.25); }
+        .color-swatch { width: 20px; height: 20px; border-radius: 50%; display: inline-block; border: 1px solid rgba(0,0,0,0.1); }
+        .swatch-noir { background: #1a1a1a; }
+        .swatch-rouge { background: linear-gradient(135deg, #c0392b 50%, #1a1a1a 50%); }
+        .swatch-leopard { background: radial-gradient(circle at 35% 35%, #2d2118 0 18%, transparent 19%), radial-gradient(circle at 70% 68%, #2d2118 0 15%, transparent 16%), #c89b5a; }
+        .swatch-blanc { background: #fff; border-color: #cfd3d6; }
+
+        /* Formulaire */
+        .checkout-form-box { background: #fdfcfb; padding: 20px; border-radius: 15px; border: 1px solid #eee; margin-top: 20px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); }
+        .checkout-form-box h4 { color: var(--dark); font-size: 0.95rem; margin-bottom: 12px; }
+        .form-group { margin-bottom: 12px; }
+        .form-group input { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; font-family: 'Poppins', sans-serif; font-size: 0.9rem; background: white; }
+        .form-group input:focus { border-color: var(--sunny-pink); outline: none; }
+
+        /* Toast notifications */
+        .custom-toast {
+            position: fixed; top: -120px; left: 50%; transform: translateX(-50%);
+            background: #2d3436; color: white; padding: 14px 28px; border-radius: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.25); font-weight: 700; font-size: 0.9rem;
+            z-index: 5000; display: none; align-items: center; gap: 10px; text-align: center; white-space: nowrap;
+            transition: top 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .custom-toast.show { display: flex; top: 45px; }
+        .custom-toast i { color: var(--sunny-pink); }
+
+        /* Boutons d'achat */
+        .add-btn { background: linear-gradient(to right, var(--sunny-pink), var(--sunset-orange)); color: white; border: none; padding: 18px; border-radius: 50px; cursor: pointer; font-weight: bold; width: 100%; font-size: 1.1rem; transition: transform 0.2s; display: flex; align-items: center; justify-content: center; gap: 10px; position: relative; }
+        .add-btn:hover { transform: scale(1.02); }
+        .add-btn.disabled-btn { background: #d63031 !important; cursor: not-allowed !important; transform: none !important; opacity: 0.8; }
+        .btn-spinner { display: none; width: 20px; height: 20px; border: 3px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: white; animation: spinEffect 0.8s linear infinite; }
+        @keyframes spinEffect { to { transform: rotate(360deg); } }
+
+        /* Section Avis & FAQ sur fond blanc Ã©lÃ©gant */
+        .reviews-section, .faq-section { max-width: 1200px; margin: 40px auto; padding: 35px; background: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); border: 1px solid #eee; }
+        .review-card { background: var(--light-bg); padding: 20px; border-radius: 15px; margin-bottom: 15px; border: 1px solid #eee; }
+        .review-card.hidden-review { display: none; }
+        .load-more-container { text-align: center; margin-top: 25px; }
+        .btn-load-more { background: transparent; color: var(--dark); border: 2px solid var(--dark); padding: 10px 24px; font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 0.9rem; border-radius: 30px; cursor: pointer; transition: all 0.2s; }
+        .btn-load-more:hover { background: var(--dark); color: white; }
+
+        .faq-container { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+        .faq-item { background: var(--light-bg); border-radius: 14px; border: 1px solid #eee; overflow: hidden; }
+        .faq-question { padding: 18px 22px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-weight: 700; font-size: 0.95rem; }
+        .faq-question i { color: var(--sunny-pink); transition: transform 0.2s ease; }
+        .faq-answer { max-height: 0; overflow: hidden; padding: 0 22px; color: #666; font-size: 0.9rem; transition: all 0.25s ease-out; background: white; }
+        .faq-item.open .faq-answer { max-height: 200px; padding-top: 15px; padding-bottom: 18px; border-top: 1px solid #eee; }
+        .faq-item.open .faq-question i { transform: rotate(180deg); }
+
+        /* SECTION Ã€ PROPOS INTERACTIVE AVEC EFFET LUMINEUX ROSE */
+        .about-container { max-width: 1000px; margin: 40px auto; display: flex; flex-direction: column; gap: 50px; padding: 0 20px; }
+        
+        .about-row { 
+            display: flex; flex-direction: column; gap: 30px; align-items: center; 
+            padding: 25px; background: white; border-radius: 25px; border: 2px solid transparent; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03); transition: all 0.3s ease; 
+        }
+        
+        /* L'effet rose qui s'illumine au survol */
+        .about-row:hover { 
+            border-color: var(--sunny-pink); 
+            box-shadow: 0 0 25px rgba(255, 77, 148, 0.4); 
+            transform: translateY(-3px);
+        }
+        
+        .about-text { flex: 1; text-align: left; }
+        .about-text h3 { color: var(--sunny-pink); font-size: 1.4rem; font-weight: 800; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
+        .about-text h3 i { color: var(--sunset-orange); }
+        .about-text p { font-size: 0.98rem; color: #4e5456; line-height: 1.7; }
+        
+        .about-image-box { 
+            flex: 1; width: 100%; height: 300px; border-radius: 16px; 
+            overflow: hidden; box-shadow: 0 8px 25px rgba(0,0,0,0.06); background: #eee;
+        }
+        .about-image-box img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; }
+        .about-image-box:hover img { transform: scale(1.03); }
+
+        @media (min-width: 768px) {
+            .about-row { flex-direction: row; gap: 60px; padding: 40px; }
+            .about-row.row-reverse { flex-direction: row-reverse; }
+            .about-image-box { height: 340px; }
+        }
+
+        /* Rubrique jour de match â€” Guinguette de Mayol */
+        .mayol-section {
+            position: relative; overflow: hidden; margin-top: 45px; padding: 34px 26px 28px;
+            border: 3px solid #0b0b0c; border-radius: 26px 26px 58px 26px;
+            background: #111214; color: #fff7f7; text-align: left;
+            box-shadow: 9px 9px 0 #c8102e;
+        }
+        .mayol-section::before {
+            content: ''; position: absolute; inset: 0; pointer-events: none; opacity: 0.13;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150' viewBox='0 0 150 150' fill='none' stroke='%23ffffff' stroke-width='2.4' stroke-linecap='round'%3E%3Cellipse cx='32' cy='30' rx='17' ry='10' transform='rotate(-35 32 30)'/%3E%3Cpath d='M27 35l9-9M30 39l10-10'/%3E%3Cpath d='M108 52V34M96 34V17M120 34V17M96 34h24'/%3E%3Cpath d='M22 122h26M35 122V101M26 101V88M44 101V88M26 101h18'/%3E%3Cellipse cx='112' cy='112' rx='15' ry='9' transform='rotate(28 112 112)'/%3E%3Cpath d='M107 116l8-8'/%3E%3C/svg%3E");
+            background-size: 150px 150px;
+        }
+        .mayol-section > * { position: relative; }
+        .mayol-badge {
+            display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 999px;
+            background: #c8102e; color: #fff; font-size: 0.66rem; font-weight: 900; letter-spacing: 2px; text-transform: uppercase;
+        }
+        .mayol-section h3 {
+            font-family: Georgia, serif; font-size: clamp(1.9rem, 5.4vw, 3rem); line-height: 0.95;
+            letter-spacing: -1.5px; margin: 16px 0 12px; color: #fff; display: block;
+        }
+        .mayol-section h3 em { font-style: normal; color: #ff3352; }
+        .mayol-copy { max-width: 620px; color: #d9d2d2; font-size: 0.97rem; line-height: 1.7; }
+        .mayol-copy strong { color: #fff; }
+        .mayol-motifs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 26px; }
+        .mayol-motif {
+            display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 18px 10px;
+            border: 2px solid rgba(255,255,255,0.18); border-radius: 18px; background: rgba(200,16,46,0.09);
+            text-align: center; transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+        }
+        .mayol-motif:hover { transform: translateY(-4px); border-color: #ff3352; background: rgba(200,16,46,0.2); }
+        .mayol-motif svg { width: 54px; height: 54px; color: #ff3352; }
+        .mayol-motif span { font-size: 0.72rem; font-weight: 900; letter-spacing: 0.6px; text-transform: uppercase; color: #fff; }
+        .mayol-footnote { margin-top: 22px; font-size: 0.8rem; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: #9d9595; }
+
+        @media (max-width: 768px) {
+            .mayol-section { padding: 26px 18px 22px; box-shadow: 6px 6px 0 #c8102e; }
+            .mayol-motifs { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        /* Rappel compact du jour de match sur la page principale */
+        .mayol-mini-wrap { max-width: 1200px; margin: 28px auto 0; padding: 0 20px; }
+        .mayol-mini {
+            position: relative; overflow: hidden; display: flex; align-items: center; gap: 14px;
+            padding: 12px 16px; border: 2px solid #0b0b0c; border-radius: 16px 16px 26px 16px;
+            background: #111214; color: #fff7f7; box-shadow: 5px 5px 0 #c8102e;
+            text-align: left; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .mayol-mini:hover { transform: translateY(-2px); box-shadow: 7px 7px 0 #c8102e; }
+        .mayol-mini::before {
+            content: ''; position: absolute; inset: 0; pointer-events: none; opacity: 0.12;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90' viewBox='0 0 90 90' fill='none' stroke='%23ffffff' stroke-width='2.2' stroke-linecap='round'%3E%3Cellipse cx='22' cy='22' rx='12' ry='7' transform='rotate(-35 22 22)'/%3E%3Cpath d='M19 25l6-6'/%3E%3Cpath d='M66 74V60M58 60V48M74 60V48M58 60h16'/%3E%3C/svg%3E");
+            background-size: 90px 90px;
+        }
+        .mayol-mini > * { position: relative; }
+        .mayol-mini-icons { display: flex; align-items: center; gap: 8px; color: #ff3352; flex-shrink: 0; }
+        .mayol-mini-icons svg { width: 26px; height: 26px; }
+        .mayol-mini-text { flex: 1; min-width: 0; }
+        .mayol-mini-kicker { display: block; color: #ff3352; font-size: 0.62rem; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; }
+        .mayol-mini-title { display: block; font-size: 0.9rem; font-weight: 800; line-height: 1.35; }
+        .mayol-mini-cta {
+            flex-shrink: 0; border: 2px solid #ff3352; border-radius: 999px; background: transparent; color: #ff3352;
+            padding: 7px 14px; font: inherit; font-size: 0.72rem; font-weight: 900; letter-spacing: 0.6px;
+            text-transform: uppercase; cursor: pointer; transition: background 0.2s ease, color 0.2s ease;
+        }
+        .mayol-mini:hover .mayol-mini-cta { background: #ff3352; color: #fff; }
+
+        @media (max-width: 768px) {
+            .mayol-mini-wrap { padding: 0 16px; margin-top: 20px; }
+            .mayol-mini { gap: 10px; padding: 11px 13px; box-shadow: 4px 4px 0 #c8102e; }
+            .mayol-mini-icons svg:last-child { display: none; }
+            .mayol-mini-title { font-size: 0.82rem; }
+            .mayol-mini-cta { padding: 6px 11px; font-size: 0.66rem; }
+        }
+
+        /* Lightbox Mobile */
+        .lightbox-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 6000; display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease; }
+        .lightbox-overlay.open { display: flex; opacity: 1; }
+        .lightbox-img { max-width: 90%; max-height: 85vh; object-fit: contain; }
+        .lightbox-close { position: absolute; top: 20px; right: 25px; color: white; background: none; border: none; font-size: 2rem; cursor: pointer; }
+
+        /* Sticky Mini-Cart & WhatsApp */
+        .sticky-mini-cart { position: fixed; bottom: 0; left: 0; width: 100%; background: white; box-shadow: 0 -5px 25px rgba(0,0,0,0.1); padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 1400; transform: translateY(100%); transition: transform 0.3s ease; border-top: 1px solid #eee; }
+        .sticky-mini-cart.visible { transform: translateY(0); }
+        .mini-cart-info-clickable { display: flex; align-items: center; gap: 12px; cursor: pointer; }
+        .mini-cart-text { font-size: 0.8rem; font-weight: 700; }
+        .mini-cart-badge-color { width: 14px; height: 14px; border-radius: 50%; display: inline-block; }
+        .mini-cart-btn { background: linear-gradient(to right, var(--sunny-pink), var(--sunset-orange)); color: white; border: none; padding: 10px 20px; border-radius: 25px; font-weight: 700; font-size: 0.85rem; cursor: pointer; }
+        .mini-cart-btn:disabled, .pay-option.is-loading { opacity: 0.55; cursor: not-allowed; }
+
+        .cart-trigger { position: relative; border: 0; background: transparent; color: var(--dark); font-size: 1.15rem; cursor: pointer; padding: 8px; }
+        .cart-count { position: absolute; top: 0; right: 0; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 10px; background: var(--sunny-pink); color: white; font-size: 0.68rem; font-weight: 800; display: grid; place-items: center; }
+        .cart-section { max-width: 1200px; margin: 40px auto; padding: 30px; background: white; border: 1px solid #eee; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); }
+        .cart-section-header { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 20px; }
+        .cart-items { display: grid; gap: 12px; }
+        .cart-empty { padding: 28px; border: 2px dashed #e4e4e4; border-radius: 16px; text-align: center; color: #888; }
+        .cart-line { display: grid; grid-template-columns: 72px 1fr auto auto; align-items: center; gap: 14px; padding: 12px; background: var(--light-bg); border-radius: 14px; }
+        .cart-line img { width: 72px; height: 72px; object-fit: cover; border-radius: 10px; }
+        .cart-line-title { font-weight: 800; }
+        .cart-line-meta { color: #777; font-size: 0.82rem; }
+        .quantity-control { display: flex; align-items: center; gap: 8px; }
+        .quantity-control button, .remove-line { width: 32px; height: 32px; border: 1px solid #ddd; background: white; border-radius: 50%; cursor: pointer; }
+        .remove-line { color: #d63031; }
+        .cart-summary { display: flex; flex-direction: column; gap: 8px; margin: 20px 0; font-weight: 800; }
+        .summary-line { display: flex; justify-content: space-between; align-items: baseline; gap: 18px; }
+        .summary-line.is-muted { font-weight: 700; font-size: 0.9rem; color: #666; }
+        .summary-line.summary-shipping { color: var(--dark); font-size: 0.92rem; }
+        .summary-line.summary-shipping span:last-child { color: var(--sunny-pink); }
+        .summary-line.summary-grand { border-top: 2px solid #eee; padding-top: 10px; }
+        .cart-total { font-size: 1.5rem; color: var(--sunny-pink); }
+        .delivery-status { margin-top: 8px; font-size: 0.83rem; font-weight: 700; line-height: 1.4; min-height: 18px; color: #666; }
+        .delivery-status.is-free { color: #128c45; }
+        .delivery-status.is-paid { color: #b9770e; }
+        .delivery-status.is-warning { color: #d63031; }
+        .checkout-status { min-height: 24px; margin-top: 12px; font-weight: 700; font-size: 0.88rem; }
+        .checkout-status.error { color: #d63031; }
+        .checkout-status.success { color: #128c45; }
+
+        .page { display: none; }
+        .page.active { display: block; }
+
+        .collections-page { max-width: 1240px; margin: 0 auto; padding: 60px 24px 90px; }
+        .collections-hero { position: relative; overflow: hidden; display: grid; grid-template-columns: 1.25fr 0.75fr; gap: 30px; align-items: end; padding: 44px; border: 3px solid var(--dark); border-radius: 34px 34px 90px 34px; background: var(--paper-white); box-shadow: 10px 10px 0 var(--retro-blue); }
+        .collections-hero::after { content: ''; position: absolute; width: 170px; height: 170px; right: -35px; top: -48px; border: 25px solid var(--sunset-orange); border-radius: 50%; opacity: 0.34; }
+        .collections-kicker { color: var(--sunny-pink); font-size: 0.78rem; font-weight: 900; letter-spacing: 2.5px; text-transform: uppercase; }
+        .collections-hero h1 { max-width: 760px; font-family: Georgia, serif; font-size: clamp(2.7rem, 7vw, 5.8rem); line-height: 0.9; letter-spacing: -4px; margin: 10px 0 20px; color: var(--retro-blue); }
+        .collections-intro { max-width: 620px; font-weight: 650; color: #596064; }
+        .collections-count { position: relative; z-index: 1; justify-self: end; width: 170px; aspect-ratio: 1; display: grid; place-items: center; padding: 20px; border-radius: 50%; background: var(--sunny-pink); color: white; text-align: center; transform: rotate(7deg); box-shadow: inset 0 0 0 5px var(--sunny-pink), inset 0 0 0 8px white; font-weight: 900; line-height: 1.05; }
+        .collections-count strong { display: block; font-size: 3rem; }
+        .collection-tools { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin: 54px 0 28px; }
+        .category-tabs { display: flex; gap: 10px; flex-wrap: wrap; }
+        .category-tab { border: 2px solid var(--dark); border-radius: 999px; background: var(--paper-white); color: var(--dark); padding: 11px 18px; font: inherit; font-size: 0.83rem; font-weight: 900; cursor: pointer; transition: transform 0.18s ease, background 0.18s ease; }
+        .category-tab:hover { transform: rotate(-2deg) translateY(-2px); }
+        .category-tab.active { background: var(--retro-blue); color: white; box-shadow: 4px 4px 0 var(--retro-yellow); }
+        .collection-result-label { color: #6d7477; font-size: 0.85rem; font-weight: 800; }
+        .collection-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 28px; }
+        .collection-card { grid-column: span 4; position: relative; overflow: hidden; min-height: 510px; display: flex; flex-direction: column; border: 2px solid var(--dark); border-radius: 26px; background: var(--paper-white); box-shadow: 7px 7px 0 rgba(45, 52, 54, 0.14); animation: collectionReveal 0.45s ease both; }
+        .collection-card:nth-child(2n) { transform: translateY(24px) rotate(0.7deg); }
+        .collection-card-media { position: relative; height: 330px; overflow: hidden; background: #eadfce; cursor: pointer; }
+        .collection-card-media img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+        .collection-card:hover .collection-card-media img { transform: scale(1.045); }
+        .collection-category { position: absolute; top: 16px; left: 16px; padding: 7px 11px; border-radius: 999px; background: var(--retro-yellow); color: var(--dark); border: 2px solid var(--dark); font-size: 0.69rem; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; }
+        .collection-card-body { flex: 1; display: flex; flex-direction: column; padding: 22px; }
+        .collection-card h2 { color: var(--retro-blue); font-family: Georgia, serif; font-size: 1.75rem; line-height: 1; margin-bottom: 10px; }
+        .collection-card-copy { color: #6b7072; font-size: 0.88rem; }
+        .collection-card-footer { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: auto; padding-top: 22px; }
+        .collection-price { color: var(--sunny-pink); font-size: 1.35rem; font-weight: 900; }
+        .collection-view-btn { border: 0; border-bottom: 2px solid var(--dark); background: transparent; color: var(--dark); padding: 5px 0; font: inherit; font-size: 0.78rem; font-weight: 900; cursor: pointer; }
+        .collection-empty { grid-column: 1 / -1; min-height: 290px; display: grid; place-items: center; text-align: center; padding: 45px; border: 3px dashed var(--sunny-pink); border-radius: 30px; background: rgba(255, 253, 248, 0.82); }
+        .collection-empty-mark { width: 75px; aspect-ratio: 1; margin: 0 auto 16px; background: var(--retro-yellow); clip-path: polygon(50% 0, 59% 38%, 100% 50%, 59% 61%, 50% 100%, 40% 61%, 0 50%, 40% 38%); }
+        .product-category-badge { display: inline-flex; align-items: center; width: fit-content; margin-bottom: 10px; padding: 6px 10px; border: 2px solid var(--dark); border-radius: 999px; background: var(--retro-yellow); color: var(--dark); font-size: 0.68rem; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; }
+        .checkout-reassurance { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 14px; color: #6b7072; font-size: 0.72rem; font-weight: 750; text-align: center; }
+        .checkout-reassurance span { padding: 8px; border-radius: 10px; background: var(--light-bg); }
+        @keyframes collectionReveal { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; } }
+        
+        .whatsapp-float { position: fixed; bottom: 30px; right: 30px; background: var(--whatsapp); color: white; width: 65px; height: 65px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 35px; z-index: 1500; text-decoration: none; transition: transform 0.2s ease; }
+        .whatsapp-float.adjust-up { transform: translateY(-70px); }
+
+        /* Modal de paiement */
+        #payment-modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 3000; align-items: center; justify-content: center; }
+        #payment-modal-overlay.open { display: flex; }
+        #payment-modal { background: white; border-radius: 20px; padding: 40px 30px; max-width: 400px; width: 90%; text-align: center; position: relative; }
+        .payment-close { position: absolute; top: 14px; right: 18px; font-size: 1.4rem; cursor: pointer; color: #bbb; background: none; border: none; }
+        .pay-option { display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%; padding: 16px; border-radius: 14px; border: 2px solid #eee; font-size: 1rem; font-weight: 700; cursor: pointer; margin-bottom: 14px; text-decoration: none; }
+        .pay-paypal { background: #FFC439; border-color: #FFC439; color: #003087; }
+        .pay-card { background: linear-gradient(to right, var(--sunny-pink), var(--sunset-orange)); border-color: transparent; color: white; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-50%); } to { opacity: 1; transform: translateY(0); } }
+
+        @media (max-width: 768px) { 
+            body { background-size: 42px 42px, 31px 31px; }
+            .art-direction-layer { display: none; }
+            nav { flex-direction: column; gap: 12px; padding: 15px 5%; top: 35px; }
+            .nav-left { width: 100%; justify-content: space-between; }
+            .search-container { max-width: 100%; width: 100%; }
+            nav ul { width: 100%; gap: 12px; justify-content: space-between; overflow-x: auto; padding-bottom: 4px; }
+            nav ul .nav-secondary { display: none; }
+            .collections-nav-btn { padding: 9px 13px; }
+            .collections-page { padding: 28px 18px 70px; }
+            .collections-hero { grid-template-columns: 1fr; padding: 28px 24px 34px; border-radius: 26px 26px 58px 26px; }
+            .collections-hero h1 { letter-spacing: -2px; }
+            .collections-count { justify-self: start; width: 115px; }
+            .collections-count strong { font-size: 2rem; }
+            .collection-tools { align-items: flex-start; flex-direction: column; margin-top: 42px; }
+            .category-tabs { width: 100%; flex-wrap: nowrap; overflow-x: auto; padding-bottom: 8px; }
+            .category-tab { white-space: nowrap; }
+            .collection-grid { grid-template-columns: 1fr; }
+            .collection-card { grid-column: auto; min-height: 470px; }
+            .collection-card:nth-child(2n) { transform: none; }
+            .checkout-reassurance { grid-template-columns: 1fr; text-align: left; }
+            .product-container { grid-template-columns: 1fr; gap: 20px; margin: 20px auto; } 
+            .carousel-outer-wrapper { gap: 0; } 
+            .hero h1 { font-size: 2.5rem; } 
+            .toulon-skyline { gap: 20px; }
+            .reviews-section, .faq-section { padding: 20px; }
+            .cart-section { margin: 20px; padding: 20px; }
+            .cart-line { grid-template-columns: 58px 1fr auto; }
+            .cart-line img { width: 58px; height: 58px; }
+            .cart-line-price { grid-column: 2; }
+            .quantity-control { grid-column: 2; }
+            .product-container { isolation: isolate; }
+            .product-container::before { width: 25px; top: 2px; right: 12px; left: auto; opacity: 0.52; z-index: 2; }
+            #second-article::before { left: 12px; right: auto; }
+            #third-article::before { right: 18px; }
+            .product-container::after { width: 68px; height: 22px; left: 2px; bottom: -8px; opacity: 0.22; z-index: 0; }
+            #second-article::after { right: 4px; left: auto; }
+            .cart-section::before, .reviews-section::after, .faq-section::before { width: 36px; height: 36px; background-size: 12px 12px; opacity: 0.2; }
+            .cart-section::before { top: -10px; left: -8px; }
+            .reviews-section::after { right: -8px; bottom: -8px; }
+            .faq-section::before { top: -8px; right: 14px; }
+        }@media (max-width: 768px) {
+    .slide-arrow { 
+        display: block !important; 
+        position: absolute; 
+        top: 50%; 
+        transform: translateY(-50%); 
+        z-index: 100;
+        background: rgba(255, 255, 255, 0.7);
+        border: none;
+        padding: 10px;
+    }
+    .slide-arrow:first-child { left: 5px; }
+    .slide-arrow:last-child { right: 5px; }
+}
+/* =========================
+   MON COMPTE
+   ========================= */
+
+.account-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+}
+
+.account-modal.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.account-modal-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(3px);
+}
+
+.account-modal-content {
+    position: relative;
+    z-index: 2;
+    width: min(92%, 420px);
+    max-height: 90vh;
+    overflow-y: auto;
+    background: var(--paper-white);
+    border-radius: 22px;
+    padding: 32px 26px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+    text-align: center;
+}
+
+.account-close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 38px;
+    height: 38px;
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--dark);
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+.account-icon {
+    width: 70px;
+    height: 70px;
+    margin: 5px auto 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--sunny-pink);
+    color: white;
+    font-size: 1.8rem;
+}
+
+.account-modal-content h2 {
+    margin: 0 0 8px;
+    color: var(--dark);
+}
+
+.account-modal-content p {
+    color: #666;
+    margin: 0 0 24px;
+    line-height: 1.5;
+}
+
+.google-login-btn {
+    width: 100%;
+    padding: 14px 18px;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    background: white;
+    color: var(--dark);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: 0.2s ease;
+}
+
+.google-login-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+}
+
+.google-login-btn i {
+    color: #4285F4;
+}
+
+.account-profile {
+    margin-bottom: 24px;
+}
+
+.account-profile img {
+    width: 76px;
+    height: 76px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 12px;
+}
+
+.account-profile h2 {
+    margin-bottom: 4px;
+}
+
+.account-profile p {
+    margin-bottom: 0;
+    font-size: 0.9rem;
+}
+
+.account-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.account-actions button {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid #e5e5e5;
+    border-radius: 12px;
+    background: white;
+    color: var(--dark);
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.account-actions button i {
+    width: 22px;
+    color: var(--sunny-pink);
+}
+.account-orders-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    width: 100%;
+}
+
+.account-order-card {
+    background: #fafafa;
+    border: 1px solid #e5e5e5;
+    border-radius: 16px;
+    padding: 16px;
+    text-align: left;
+}
+
+.account-order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+.account-order-header strong {
+    font-size: 15px;
+}
+
+.account-order-header span {
+    color: #777;
+    font-size: 13px;
+}
+
+.account-order-status {
+    display: inline-block;
+    margin-bottom: 14px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: #f0f0f0;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.account-order-items {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    border-top: 1px solid #e5e5e5;
+    padding-top: 12px;
+}
+
+.account-order-item {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 13px;
+}
+
+.account-order-total {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid #e5e5e5;
+}
+
+.account-tracking-btn {
+    display: block;
+    margin-top: 14px;
+    padding: 11px 14px;
+    border-radius: 10px;
+    background: #111;
+    color: #fff;
+    text-align: center;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+}
+    
+
+.account-addresses-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    width: 100%;
+    margin-top: 20px;
+}
+
+.account-address-card {
+    padding: 16px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 14px;
+    background: #fff;
+    text-align: left;
+}
+
+.account-address-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.account-address-header strong {
+    font-size: 16px;
+}
+
+.account-address-default {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 5px 8px;
+    border-radius: 999px;
+    background: #111;
+    color: #fff;
+}
+
+.account-address-card p {
+    margin: 0;
+    line-height: 1.6;
+    color: #555;
+}
+
+.account-address-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 14px;
+}
+
+.account-address-actions button {
+    border: 1px solid #ddd;
+    background: #fff;
+    border-radius: 8px;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.account-address-actions button:hover {
+    background: #f5f5f5;
+}
+
+.account-empty-state {
+    padding: 18px;
+    border-radius: 14px;
+    background: #f7f7f7;
+    color: #666;
+    line-height: 1.5;
+}
+
+.account-address-form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    width: 100%;
+    margin-top: 20px;
+    text-align: left;
+}
+
+.account-address-form label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.account-address-form input,
+.account-address-form textarea {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 11px 12px;
+    font: inherit;
+    background: #fff;
+    color: #111;
+}
+
+.account-address-form textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.account-address-form input:focus,
+.account-address-form textarea:focus {
+    outline: none;
+    border-color: #111;
+}
+
+.account-address-checkbox {
+    flex-direction: row !important;
+    align-items: center;
+    gap: 8px !important;
+    font-weight: 500 !important;
+}
+
+.account-address-checkbox input {
+    width: auto;
+}
+
+.account-address-form-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+.account-address-form-actions button {
+    width: 100%;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 14px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.account-address-form-actions button[type="submit"] {
+    background: #111;
+    color: #fff;
+}
+
+.account-address-form-actions button[type="button"] {
+    background: #eee;
+    color: #111;
+}
+
+@media (max-width: 480px) {
+    .account-address-card {
+        padding: 14px;
+    }
+
+    .account-address-actions {
+        flex-direction: column;
+    }
+
+    .account-address-actions button {
+        width: 100%;
+    }
+}
+    
+
+</style>
+</head>
+<body>
+
+    <div class="art-direction-layer" aria-hidden="true">
+        <div class="art-rail art-rail-left">
+            <div class="retro-stamp">DEPUIS<strong>83</strong>TOULON</div>
+            <svg class="doodle doodle-sun" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="20"></circle>
+                <path d="M50 8v16M50 76v16M8 50h16M76 50h16M20 20l12 12M68 68l12 12M80 20L68 32M32 68L20 80"></path>
+            </svg>
+            <svg class="doodle doodle-wave" viewBox="0 0 130 60">
+                <path d="M4 22c13-15 25-15 38 0s25 15 38 0 25-15 46 0M4 42c13-15 25-15 38 0s25 15 38 0 25-15 46 0"></path>
+            </svg>
+            <span class="graphic-star"></span>
+        </div>
+        <div class="art-rail art-rail-right">
+            <span class="sun-label">MÃ‰DITERRANÃ‰E Â· SOLEIL Â· RADE</span>
+            <svg class="doodle doodle-fish" viewBox="0 0 130 70">
+                <path d="M8 35c26-26 58-26 86 0-28 26-60 26-86 0Z"></path>
+                <path d="m94 35 28-22v44L94 35ZM28 31c5 3 5 5 0 8"></path>
+                <circle cx="72" cy="29" r="2" fill="currentColor" stroke="none"></circle>
+            </svg>
+            <div class="retro-stamp">Ã‰DITION<strong>FORK</strong>SUD</div>
+            <span class="graphic-star"></span>
+            <span class="checker-patch"></span>
+            <svg class="doodle doodle-arches" viewBox="0 0 110 80">
+                <path d="M5 69c0-29 14-49 32-49s32 20 32 49M35 69c0-20 10-34 23-34s23 14 23 34M68 69c0-14 7-24 17-24s17 10 17 24"></path>
+            </svg>
+        </div>
+    </div>
+
+    <div class="top-announcement-bar">
+        <div class="marquee-text">
+            âš¡ COLLECTION ORIGINAIRE DE TOULON ðŸŒ´ â€” STOCK LIMITÃ‰ â€” Commandez maintenant pour une livraison garantie avant le grand jour â˜€ï¸ âš¡ SPÃ‰CIAL ESTIVALES : Offrez vous l'authentique toulonnais ðŸŒ´</div>
+    </div>
+
+    <div id="lightbox" class="lightbox-overlay" onclick="closeLightbox(event)">
+        <button class="lightbox-close" onclick="closeLightbox(event)">âœ•</button>
+        <img id="lightbox-img" class="lightbox-img" src="" alt="Zoom">
+    </div>
+
+    <div id="sticky-mini-cart" class="sticky-mini-cart">
+        <div class="mini-cart-info-clickable" onclick="scrollToActiveProduct()">
+            <span id="mini-cart-color-indicator" class="mini-cart-badge-color swatch-rouge"></span>
+            <span id="mini-cart-details" class="mini-cart-text">L'Authentique â€” Taille ...</span>
+        </div>
+        <button id="mini-cart-add-btn" class="mini-cart-btn" onclick="addActiveProductToCart()">Ajouter</button>
+    </div>
+
+    <div id="toast-notification" class="custom-toast">
+        <i class="fas fa-exclamation-circle" id="toast-icon"></i> <span id="toast-text">Message</span>
+    </div>
+
+    <a href="https://wa.me/33766751840" id="whatsapp-btn" class="whatsapp-float" target="_blank"><i class="fab fa-whatsapp"></i></a>
+
+    <nav>
+        <div class="nav-left">
+            <div class="logo-container" onclick="showPage('home')">
+                <img src="logo.png" alt="Logo Fork" class="logo-img-nav" onerror="this.src='https://via.placeholder.com/150x50?text=FORK'">
+            </div>
+            <div class="search-container">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="search" class="search-input" id="search-bar" placeholder="ModÃ¨le, LÃ©opard, Femme..." aria-label="Rechercher dans les collections" oninput="handleSearch()" onkeydown="handleSearchKeydown(event)">
+                </div>
+                <div class="search-suggestions" id="search-results"></div>
+            </div>
+        </div>
+        <ul>
+            <li class="nav-secondary"><span class="nav-link" onclick="showPage('home')">Accueil</span></li>
+            <li class="nav-secondary"><span class="nav-link" onclick="showPage('about')">Ã€ Propos</span></li>
+            <li>
+    <button class="account-trigger" type="button" onclick="openAccount()" aria-label="Mon compte">
+        <i class="fas fa-user"></i>
+    </button>
+</li>
+            <li><button class="cart-trigger" type="button" onclick="scrollToCart()" aria-label="Voir le panier"><i class="fas fa-shopping-bag"></i><span class="cart-count" id="cart-count">0</span></button></li>
+            <li><a href="https://www.instagram.com/fork__off/" target="_blank" style="color: var(--sunny-pink); font-size: 1.2rem;"><i class="fab fa-instagram"></i></a></li>
+            <li><button class="collections-nav-btn" type="button" onclick="openCollections()">Nos Collections</button></li>
+        </ul>
+    </nav>
+
+    <div class="toulon-skyline">
+        <div class="skyline-item"><i class="fas fa-mountain"></i><span>TÃ©lÃ©phÃ©rique</span></div>
+        <div class="skyline-item"><i class="fas fa-republican"></i><span>Stade Mayol</span></div>
+        <div class="skyline-item"><i class="fas fa-anchor"></i><span>Port de Toulon</span></div>
+    </div>
+
+    <div id="home-page" class="page active">
+        <section class="hero">
+            <h1>FORK</h1>
+            <p>La Vibe de Toulon dans ton Dressing â¤ï¸</p>
+        </section>
+
+        <div class="mayol-mini-wrap">
+            <div class="mayol-mini" role="button" tabindex="0" onclick="openMayolInfo()" onkeydown="if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); openMayolInfo(); }">
+                <span class="mayol-mini-icons">
+                    <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M32 56V29"/><path d="M15 29V9"/><path d="M49 29V9"/><path d="M15 29h34"/><path d="M23 56h18"/>
+                    </svg>
+                    <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <ellipse cx="32" cy="32" rx="26" ry="16" transform="rotate(-35 32 32)"/>
+                        <path d="M23 41 41 23"/><path d="M27 34l5 5"/><path d="M32 29l5 5"/>
+                    </svg>
+                </span>
+                <span class="mayol-mini-text">
+                    <span class="mayol-mini-kicker">Jours de match Ã  domicile</span>
+                    <span class="mayol-mini-title">On est Ã  la <strong>Guinguette de Mayol</strong> â€” passez nous voir en rouge et noir ðŸ‰</span>
+                </span>
+                <span class="mayol-mini-cta">Voir â†’</span>
+            </div>
+        </div>
+
+       <div id="first-article" class="product-container">
+            
+            <div class="carousel-outer-wrapper">
+                <div style="position: relative;">
+    <button onclick="changeSlide('authentique', -1)" style="position: absolute; top: 50%; left: 10px; z-index: 99; background: white; border: none; padding: 10px; cursor: pointer;">&#8592;</button>
+    <button onclick="changeSlide('authentique', 1)" style="position: absolute; top: 50%; right: 10px; z-index: 99; background: white; border: none; padding: 10px; cursor: pointer;">&#8594;</button>
+</div>
+                
+                <div class="product-image-box" id="product-slider" onclick="openLightboxForProduct('authentique')">
+                    <div class="slide-dots" id="slide-dots"></div>
+                </div>
+                
+                <button class="slide-arrow" onclick="changeSlide('authentique', 1)">&#8594;</button>
+            </div>
+            
+            <div class="product-info">
+                <button class="product-category-badge" type="button" onclick="openCollections('homme')">Homme</button>
+                <h2 style="color: var(--sunny-pink);">T-SHIRT FORK "L'AUTHENTIQUE"</h2>
+                <div style="margin-bottom: 15px; font-weight: 600; color: #ff4d94; font-size: 0.9rem;">
+    ImaginÃ© et conÃ§u Ã  Toulon.
+</div>
+                <div style="margin-bottom: 20px; font-size: 0.85rem; color: #555;">
+    ðŸšš <strong>Livraison express :</strong> Commandez dÃ¨s maintenant !
+</div>
+                <div style="margin: 18px 0 0;">
+                    <p style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: #999; margin-bottom: 8px;">Couleur du dos</p>
+                    <div class="color-selector">
+                        <button class="color-btn selected" id="btn-color-rouge" onclick="selectColor(this, 'rouge')">
+                            <span class="color-swatch swatch-rouge"></span> Rouge &amp; noir
+                        </button>
+                        <button class="color-btn" id="btn-color-noir" onclick="selectColor(this, 'noir')">
+                            <span class="color-swatch swatch-noir"></span> âŒ Tout noir (Ã‰puisÃ©)
+                        </button>
+                    </div>
+                </div>
+                
+                <div style="margin: 18px 0 0;">
+                    <p style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: #999; margin-bottom: 8px;">Taille</p>
+                    <div class="size-selector">
+                        <button class="size-btn" onclick="selectSize(this, 'authentique', 'S')">S</button>
+                        <button class="size-btn" onclick="selectSize(this, 'authentique', 'M')">M</button>
+                        <button class="size-btn" onclick="selectSize(this, 'authentique', 'L')">L</button>
+                        <button class="size-btn" onclick="selectSize(this, 'authentique', 'XL')">XL</button>
+                        <button class="size-btn" onclick="selectSize(this, 'authentique', '2XL')">2XL</button>
+                        <button class="size-btn" onclick="selectSize(this, 'authentique', '3XL')">3XL</button>
+                    </div>
+                    <div class="stock-warning" id="stock-counter-display">
+                        <i class="fas fa-fire"></i> <span>Plusieurs clients consultent cette taille en ce moment</span>
+                    </div>
+                </div>
+                
+                <p style="font-size: 1.8rem; font-weight: 900; margin: 15px 0 5px;">30.00 â‚¬</p>
+                <p style="font-size: 0.85rem; color: var(--whatsapp); font-weight: bold; margin-bottom: 15px;">ðŸ“¦ Colissimo suivi â€” livraison offerte Ã  moins de 10 km de Toulon, 7,64 â‚¬ au-delÃ </p>
+
+                <button id="add-to-cart-btn" type="button" class="add-btn disabled-btn" style="margin-top: 15px;" onclick="addProductToCart('authentique')">
+                    <span id="btn-text-content">CHOISISSEZ UNE TAILLE SUR LA ROUGE &amp; NOIR</span>
+                </button>
+            </div>
+        </div>
+
+<div id="second-article" class="product-container" style="margin-top: 40px;">
+    
+    <div class="carousel-outer-wrapper" style="position: relative;">
+        <!-- FlÃ¨ches de navigation positionnÃ©es au centre de l'image comme le premier article -->
+        <button onclick="changeSlide('lou-faron', -1)" style="position: absolute; top: 50%; left: 10px; transform: translateY(-50%); z-index: 99; background: white; border: none; padding: 10px; cursor: pointer; border-radius: 50%;">&#8592;</button>
+        <button onclick="changeSlide('lou-faron', 1)" style="position: absolute; top: 50%; right: 10px; transform: translateY(-50%); z-index: 99; background: white; border: none; padding: 10px; cursor: pointer; border-radius: 50%;">&#8594;</button>
+        
+        <div class="product-image-box" id="product-slider-modele2" onclick="openLightboxForProduct('lou-faron')">
+            <div class="slide-dots" id="slide-dots-modele2"></div>
+        </div>
+    </div>
+
+    <div class="product-info">
+        <button class="product-category-badge" type="button" onclick="openCollections('femme')">Femme</button>
+        <h2 style="color: var(--sunny-pink);">T-SHIRT FORK "LOU FARON"</h2>
+        <div style="font-size: 0.89rem; color: #555; margin-bottom: 20px;">
+            Nouvelle collection exclusive Fork. ImaginÃ© et conÃ§u Ã  Toulon.
+        </div>
+
+        <!-- Couleur unique : LÃ©opard -->
+<div style="margin: 18px 0 0;">
+    <p style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: #999; margin-bottom: 8px;">Couleur</p>
+    <div style="display: flex; align-items: center; gap: 8px; font-size: 0.9rem; font-weight: 600; color: #333;">
+        <span class="color-swatch swatch-leopard"></span> LÃ©opard
+    </div>
+</div>
+
+        <!-- SÃ©lection de la taille -->
+        <div style="margin: 18px 0 0;">
+            <p style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: #999; margin-bottom: 8px;">Taille</p>
+            <div class="size-selector">
+    <button class="size-btn" onclick="selectSize(this, 'lou-faron', 'S')">S</button>
+    <button class="size-btn" onclick="selectSize(this, 'lou-faron', 'M')">M</button>
+    <button class="size-btn" onclick="selectSize(this, 'lou-faron', 'L')">L</button>
+</div>
+        </div>
+
+        <p style="font-size: 1.8rem; font-weight: 900; margin: 15px 0 5px;">30.00 â‚¬</p>
+        <p style="font-size: 0.85rem; color: var(--whatsapp); font-weight: bold; margin-bottom: 15px;">ðŸ“¦ Colissimo suivi â€” livraison offerte Ã  moins de 10 km de Toulon, 7,64 â‚¬ au-delÃ </p>
+
+        <button id="add-to-cart-btn-2" type="button" class="add-btn disabled-btn" style="margin-top: 15px;" onclick="addProductToCart('lou-faron')">
+            <span id="btn-text-content-2">CHOISISSEZ UNE TAILLE</span>
+        </button>
+    </div>
+</div>
+
+<div id="third-article" class="product-container" style="margin-top: 40px;">
+    <div class="carousel-outer-wrapper" style="position: relative;">
+        <button onclick="changeSlide('les-boutades', -1)" style="position: absolute; top: 50%; left: 10px; transform: translateY(-50%); z-index: 99; background: white; border: none; padding: 10px; cursor: pointer; border-radius: 50%;">&#8592;</button>
+        <button onclick="changeSlide('les-boutades', 1)" style="position: absolute; top: 50%; right: 10px; transform: translateY(-50%); z-index: 99; background: white; border: none; padding: 10px; cursor: pointer; border-radius: 50%;">&#8594;</button>
+
+        <div class="product-image-box" id="product-slider-modele3" onclick="openLightboxForProduct('les-boutades')">
+            <div class="slide-dots" id="slide-dots-modele3"></div>
+        </div>
+    </div>
+
+    <div class="product-info">
+        <button class="product-category-badge" type="button" onclick="openCollections('homme')">Homme</button>
+        <h2 style="color: var(--sunny-pink);">T-shirt Fork "Les Boutades"</h2>
+        <div style="font-size: 0.89rem; color: #555; margin-bottom: 20px;">
+            Nouvelle collection exclusive Fork. ImaginÃ© et conÃ§u Ã  Toulon.
+        </div>
+
+        <div style="margin: 18px 0 0;">
+            <p style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: #999; margin-bottom: 8px;">Couleur</p>
+            <div style="display: flex; align-items: center; gap: 8px; font-size: 0.9rem; font-weight: 600; color: #333;">
+                <span class="color-swatch swatch-noir"></span> Noir
+            </div>
+        </div>
+
+        <div style="margin: 18px 0 0;">
+            <p style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: #999; margin-bottom: 8px;">Taille</p>
+            <div class="size-selector">
+                <button class="size-btn" onclick="selectSize(this, 'les-boutades', 'S')">S</button>
+                <button class="size-btn" onclick="selectSize(this, 'les-boutades', 'M')">M</button>
+                <button class="size-btn" onclick="selectSize(this, 'les-boutades', 'L')">L</button>
+                <button class="size-btn" onclick="selectSize(this, 'les-boutades', 'XL')">XL</button>
+                <button class="size-btn" onclick="selectSize(this, 'les-boutades', '2XL')">2XL</button>
+                <button class="size-btn" onclick="selectSize(this, 'les-boutades', '3XL')">3XL</button>
+            </div>
+        </div>
+
+        <p style="font-size: 1.8rem; font-weight: 900; margin: 15px 0 5px;">30.00 â‚¬</p>
+        <p style="font-size: 0.85rem; color: var(--whatsapp); font-weight: bold; margin-bottom: 15px;">ðŸ“¦ Colissimo suivi â€” livraison offerte Ã  moins de 10 km de Toulon, 7,64 â‚¬ au-delÃ </p>
+
+        <button id="add-to-cart-btn-3" type="button" class="add-btn disabled-btn" style="margin-top: 15px;" onclick="addProductToCart('les-boutades')">
+            <span id="btn-text-content-3">CHOISISSEZ UNE TAILLE</span>
+        </button>
+    </div>
+</div>
+
+        <section id="cart-section" class="cart-section">
+            <div class="cart-section-header">
+                <div><p style="color:var(--sunny-pink);font-weight:800;font-size:.78rem;letter-spacing:1px;">VOTRE SÃ‰LECTION</p><h3>MON PANIER</h3></div>
+                <span id="cart-items-label" style="color:#888;font-weight:700;">0 article</span>
+            </div>
+            <div id="cart-items" class="cart-items"></div>
+            <div class="cart-summary">
+                <div class="summary-line is-muted"><span>Sous-total articles</span><span id="cart-subtotal">0,00 â‚¬</span></div>
+                <div class="summary-line summary-shipping" id="cart-shipping-line" hidden><span id="cart-shipping-label">Frais de livraison</span><span id="cart-shipping">0,00 â‚¬</span></div>
+                <div class="summary-line summary-grand"><span>Total</span><span id="cart-total" class="cart-total">0,00 â‚¬</span></div>
+            </div>
+            <form id="checkout-form" onsubmit="submitOrder(event)">
+                <div class="checkout-form-box">
+                    <h4>ðŸ“ COORDONNÃ‰ES DE LIVRAISON</h4>
+                    <div class="form-group"><input type="text" name="customerName" placeholder="Nom et PrÃ©nom" autocomplete="name" required></div>
+                    <div class="form-group"><input type="email" name="email" placeholder="Adresse mail" autocomplete="email" required></div>
+                    <div class="form-group"><input type="tel" name="phone" placeholder="NumÃ©ro de tÃ©lÃ©phone" autocomplete="tel" required></div>
+                    <div class="form-group">
+                        <input type="text" id="address-input" name="address" placeholder="Adresse complÃ¨te avec code postal" autocomplete="street-address" required>
+                        <div id="delivery-status" class="delivery-status" role="status" aria-live="polite">Livraison offerte dans un rayon de 10 km autour de Toulon centre.</div>
+                    </div>
+                </div>
+                <button id="checkout-button" type="submit" class="add-btn disabled-btn" style="margin-top:15px;" disabled>AJOUTEZ UN ARTICLE AU PANIER</button>
+                <div class="checkout-reassurance" aria-label="Ã‰tapes de commande"><span>1 Â· CoordonnÃ©es</span><span>2 Â· Paiement sÃ©curisÃ©</span><span>3 Â· Confirmation</span></div>
+                <div id="checkout-status" class="checkout-status" role="status"></div>
+            </form>
+        </section>
+
+
+        <section class="reviews-section">
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom: 2px solid var(--sunny-pink); padding-bottom: 10px; margin-bottom: 20px;">
+                <h3>AVIS DE LA COMMUNAUTÃ‰</h3>
+                <div style="font-weight: bold;" id="average-stars-display">4.7/5 â­ (12 avis)</div>
+            </div>
+            <div id="reviews-list">
+                <div class="review-card"><div style="color:#f1c40f;">â­â­â­â­â­</div><p>"QualitÃ© incroyable, on sent l'amour de Toulon !"</p><div style="font-weight:bold; margin-top:10px;">â€” Lucas T.</div></div>
+                <div class="review-card"><div style="color:#f1c40f;">â­â­â­â­â­</div><p>"Le t-shirt rouge et noir taille super bien, lourd ðŸŒ´"</p><div style="font-weight:bold; margin-top:10px;">â€” Enzo M.</div></div>
+                <div class="review-card"><div style="color:#f1c40f;">â­â­â­â­â­</div><p>"Franchement pas dÃ©Ã§u, le coton est bien Ã©pais, Ã§a bouge pas au lavage."</p><div style="font-weight:bold; margin-top:10px;">â€” Tom B.</div></div>
+                <div class="review-card hidden-review"><div style="color:#f1c40f;">â­â­â­â­â­</div><p>"ReÃ§u super vite. Le packaging est sympa et le logo sur le tee-shirt est super propre."</p><div style="font-weight:bold; margin-top:10px;">â€” Amandine L.</div></div>
+                <div class="review-card hidden-review"><div style="color:#f1c40f;">â­â­â­â­</div><p>"Coupe nickel bien oversize, un peu d'attente avec Colissimo mais le t-shirt est lourd."</p><div style="font-weight:bold; margin-top:10px;">â€” ThÃ©o V.</div></div>
+                <div class="review-card hidden-review"><div style="color:#f1c40f;">â­â­â­â­â­</div><p>"Une marque d'ici Ã§a fait plaisir, hÃ¢te de voir les prochains drops !"</p><div style="font-weight:bold; margin-top:10px;">â€” Sarah D.</div></div>
+            </div>
+            <div class="load-more-container" id="load-more-box">
+                <button class="btn-load-more" onclick="toggleReviews()" id="btn-review-action">Voir plus d'avis <i class="fas fa-chevron-down" style="margin-left:5px;"></i></button>
+            </div>
+        </section>
+
+        <section class="faq-section">
+            <div style="border-bottom: 2px solid var(--sunny-pink); padding-bottom: 10px; margin-bottom: 15px;">
+                <h3>DES QUESTIONS ? ðŸ“¦</h3>
+            </div>
+            <div class="faq-container">
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)"><span>Quels sont les dÃ©lais de livraison ?</span><i class="fas fa-chevron-down"></i></div>
+                    <div class="faq-answer">Toutes nos commandes sont expÃ©diÃ©es via Colissimo avec numÃ©ro de suivi. La livraison est offerte si votre adresse se trouve Ã  moins de 10 km de Toulon centre ; au-delÃ , 7,64 â‚¬ de frais sâ€™ajoutent au panier. Le montant exact sâ€™affiche automatiquement dÃ¨s que vous saisissez votre adresse et votre code postal.</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)"><span>Comment taille le t-shirt ?</span><i class="fas fa-chevron-down"></i></div>
+                    <div class="faq-answer">Coupe droite moderne premium. Prends ta taille habituelle pour un effet classique, ou une taille au-dessus pour un look plus oversize.</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)"><span>Puis-je modifier ou annuler ma commande ?</span><i class="fas fa-chevron-down"></i></div>
+                    <div class="faq-answer">Bien sÃ»r ! Tant que ton colis n'est pas encore remis Ã  la Poste, on peut tout ajuster. Clique directement sur le bouton WhatsApp vert en bas Ã  droite de l'Ã©cran pour nous contacter en direct.</div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div id="collections-page" class="page">
+        <main class="collections-page">
+            <section class="collections-hero">
+                <div>
+                    <p class="collections-kicker">Tous les drops Â· imaginÃ©s Ã  Toulon</p>
+                    <h1>Nos Collections</h1>
+                    <p class="collections-intro">Trouvez votre piÃ¨ce par univers, recherchez un modÃ¨le ou ouvrez directement sa fiche pour choisir votre taille.</p>
+                </div>
+                <div class="collections-count" aria-label="Nombre de produits"><span><strong id="collections-count">3</strong>piÃ¨ces<br>disponibles</span></div>
+            </section>
+            <section aria-labelledby="collection-filter-title">
+                <div class="collection-tools">
+                    <div>
+                        <p id="collection-filter-title" class="collections-kicker">Filtrer la sÃ©lection</p>
+                        <div class="category-tabs" role="tablist" aria-label="CatÃ©gories de produits">
+                            <button class="category-tab active" type="button" data-category="all" onclick="filterCollections('all', this)">Tout</button>
+                            <button class="category-tab" type="button" data-category="homme" onclick="filterCollections('homme', this)">Homme</button>
+                            <button class="category-tab" type="button" data-category="femme" onclick="filterCollections('femme', this)">Femme</button>
+                            <button class="category-tab" type="button" data-category="accessoires" onclick="filterCollections('accessoires', this)">Accessoires</button>
+                        </div>
+                    </div>
+                    <p id="collection-result-label" class="collection-result-label" aria-live="polite"></p>
+                </div>
+                <div id="collection-grid" class="collection-grid"></div>
+            </section>
+        </main>
+    </div>
+
+    <div id="about-page" class="page">
+        <div style="max-width: 1000px; margin: 60px auto; padding: 0 20px; text-align: center;">
+            <h1 style="color: var(--sunny-pink); font-size: 2.8rem; margin-bottom: 10px; font-weight: 900;">L'HISTOIRE DE FORK ðŸ“</h1>
+            <p style="color: #888; font-size: 1rem; margin-bottom: 35px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">DesignÃ© sous le soleil du Var, portÃ© partout</p>
+            
+            <div class="about-container">
+             <div style="background: #fff0f5; padding: 25px; border-radius: 20px; border: 2px dashed #ff4d94; margin-bottom: 30px; text-align: center;">
+    <h3 style="color: #ff4d94; margin-bottom: 10px;">ðŸ‘¨â€ðŸ‘§â€ðŸ‘¦ FORK : Toute un heritage</h3>
+    <p>Fork, c'est la vibes de Toulon directement dans ton dressing. Des designs inspirÃ©s par notre ville, nos paysages et notre art de vivre, faits pour durer toute l'annÃ©e.</p>
+</div>
+                <div class="about-row">
+                    <div class="about-text">
+                        <h3><i class="fas fa-sun"></i> La Vibe Toulonnaise</h3>
+                        <p><strong>Fork</strong> n'est pas qu'une simple marque de vÃªtements, c'est une identitÃ©. NÃ©e de la passion pour notre rÃ©gion, la marque capture lâ€™Ã©nergie unique de Toulon â€” entre mer, monts et culture locale. Chaque crÃ©ation est pensÃ©e pour les amoureux du Sud.</p>
+                    </div>
+                    <div class="about-image-box">
+                        <img src="https://tse4.mm.bing.net/th/id/OIP.khDIrUerdy9o8FspDH-UPgHaD3?pid=Api&h=220&P=0" alt="Vibe Toulon Rade">
+                    </div>
+                </div>
+
+                <div class="about-row row-reverse">
+                    <div class="about-text">
+                        <h3><i class="fas fa-bolt"></i> Le Concept des Drops</h3>
+                        <p>Parce que nous croyons en une mode unique, nous fonctionnons exclusivement par systÃ¨me de <strong>drops limitÃ©s</strong>. Chaque piÃ¨ce Ã©ditÃ©e is une sÃ©rie exclusive, conÃ§ue pour Ã©viter la surproduction. Une fois qu'un drop est Ã©puisÃ©, il laisse place au suivant.</p>
+                    </div>
+                    <div class="about-image-box">
+                        <img src="https://i.postimg.cc/dVqkXMKy/IMG-4244.jpg" alt="Drop exclusif Fork">
+                    </div>
+                </div>
+
+                <div class="about-row">
+                    <div class="about-text">
+                        <h3><i class="fas fa-gem"></i> QualitÃ© et Finitions</h3>
+                        <p>Nous apportons un soin tout particulier Ã  la sÃ©lection de nos textiles. Des coupes droites modernes parfaitement ajustÃ©es, un coton lourd haut de gamme qui rÃ©siste au temps et aux lavages, et des marquages nets rÃ©alisÃ©s avec passion.</p>
+                    </div>
+                    <div class="about-image-box">
+                        <img src="https://i.postimg.cc/ZRrJ4R8d/IMG-4291.webp" alt="QualitÃ© finitions atelier">
+                    </div>
+                </div>
+            </div>
+
+            <section class="mayol-section" aria-labelledby="mayol-title">
+                <span class="mayol-badge"><i class="fas fa-football-ball"></i> Tous les jours de match Ã  domicile</span>
+                <h3 id="mayol-title">ON EST Ã€ LA <em>GUINGUETTE DE MAYOL</em></h3>
+                <p class="mayol-copy">
+                    Les jours de match Ã  domicile, Fork quitte le dressing et descend Ã  la <strong>Guinguette de Mayol</strong>.
+                    Le stand est posÃ© lÃ , avec les piÃ¨ces du drop en cours : venez essayer, rÃ©cupÃ©rer votre commande,
+                    parler chiffons et rugby avant d'aller pousser derriÃ¨re les <strong>rouge et noir</strong>. ðŸ‰
+                </p>
+                <div class="mayol-motifs">
+                    <div class="mayol-motif">
+                        <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M32 56V29"/><path d="M15 29V9"/><path d="M49 29V9"/><path d="M15 29h34"/><path d="M23 56h18"/>
+                        </svg>
+                        <span>Face aux poteaux</span>
+                    </div>
+                    <div class="mayol-motif">
+                        <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <ellipse cx="32" cy="32" rx="26" ry="16" transform="rotate(-35 32 32)"/>
+                            <path d="M22 42 42 22"/><path d="M25 35l6 6"/><path d="M29 31l6 6"/><path d="M33 27l6 6"/>
+                        </svg>
+                        <span>Ballon ovale</span>
+                    </div>
+                    <div class="mayol-motif">
+                        <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M23 9 10 16l5 11 6-2v30h30V25l6 2 5-11L49 9z"/>
+                            <path d="M23 9c0 6 4 9 9 9s9-3 9-9"/>
+                            <path d="M21 33h22"/><path d="M21 42h22"/>
+                        </svg>
+                        <span>Rouge &amp; noir</span>
+                    </div>
+                    <div class="mayol-motif">
+                        <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M18 56V8"/><path d="M18 12l30 9-30 9z"/><path d="M12 56h14"/>
+                        </svg>
+                        <span>Coup d'envoi</span>
+                    </div>
+                </div>
+                <p class="mayol-footnote">Guinguette de Mayol Â· Toulon Â· On se retrouve lÃ -bas</p>
+            </section>
+
+            <button class="add-btn" style="margin-top: 35px; max-width: 320px;" onclick="showPage('home')">RETOUR Ã€ LA COLLECTION</button>
+        </div>
+    </div>
+
+    <div id="payment-modal-overlay" onclick="closePaymentModalOnOverlay(event)">
+        <div id="payment-modal">
+            <button class="payment-close" onclick="closePaymentModal()">âœ•</button>
+            <h3>CHOISIR MON PAIEMENT</h3>
+            <p style="margin-bottom: 20px; color: #888;">SÃ©lectionne ta mÃ©thode de paiement prÃ©fÃ©rÃ©e</p>
+            <a id="paypal-link" href="#" target="_blank" rel="noopener" class="pay-option pay-paypal" onclick="completePaymentHandoff()">Payer avec PayPal</a>
+            <a id="card-link" href="#" class="pay-option pay-card" onclick="startCardPayment(event)">Payer par Carte Bancaire</a>
+            <p id="card-payment-note" style="color:#888;font-size:.8rem;">Le montant exact du panier est transmis Ã  SumUp.</p>
+        </div>
+    </div>
+
+    <script>
+        const CART_STORAGE_KEY = 'fork-cart-v2';
+        const PENDING_PAYMENT_STORAGE_KEY = 'fork-pending-payment-v1';
+        const CHECKOUT_TOKEN_STORAGE_KEY = 'fork-checkout-token-v1';
+        const FREE_DELIVERY_RADIUS_KM = 10;
+        const DELIVERY_FEE_EUR = 7.64;
+        const DELIVERY_QUOTE_DEBOUNCE_MS = 700;
+        const DEFAULT_DELIVERY_HINT = `Livraison offerte dans un rayon de ${FREE_DELIVERY_RADIUS_KM} km autour de Toulon centre.`;
+        const products = {
+            authentique: {
+                id: 'authentique', sku: 'fork-authentique', name: "L'Authentique", color: 'Rouge & noir', colorKey: 'rouge', price: 30,
+                category: 'homme', categoryLabel: 'Homme', keywords: ['authentique', 'rouge', 'noir', 'toulon'], description: 'Le classique rouge et noir, coupe droite et coton lourd.',
+                sizes: ['S', 'M', 'L', 'XL', '2XL', '3XL'], selectedSize: null, sectionId: 'first-article', sliderId: 'product-slider', dotsId: 'slide-dots', buttonId: 'add-to-cart-btn', buttonTextId: 'btn-text-content', slide: 0,
+                images: {
+                    rouge: [{ src: 'img_4231.jpeg', alt: "L'Authentique rouge et noir" }, { src: 'img_4222.jpeg', alt: "Dos de L'Authentique" }, { src: 'img_4227.jpeg', alt: "DÃ©tail de L'Authentique" }],
+                    noir: [{ src: 'img_3846.jpg', alt: "L'Authentique tout noir" }, { src: 'img_3841.jpg', alt: "Dos du modÃ¨le tout noir" }, { src: 'img_3845.jpg', alt: "DÃ©tail du modÃ¨le tout noir" }]
+                }
+            },
+            'lou-faron': {
+                id: 'lou-faron', sku: 'fork-lou-faron', name: 'Lou Faron', color: 'LÃ©opard', colorKey: 'leopard', price: 30,
+                category: 'femme', categoryLabel: 'Femme', keywords: ['lou faron', 'lÃ©opard', 'leopard', 'femme'], description: 'Le modÃ¨le LÃ©opard affirmÃ©, pensÃ© comme une piÃ¨ce forte du vestiaire fÃ©minin.',
+                sizes: ['S', 'M', 'L'], selectedSize: null, sectionId: 'second-article', sliderId: 'product-slider-modele2', dotsId: 'slide-dots-modele2', buttonId: 'add-to-cart-btn-2', buttonTextId: 'btn-text-content-2', slide: 0,
+                images: { leopard: [
+                    { src: 'assets/products/lou-faron/lou-faron-face-porte.jpeg', alt: 'T-shirt Lou Faron LÃ©opard portÃ© de face' },
+                    { src: 'assets/products/lou-faron/lou-faron-dos-porte.jpeg', alt: 'T-shirt Lou Faron LÃ©opard portÃ© de dos' },
+                    { src: 'assets/products/lou-faron/lou-faron-face-produit.jpeg', alt: 'Face du t-shirt Lou Faron LÃ©opard' },
+                    { src: 'assets/products/lou-faron/lou-faron-dos-produit.jpeg', alt: 'Dos du t-shirt Lou Faron LÃ©opard' },
+                    { src: 'assets/products/lou-faron/lou-faron-dos-panorama.jpeg', alt: 'T-shirt Lou Faron LÃ©opard devant le panorama de Toulon' }
+                ] }
+            },
+            'les-boutades': {
+                id: 'les-boutades', sku: 'fork-les-boutades', name: 'Les Boutades', color: 'Noir', colorKey: 'noir', price: 30,
+                category: 'homme', categoryLabel: 'Homme', keywords: ['boutades', 'noir', 'homme', 'toulon'], description: 'Un noir profond et graphique inspirÃ© des expressions du Sud.',
+                sizes: ['S', 'M', 'L', 'XL', '2XL', '3XL'], selectedSize: null, sectionId: 'third-article', sliderId: 'product-slider-modele3', dotsId: 'slide-dots-modele3', buttonId: 'add-to-cart-btn-3', buttonTextId: 'btn-text-content-3', slide: 0,
+                images: { noir: [
+                    { src: 'assets/products/les-boutades/les-boutades-dos-toulon.jpeg', alt: 'T-shirt Fork Les Boutades noir portÃ© de dos Ã  Toulon' },
+                    { src: 'assets/products/les-boutades/les-boutades-face-toulon.jpeg', alt: 'T-shirt Fork Les Boutades noir portÃ© de face Ã  Toulon' },
+                    { src: 'assets/products/les-boutades/les-boutades-dos-studio.jpeg', alt: 'T-shirt Fork Les Boutades noir portÃ© de dos en studio' },
+                    { src: 'assets/products/les-boutades/les-boutades-face-studio.jpeg', alt: 'T-shirt Fork Les Boutades noir portÃ© de face en studio' }
+                ] }
+            }
+        };
+
+        let activeProductId = 'authentique';
+        let activeCollectionCategory = 'all';
+        let collectionSearchQuery = '';
+        let reviewsExpanded = false;
+        let cart = loadCart();
+        let pendingPayment = loadPendingPayment();
+        let checkoutToken = localStorage.getItem(CHECKOUT_TOKEN_STORAGE_KEY);
+        let deliveryQuote = null;
+        let deliveryQuoteRequestId = 0;
+        let deliveryQuoteTimer = null;
+
+        const catalogueProduits = Object.values(products);
+
+        function getProductIdFromSection(elementId) {
+            return Object.values(products).find(product => product.sectionId === elementId)?.id || 'authentique';
+        }
+
+        function loadCart() {
+            try {
+                const saved = JSON.parse(localStorage.getItem(CART_STORAGE_KEY) || '[]');
+                if (!Array.isArray(saved)) return [];
+                return saved.flatMap(item => {
+                    const product = products[item.productId];
+                    const quantity = Number(item.quantity);
+                    if (!product || !product.sizes.includes(item.size) || !Number.isInteger(quantity) || quantity < 1 || quantity > 20) return [];
+                    return [{
+                        lineId: `${product.sku}:${product.color}:${item.size}`,
+                        productId: product.id,
+                        sku: product.sku,
+                        name: product.name,
+                        color: product.color,
+                        size: item.size,
+                        quantity
+                    }];
+                });
+            } catch {
+                return [];
+            }
+        }
+
+        function loadPendingPayment() {
+            try {
+                const saved = JSON.parse(localStorage.getItem(PENDING_PAYMENT_STORAGE_KEY) || 'null');
+                if (!saved || typeof saved.orderNumber !== 'string' || typeof saved.total !== 'number') return null;
+                return saved;
+            } catch {
+                return null;
+            }
+        }
+
+        function clearPendingPayment() {
+            pendingPayment = null;
+            localStorage.removeItem(PENDING_PAYMENT_STORAGE_KEY);
+        }
+
+        function getCheckoutToken() {
+            if (!checkoutToken) {
+                checkoutToken = crypto.randomUUID();
+                localStorage.setItem(CHECKOUT_TOKEN_STORAGE_KEY, checkoutToken);
+            }
+            return checkoutToken;
+        }
+
+        function clearCheckoutAttempt() {
+            clearPendingPayment();
+            checkoutToken = null;
+            localStorage.removeItem(CHECKOUT_TOKEN_STORAGE_KEY);
+        }
+
+        function saveCart() {
+            clearCheckoutAttempt();
+            localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
+            renderCart();
+        }
+
+        function completePaymentHandoff() {
+            cart = [];
+            localStorage.setItem(CART_STORAGE_KEY, '[]');
+            clearCheckoutAttempt();
+            renderCart();
+            closePaymentModal();
+        }
+
+        function formatPrice(value) {
+            return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(value);
+        }
+
+        function setActiveProduct(productId) {
+            if (!products[productId]) return;
+            activeProductId = productId;
+            updateStickyMiniCartText();
+        }
+
+        function renderProductSlider(productId) {
+            const product = products[productId];
+            const slider = document.getElementById(product.sliderId);
+            const dots = document.getElementById(product.dotsId);
+            const images = product.images[product.colorKey];
+            if (!slider || !dots) return;
+
+            slider.querySelectorAll('img').forEach(image => image.remove());
+            dots.innerHTML = '';
+            product.slide = Math.min(product.slide, images.length - 1);
+
+            images.forEach((image, index) => {
+                const element = document.createElement('img');
+                element.src = image.src;
+                element.alt = image.alt;
+                if (index === product.slide) element.classList.add('active-slide');
+                slider.appendChild(element);
+
+                const dot = document.createElement('button');
+                dot.type = 'button';
+                dot.className = `slide-dot${index === product.slide ? ' active-dot' : ''}`;
+                dot.setAttribute('aria-label', `Voir l'image ${index + 1}`);
+                dot.onclick = event => { event.stopPropagation(); goToSlide(productId, index); };
+                dots.appendChild(dot);
+            });
+        }
+
+        function goToSlide(productId, index) {
+            const product = products[productId];
+            const images = product.images[product.colorKey];
+            product.slide = (index + images.length) % images.length;
+            setActiveProduct(productId);
+            renderProductSlider(productId);
+        }
+
+        function changeSlide(productId, direction) {
+            goToSlide(productId, products[productId].slide + direction);
+        }
+
+        function openLightboxForProduct(productId) {
+            setActiveProduct(productId);
+            if (window.innerWidth > 768) return;
+            const image = document.querySelector(`#${products[productId].sliderId} img.active-slide`);
+            if (!image) return;
+            document.getElementById('lightbox-img').src = image.src;
+            document.getElementById('lightbox').classList.add('open');
+        }
+
+        function closeLightbox(event) {
+            if (event) event.stopPropagation();
+            document.getElementById('lightbox').classList.remove('open');
+        }
+
+        function selectColor(button, colorKey) {
+            const product = products.authentique;
+            setActiveProduct('authentique');
+            button.closest('.color-selector').querySelectorAll('.color-btn').forEach(item => item.classList.remove('selected'));
+            button.classList.add('selected');
+            product.colorKey = colorKey;
+            product.color = colorKey === 'noir' ? 'Tout noir' : 'Rouge & noir';
+            product.slide = 0;
+            if (colorKey === 'noir') {
+                product.selectedSize = null;
+                document.querySelectorAll('#first-article .size-btn').forEach(item => item.classList.remove('selected'));
+            }
+            renderProductSlider('authentique');
+            updateProductButton('authentique');
+            updateStickyMiniCartText();
+        }
+
+        function selectSize(button, productId, size) {
+            const product = products[productId];
+            if (!product || !product.sizes.includes(size) || button.classList.contains('out-of-stock')) {
+                showToast('Cette taille est indisponible.');
+                return;
+            }
+            setActiveProduct(productId);
+            button.closest('.size-selector').querySelectorAll('.size-btn').forEach(item => item.classList.remove('selected'));
+            button.classList.add('selected');
+            product.selectedSize = size;
+            updateProductButton(productId);
+            updateStickyMiniCartText();
+        }
+
+        function updateProductButton(productId) {
+            const product = products[productId];
+            const button = document.getElementById(product.buttonId);
+            const text = document.getElementById(product.buttonTextId);
+            const soldOut = isProductSoldOut(productId);
+            button.classList.toggle('disabled-btn', soldOut || !product.selectedSize);
+            button.disabled = soldOut || !product.selectedSize;
+            text.textContent = soldOut ? 'âŒ MODÃˆLE Ã‰PUISÃ‰' : product.selectedSize ? `AJOUTER AU PANIER â€” ${formatPrice(product.price)}` : 'CHOISISSEZ UNE TAILLE';
+        }
+
+        function isProductSoldOut(productId) {
+            return productId === 'authentique' && products[productId].colorKey === 'noir';
+        }
+
+        function addProductToCart(productId) {
+            const product = products[productId];
+            setActiveProduct(productId);
+            if (!product.selectedSize || isProductSoldOut(productId)) {
+                showToast('Choisissez une taille disponible.');
+                return;
+            }
+            const lineId = `${product.sku}:${product.color}:${product.selectedSize}`;
+            const existing = cart.find(item => item.lineId === lineId);
+            if (existing) existing.quantity += 1;
+            else cart.push({ lineId, productId, sku: product.sku, name: product.name, color: product.color, size: product.selectedSize, quantity: 1 });
+            saveCart();
+            showToast(`${product.name} â€” taille ${product.selectedSize} ajoutÃ© au panier.`, false);
+        }
+
+        function addActiveProductToCart() {
+            addProductToCart(activeProductId);
+        }
+
+        function changeQuantity(lineId, delta) {
+            const line = cart.find(item => item.lineId === lineId);
+            if (!line) return;
+            line.quantity += delta;
+            if (line.quantity <= 0) cart = cart.filter(item => item.lineId !== lineId);
+            saveCart();
+        }
+
+        function removeCartLine(lineId) {
+            cart = cart.filter(item => item.lineId !== lineId);
+            saveCart();
+        }
+
+        function getCartTotal() {
+            return cart.reduce((total, line) => total + products[line.productId].price * line.quantity, 0);
+        }
+
+        /** Frais de livraison retenus : panier non vide et adresse au-delÃ  du rayon offert. */
+        function getDeliveryFee() {
+            if (!cart.length || !deliveryQuote || deliveryQuote.zone !== 'outside_zone') return 0;
+            return deliveryQuote.feeCents / 100;
+        }
+
+        function getOrderTotal() {
+            return getCartTotal() + getDeliveryFee();
+        }
+
+        function formatKm(distanceKm) {
+            return new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 1 }).format(distanceKm);
+        }
+
+        function setDeliveryStatus(text, variant) {
+            const status = document.getElementById('delivery-status');
+            if (!status) return;
+            status.className = `delivery-status${variant ? ` is-${variant}` : ''}`;
+            status.textContent = text;
+        }
+
+        /** Traduit le verdict du serveur en message client et en ligne de frais. */
+        function renderDeliveryState(state) {
+            if (state === 'loading') {
+                setDeliveryStatus('Calcul de la zone de livraisonâ€¦', null);
+            } else if (!deliveryQuote) {
+                setDeliveryStatus(DEFAULT_DELIVERY_HINT, null);
+            } else if (deliveryQuote.zone === 'free_zone') {
+                setDeliveryStatus(`âœ… Livraison offerte â€” ${formatKm(deliveryQuote.distanceKm)} km de Toulon centre.`, 'free');
+            } else if (deliveryQuote.zone === 'outside_zone') {
+                setDeliveryStatus(`ðŸ“¦ ${formatKm(deliveryQuote.distanceKm)} km de Toulon centre, au-delÃ  de ${FREE_DELIVERY_RADIUS_KM} km : ${formatPrice(deliveryQuote.feeCents / 100)} de frais de livraison.`, 'paid');
+            } else {
+                setDeliveryStatus(deliveryQuote.message || DEFAULT_DELIVERY_HINT, 'warning');
+            }
+            renderCart();
+        }
+
+        /** Demande le calcul des frais au serveur ; la derniÃ¨re rÃ©ponse gagne. */
+        async function requestDeliveryQuote(address) {
+            const requestId = ++deliveryQuoteRequestId;
+            renderDeliveryState('loading');
+            try {
+                const response = await fetch('/api/shipping-quote', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ address })
+                });
+                const result = await response.json().catch(() => null);
+                if (requestId !== deliveryQuoteRequestId) return;
+                deliveryQuote = response.ok && result && typeof result.zone === 'string' ? result : null;
+                renderDeliveryState();
+            } catch {
+                if (requestId !== deliveryQuoteRequestId) return;
+                deliveryQuote = null;
+                setDeliveryStatus('Frais de livraison non calculÃ©s pour le moment. RÃ©essayez dans un instant.', 'warning');
+                renderCart();
+            }
+        }
+
+        function scheduleDeliveryQuote(delay) {
+            const address = (document.getElementById('address-input')?.value || '').trim();
+            clearTimeout(deliveryQuoteTimer);
+
+            if (address.length < 5) {
+                deliveryQuoteRequestId += 1;
+                deliveryQuote = null;
+                renderDeliveryState();
+                return;
+            }
+
+            deliveryQuoteTimer = setTimeout(() => requestDeliveryQuote(address), delay);
+        }
+
+        function initDeliveryQuote() {
+            const input = document.getElementById('address-input');
+            if (!input) return;
+            input.addEventListener('input', () => scheduleDeliveryQuote(DELIVERY_QUOTE_DEBOUNCE_MS));
+            input.addEventListener('change', () => scheduleDeliveryQuote(0));
+            if (input.value.trim()) scheduleDeliveryQuote(0);
+        }
+
+        function renderCart() {
+            const container = document.getElementById('cart-items');
+            const quantity = cart.reduce((total, line) => total + line.quantity, 0);
+            document.getElementById('cart-count').textContent = quantity;
+            document.getElementById('cart-items-label').textContent = `${quantity} article${quantity > 1 ? 's' : ''}`;
+            const deliveryFee = getDeliveryFee();
+            document.getElementById('cart-subtotal').textContent = formatPrice(getCartTotal());
+            document.getElementById('cart-total').textContent = formatPrice(getOrderTotal());
+
+            const shippingLine = document.getElementById('cart-shipping-line');
+            shippingLine.hidden = !(cart.length && deliveryFee > 0);
+            if (!shippingLine.hidden) {
+                document.getElementById('cart-shipping-label').textContent = `Frais de livraison (hors ${FREE_DELIVERY_RADIUS_KM} km)`;
+                document.getElementById('cart-shipping').textContent = formatPrice(deliveryFee);
+            }
+
+            if (!cart.length) {
+                container.innerHTML = '<div class="cart-empty"><i class="fas fa-shopping-bag" style="font-size:1.8rem;color:var(--sunny-pink);margin-bottom:8px;"></i><p>Votre panier est vide.</p><small>Choisissez un modÃ¨le et une taille pour commencer.</small></div>';
+            } else {
+                container.innerHTML = cart.map(line => {
+                    const product = products[line.productId];
+                    const image = product.images[product.colorKey][0].src;
+                    return `<article class="cart-line"><img src="${image}" alt="${line.name}"><div><div class="cart-line-title">${line.name}</div><div class="cart-line-meta">${line.color} Â· Taille ${line.size}</div></div><div class="cart-line-price">${formatPrice(product.price * line.quantity)}</div><div class="quantity-control"><button type="button" onclick="changeQuantity('${line.lineId}', -1)" aria-label="Retirer une unitÃ©">âˆ’</button><strong>${line.quantity}</strong><button type="button" onclick="changeQuantity('${line.lineId}', 1)" aria-label="Ajouter une unitÃ©">+</button><button type="button" class="remove-line" onclick="removeCartLine('${line.lineId}')" aria-label="Supprimer l'article"><i class="fas fa-trash"></i></button></div></article>`;
+                }).join('');
+            }
+
+            const checkoutButton = document.getElementById('checkout-button');
+            checkoutButton.disabled = !cart.length;
+            checkoutButton.classList.toggle('disabled-btn', !cart.length);
+            checkoutButton.textContent = !cart.length
+                ? 'AJOUTEZ UN ARTICLE AU PANIER'
+                : pendingPayment
+                    ? `REPRENDRE LE PAIEMENT â€” ${formatPrice(pendingPayment.total)}`
+                    : `COMMANDER ET PAYER â€” ${formatPrice(getOrderTotal())}`;
+            document.getElementById('checkout-form').noValidate = Boolean(pendingPayment);
+        }
+
+        async function submitOrder(event) {
+            event.preventDefault();
+            if (!cart.length) return;
+            const form = event.currentTarget;
+            const button = document.getElementById('checkout-button');
+            const status = document.getElementById('checkout-status');
+            const formData = new FormData(form);
+
+            if (pendingPayment) {
+                status.className = 'checkout-status success';
+                status.textContent = `Reprise du paiement de la commande ${pendingPayment.orderNumber}â€¦`;
+                openPaymentModal(pendingPayment.total, pendingPayment.orderNumber);
+                await startCardPayment();
+                return;
+            }
+
+            button.disabled = true;
+            button.textContent = 'ENREGISTREMENT...';
+            status.className = 'checkout-status';
+            status.textContent = '';
+
+            try {
+                const response = await fetch('/api/orders', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        checkoutToken: getCheckoutToken(),
+                        customer: { name: formData.get('customerName'), email: formData.get('email'), phone: formData.get('phone'), address: formData.get('address') },
+                        items: cart.map(line => ({ sku: line.sku, size: line.size, color: line.color, quantity: line.quantity }))
+                    })
+                });
+                const result = await response.json().catch(() => null);
+                if (!result) throw new Error('RÃ©ponse de commande invalide. Aucun paiement nâ€™a Ã©tÃ© lancÃ©.');
+                if (!response.ok) throw new Error(result.error || 'Impossible dâ€™enregistrer la commande.');
+                if (result.delivery) {
+                    deliveryQuote = result.delivery;
+                    renderDeliveryState();
+                }
+                const total = Number.isFinite(result.totalCents) ? result.totalCents / 100 : getOrderTotal();
+                status.className = 'checkout-status success';
+                status.textContent = result.shippingCents > 0
+                    ? `Commande ${result.orderNumber} enregistrÃ©e (dont ${formatPrice(result.shippingCents / 100)} de livraison). Ouverture du paiement sÃ©curisÃ©â€¦`
+                    : `Commande ${result.orderNumber} enregistrÃ©e. Ouverture du paiement sÃ©curisÃ©â€¦`;
+                openPaymentModal(total, result.orderNumber);
+                await startCardPayment();
+            } catch (error) {
+                status.className = 'checkout-status error';
+                status.textContent = error instanceof Error ? error.message : 'Une erreur est survenue.';
+            } finally {
+                renderCart();
+            }
+        }
+
+        function openPaymentModal(total, orderNumber) {
+            pendingPayment = { total, orderNumber };
+            localStorage.setItem(PENDING_PAYMENT_STORAGE_KEY, JSON.stringify(pendingPayment));
+            const paypalUrl = new URL('https://www.paypal.com/cgi-bin/webscr');
+            paypalUrl.search = new URLSearchParams({ cmd: '_xclick', business: '[adresse-retiree]', currency_code: 'EUR', amount: total.toFixed(2), item_name: `Commande FORK ${orderNumber}`, custom: orderNumber }).toString();
+            const paypalLink = document.getElementById('paypal-link');
+            paypalLink.href = paypalUrl.toString();
+            paypalLink.textContent = `Payer avec PayPal (${formatPrice(total)})`;
+
+            const cardLink = document.getElementById('card-link');
+            const cardNote = document.getElementById('card-payment-note');
+            cardLink.classList.remove('is-loading');
+            cardLink.removeAttribute('aria-disabled');
+            cardLink.textContent = `Payer par Carte Bancaire (${formatPrice(total)})`;
+            cardNote.textContent = 'Le montant exact du panier est transmis Ã  SumUp.';
+            document.getElementById('payment-modal-overlay').classList.add('open');
+        }
+
+        async function startCardPayment(event) {
+            event?.preventDefault();
+            if (!pendingPayment) return;
+            const payment = pendingPayment;
+            const cardLink = document.getElementById('card-link');
+            const cardNote = document.getElementById('card-payment-note');
+            if (cardLink.classList.contains('is-loading')) return;
+
+            cardLink.classList.add('is-loading');
+            cardLink.setAttribute('aria-disabled', 'true');
+            cardLink.textContent = 'OUVERTURE DU PAIEMENT...';
+            cardNote.textContent = 'CrÃ©ation du paiement sÃ©curisÃ© en cours.';
+
+            try {
+                const response = await fetch('/api/sumup-checkout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ orderNumber: payment.orderNumber })
+                });
+                const result = await response.json().catch(() => ({}));
+                if (!response.ok || !result.checkoutUrl) throw new Error(result.error || 'Le paiement par carte est momentanÃ©ment indisponible.');
+                completePaymentHandoff();
+                window.location.assign(result.checkoutUrl);
+            } catch (error) {
+                cardLink.classList.remove('is-loading');
+                cardLink.removeAttribute('aria-disabled');
+                cardLink.textContent = `RÃ©essayer par Carte (${formatPrice(payment.total)})`;
+                cardNote.textContent = error instanceof Error ? error.message : 'Le paiement par carte est momentanÃ©ment indisponible.';
+            }
+        }
+
+        function closePaymentModal() { document.getElementById('payment-modal-overlay').classList.remove('open'); }
+        function closePaymentModalOnOverlay(event) { if (event.target === document.getElementById('payment-modal-overlay')) closePaymentModal(); }
+
+        function updateStickyMiniCartText() {
+            const product = products[activeProductId];
+            const indicator = document.getElementById('mini-cart-color-indicator');
+            const details = document.getElementById('mini-cart-details');
+            const button = document.getElementById('mini-cart-add-btn');
+            const swatchClass = product.colorKey === 'rouge' ? 'swatch-rouge' : product.colorKey === 'noir' ? 'swatch-noir' : product.colorKey === 'blanc' ? 'swatch-blanc' : 'swatch-leopard';
+            indicator.className = `mini-cart-badge-color ${swatchClass}`;
+            const soldOut = isProductSoldOut(activeProductId);
+            details.textContent = soldOut ? `${product.name} â€” ${product.color} (Ã‰puisÃ©)` : `${product.name} (${product.color}) â€” Taille ${product.selectedSize || '...'}`;
+            button.disabled = soldOut || !product.selectedSize;
+            button.textContent = soldOut ? 'Ã‰puisÃ©' : product.selectedSize ? 'Ajouter' : 'Choisir';
+        }
+
+        function scrollToActiveProduct() {
+            const section = document.getElementById(products[activeProductId].sectionId);
+            window.scrollTo({ top: section.offsetTop - 90, behavior: 'smooth' });
+        }
+
+        function scrollToCart() {
+            showPage('home');
+            setTimeout(() => document.getElementById('cart-section').scrollIntoView({ behavior: 'smooth', block: 'start' }), 10);
+        }
+
+        function handleSearch() {
+            const query = document.getElementById('search-bar').value.toLowerCase().trim();
+            const results = document.getElementById('search-results');
+            if (!query) { results.classList.remove('active'); return; }
+            const filtered = catalogueProduits.filter(product => {
+                const searchable = [product.name, product.color, product.categoryLabel, ...product.keywords].join(' ').toLowerCase();
+                return searchable.includes(query);
+            });
+            results.classList.add('active');
+            results.innerHTML = filtered.length ? filtered.map(product => `<div class="suggestion-item" onclick="selectSearchProduct('${product.id}')"><img src="${product.images[product.colorKey][0].src}" class="suggestion-img" alt=""><div class="suggestion-info"><span class="suggestion-title">${product.name}</span><span class="suggestion-price">${product.categoryLabel} Â· ${formatPrice(product.price)}</span></div></div>`).join('') : '<div style="padding:12px;font-size:.8rem;color:#777;">Aucun article dans cette sÃ©lection.</div>';
+        }
+
+        function handleSearchKeydown(event) {
+            if (event.key !== 'Enter') return;
+            event.preventDefault();
+            collectionSearchQuery = event.currentTarget.value.toLowerCase().trim();
+            activeCollectionCategory = 'all';
+            document.getElementById('search-results').classList.remove('active');
+            document.querySelectorAll('.category-tab').forEach(tab => tab.classList.toggle('active', tab.dataset.category === 'all'));
+            showPage('collections');
+            renderCollections();
+        }
+
+        function selectSearchProduct(productId) {
+            document.getElementById('search-bar').value = '';
+            document.getElementById('search-results').classList.remove('active');
+            showPage('home');
+            setActiveProduct(productId);
+            setTimeout(() => document.getElementById(products[productId].sectionId).scrollIntoView({ behavior: 'smooth', block: 'start' }), 10);
+        }
+
+        function openCollections(category = 'all') {
+            activeCollectionCategory = category;
+            collectionSearchQuery = '';
+            document.getElementById('search-bar').value = '';
+            document.getElementById('search-results').classList.remove('active');
+            document.querySelectorAll('.category-tab').forEach(tab => tab.classList.toggle('active', tab.dataset.category === category));
+            showPage('collections');
+            renderCollections();
+        }
+
+        function filterCollections(category, button) {
+            activeCollectionCategory = category;
+            document.querySelectorAll('.category-tab').forEach(tab => tab.classList.remove('active'));
+            button.classList.add('active');
+            renderCollections();
+        }
+
+        function renderCollections() {
+            const grid = document.getElementById('collection-grid');
+            const filtered = catalogueProduits.filter(product => {
+                const matchesCategory = activeCollectionCategory === 'all' || product.category === activeCollectionCategory;
+                const searchable = [product.name, product.color, product.categoryLabel, ...product.keywords].join(' ').toLowerCase();
+                return matchesCategory && (!collectionSearchQuery || searchable.includes(collectionSearchQuery));
+            });
+            document.getElementById('collections-count').textContent = catalogueProduits.length;
+            document.getElementById('collection-result-label').textContent = `${filtered.length} modÃ¨le${filtered.length > 1 ? 's' : ''} dans cette sÃ©lection`;
+
+            if (!filtered.length) {
+                grid.innerHTML = '<div class="collection-empty"><div><div class="collection-empty-mark"></div><h2>Le prochain drop se prÃ©pare</h2><p>Aucun accessoire nâ€™est encore disponible. Retrouvez les piÃ¨ces Homme et Femme dÃ¨s maintenant.</p></div></div>';
+                return;
+            }
+
+            grid.innerHTML = filtered.map((product, index) => `<article class="collection-card" style="animation-delay:${index * 70}ms"><div class="collection-card-media" onclick="selectCollectionProduct('${product.id}')"><img src="${product.images[product.colorKey][0].src}" alt="${product.images[product.colorKey][0].alt}"><span class="collection-category">${product.categoryLabel}</span></div><div class="collection-card-body"><h2>${product.name}</h2><p class="collection-card-copy">${product.description}</p><div class="collection-card-footer"><span class="collection-price">${formatPrice(product.price)}</span><button class="collection-view-btn" type="button" onclick="selectCollectionProduct('${product.id}')">Voir le modÃ¨le â†’</button></div></div></article>`).join('');
+        }
+
+        function selectCollectionProduct(productId) {
+            showPage('home');
+            setActiveProduct(productId);
+            setTimeout(() => document.getElementById(products[productId].sectionId).scrollIntoView({ behavior: 'smooth', block: 'start' }), 10);
+        }
+
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.getElementById(`${pageId}-page`).classList.add('active');
+            window.scrollTo(0, 0);
+        }
+        // =========================
+// MON COMPTE / GOOGLE
+// =========================
+
+function openAccount() {
+    const modal = document.getElementById('account-modal');
+
+    if (!modal) return;
+
+    modal.classList.add('active');
+    modal.setAttribute('aria-hidden', 'false');
+
+    loadAccount();
+}
+
+function closeAccount() {
+    const modal = document.getElementById('account-modal');
+
+    if (!modal) return;
+
+    modal.classList.remove('active');
+    modal.setAttribute('aria-hidden', 'true');
+}
+
+function loginWithGoogle() {
+    window.location.href = '/.netlify/functions/auth-google';
+}
+
+async function loadAccount() {
+    try {
+        const response = await fetch('/.netlify/functions/me', {
+            credentials: 'include',
+        });
+
+        if (!response.ok) {
+            showLoggedOutAccount();
+            return;
+        }
+
+        const data = await response.json();
+
+        if (!data.authenticated || !data.user) {
+            showLoggedOutAccount();
+            return;
+        }
+
+        showLoggedInAccount(data.user);
+    } catch (error) {
+        console.error('Erreur lors du chargement du compte :', error);
+        showLoggedOutAccount();
+    }
+}
+
+function showLoggedOutAccount() {
+    const loggedOut = document.getElementById('account-logged-out');
+    const loggedIn = document.getElementById('account-logged-in');
+
+    if (loggedOut) loggedOut.style.display = 'block';
+    if (loggedIn) loggedIn.style.display = 'none';
+}
+
+let accountHomeMarkup = null;
+
+function showLoggedInAccount(user) {
+    const loggedOut = document.getElementById('account-logged-out');
+    const loggedIn = document.getElementById('account-logged-in');
+
+    if (!loggedIn) return;
+
+    // On mÃ©morise une seule fois le contenu original de "Mon compte".
+    if (accountHomeMarkup === null) {
+        accountHomeMarkup = loggedIn.innerHTML;
+    }
+
+    // Si "Mes commandes" a remplacÃ© le contenu, on restaure "Mon compte".
+    if (!document.getElementById('account-name')) {
+        loggedIn.innerHTML = accountHomeMarkup;
+    }
+
+    if (loggedOut) loggedOut.style.display = 'none';
+    loggedIn.style.display = 'block';
+
+    const name = document.getElementById('account-name');
+    const email = document.getElementById('account-email');
+    const avatar = document.getElementById('account-avatar');
+
+    if (name) {
+        name.textContent = user.name || 'Mon compte';
+    }
+
+    if (email) {
+        email.textContent = user.email || '';
+    }
+
+    if (avatar) {
+        if (user.avatarUrl) {
+            avatar.src = user.avatarUrl;
+            avatar.style.display = 'inline-block';
+        } else {
+            avatar.style.display = 'none';
+        }
+    }
+}
+
+async function showAccountSection(section) {
+    if (section === 'orders') {
+        await loadAccountOrders();
+        return;
+    }
+
+    if (section === 'addresses') {
+    await loadAccountAddresses();
+    return;
+}
+
+    if (section === 'profile') {
+        await loadAccountProfile();
+        return;
+    }
+}
+
+async function loadAccountProfile() {
+    const loggedIn = document.getElementById('account-logged-in');
+
+    if (!loggedIn) return;
+
+    try {
+        const response = await fetch('/api/account-profile', {
+            method: 'GET',
+            credentials: 'include',
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.user) {
+            alert(data.error || 'Impossible de charger vos informations.');
+            return;
+        }
+
+        loggedIn.innerHTML = `
+            <div class="account-section">
+                <button type="button" id="account-profile-back" class="account-back-button">
+                    Retour &agrave; mon compte
+                </button>
+
+                <h2>Mes informations</h2>
+
+                <form id="account-profile-form" class="account-profile-form">
+                    <label for="account-profile-name">Nom</label>
+                    <input
+                        type="text"
+                        id="account-profile-name"
+                        name="name"
+                        value="${escapeAccountHtml(data.user.name || '')}"
+                        required
+                    >
+
+                    <label for="account-profile-email">E-mail</label>
+                    <input
+                        type="email"
+                        id="account-profile-email"
+                        value="${escapeAccountHtml(data.user.email || '')}"
+                        disabled
+                    >
+
+                    <label for="account-profile-phone">T&eacute;l&eacute;phone</label>
+                    <input
+                        type="tel"
+                        id="account-profile-phone"
+                        name="phone"
+                        value="${escapeAccountHtml(data.user.phone || '')}"
+                    >
+
+                    <div class="account-form-actions">
+                        <button type="submit">Enregistrer</button>
+                    </div>
+                </form>
+            </div>
+        `;
+
+        const backButton = document.getElementById('account-profile-back');
+
+        if (backButton) {
+            backButton.addEventListener('click', () => {
+                showLoggedInAccount(data.user);
+            });
+        }
+
+        const form = document.getElementById('account-profile-form');
+
+        if (!form) return;
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const nameInput = document.getElementById('account-profile-name');
+            const phoneInput = document.getElementById('account-profile-phone');
+
+            const name = nameInput?.value.trim() || '';
+            const phone = phoneInput?.value.trim() || '';
+
+            if (!name) {
+                alert('Le nom est obligatoire.');
+                return;
+            }
+
+            try {
+                const saveResponse = await fetch('/api/account-profile', {
+                    method: 'PUT',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name,
+                        phone,
+                    }),
+                });
+
+                const saveData = await saveResponse.json();
+
+                if (!saveResponse.ok || !saveData.user) {
+                    alert(saveData.error || 'Impossible d\u2019enregistrer vos informations.');
+                    return;
+                }
+
+                alert('Vos informations ont bien \u00e9t\u00e9 enregistr\u00e9es.');
+                showLoggedInAccount(saveData.user);
+            } catch (error) {
+                console.error('Account profile save failed', error);
+                alert('Une erreur est survenue. Veuillez r\u00e9essayer.');
+            }
+        });
+    } catch (error) {
+        console.error('Account profile load failed', error);
+        alert('Impossible de charger vos informations.');
+    }
+}
+
+async function loadAccountAddresses() {
+    const loggedIn = document.getElementById('account-logged-in');
+
+    if (!loggedIn) return;
+
+    try {
+        const response = await fetch('/api/account-addresses', {
+            method: 'GET',
+            credentials: 'include',
+            cache: 'no-store',
+        });
+
+        if (response.status === 401) {
+            showLoggedOutAccount();
+            return;
+        }
+
+        if (!response.ok) {
+            throw new Error('Impossible de recuperer les adresses.');
+        }
+
+        const data = await response.json();
+        const addresses = Array.isArray(data.addresses) ? data.addresses : [];
+
+        loggedIn.innerHTML = `
+            <div class="account-profile">
+                <div class="account-icon"><i class="fas fa-location-dot"></i></div>
+                <h2>Mes adresses</h2>
+                <p>${addresses.length} adresse${addresses.length > 1 ? 's' : ''} enregistrÃ©e${addresses.length > 1 ? 's' : ''}</p>
+            </div>
+
+            <div class="account-addresses-list">
+                ${
+                    addresses.length === 0
+                        ? `
+                            <div class="account-empty-state">
+                                Vous n'avez encore aucune adresse enregistrÃ©e.
+                            </div>
+                        `
+                        : addresses.map(address => `
+                            <div class="account-address-card">
+                                <div class="account-address-header">
+                                    <strong>${escapeAccountHtml(address.label || 'Adresse')}</strong>
+                                    ${address.isDefault ? '<span class="account-address-default">Adresse par dÃ©faut</span>' : ''}
+                                </div>
+
+                                <p>
+                                    <strong>${escapeAccountHtml(address.recipientName || '')}</strong><br>
+                                    ${escapeAccountHtml(address.address || '')}
+                                    ${address.phone ? `<br>${escapeAccountHtml(address.phone)}` : ''}
+                                </p>
+
+                                <div class="account-address-actions">
+                                    <button type="button" onclick="editAccountAddress('${escapeAccountHtml(address.id)}')">
+                                        Modifier
+                                    </button>
+
+                                    <button type="button" onclick="deleteAccountAddress('${escapeAccountHtml(address.id)}')">
+                                        Supprimer
+                                    </button>
+
+                                    ${
+                                        address.isDefault
+                                            ? ''
+                                            : `
+                                                <button type="button" onclick="setDefaultAccountAddress('${escapeAccountHtml(address.id)}')">
+                                                    DÃ©finir par dÃ©faut
+                                                </button>
+                                            `
+                                    }
+                                </div>
+                            </div>
+                        `
+                    ).join('')
+                }
+
+                <button type="button" onclick="showAddAddressForm()">
+                    <i class="fas fa-plus"></i>
+                    Ajouter une adresse
+                </button>
+
+                <button type="button" onclick="loadAccount()">
+                    Retour Ã  mon compte
+                </button>
+            </div>
+        `;
+    } catch (error) {
+        console.error('Erreur lors du chargement des adresses :', error);
+
+        loggedIn.innerHTML = `
+            <div class="account-profile">
+                <div class="account-icon"><i class="fas fa-circle-exclamation"></i></div>
+                <h2>Mes adresses</h2>
+                <p>Impossible de rÃ©cupÃ©rer tes adresses pour le moment.</p>
+            </div>
+
+            <button type="button" onclick="loadAccount()">
+                Retour Ã  mon compte
+            </button>
+        `;
+    }
+}
+
+function showAddAddressForm() {
+    showAddressForm();
+}
+
+function showAddressForm(address = null) {
+    const loggedIn = document.getElementById('account-logged-in');
+
+    if (!loggedIn) return;
+
+    const isEdit = Boolean(address);
+    const safeAddress = address || {};
+
+    loggedIn.innerHTML = `
+        <div class="account-profile">
+            <div class="account-icon"><i class="fas fa-location-dot"></i></div>
+            <h2>${isEdit ? 'Modifier mon adresse' : 'Ajouter une adresse'}</h2>
+            <p>${isEdit ? 'Modifiez les informations de cette adresse.' : 'Enregistrez une nouvelle adresse pour vos commandes.'}</p>
+        </div>
+
+        <form id="account-address-form" class="account-address-form">
+            <label>
+                Nom de l'adresse
+                <input
+                    id="address-label"
+                    type="text"
+                    value="${escapeAccountHtml(safeAddress.label || '')}"
+                    required
+                >
+            </label>
+
+            <label>
+                Nom du destinataire
+                <input
+                    id="address-recipient"
+                    type="text"
+                    value="${escapeAccountHtml(safeAddress.recipientName || '')}"
+                    required
+                >
+            </label>
+
+            <label>
+                Adresse complÃ¨te
+                <textarea
+                    id="address-line"
+                    required
+                >${escapeAccountHtml(safeAddress.address || '')}</textarea>
+            </label>
+
+            <label>
+                TÃ©lÃ©phone
+                <input
+                    id="address-phone"
+                    type="tel"
+                    value="${escapeAccountHtml(safeAddress.phone || '')}"
+                >
+            </label>
+
+            <label class="account-address-checkbox">
+                <input
+                    id="address-default"
+                    type="checkbox"
+                    ${safeAddress.isDefault ? 'checked' : ''}
+                >
+                DÃ©finir comme adresse par dÃ©faut
+            </label>
+
+            <div class="account-address-form-actions">
+                <button type="submit">
+                    ${isEdit ? 'Enregistrer les modifications' : 'Ajouter cette adresse'}
+                </button>
+
+                <button type="button" onclick="loadAccountAddresses()">
+                    Annuler
+                </button>
+            </div>
+        </form>
+    `;
+
+    const form = document.getElementById('account-address-form');
+
+    if (!form) return;
+
+    form.addEventListener('submit', async event => {
+        event.preventDefault();
+
+        const payload = {
+            label: document.getElementById('address-label').value.trim(),
+            recipientName: document.getElementById('address-recipient').value.trim(),
+            address: document.getElementById('address-line').value.trim(),
+            phone: document.getElementById('address-phone').value.trim(),
+            isDefault: document.getElementById('address-default').checked,
+        };
+
+        if (isEdit) {
+            payload.id = address.id;
+        }
+
+        try {
+            const response = await fetch('/api/account-addresses', {
+                method: isEdit ? 'PUT' : 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload),
+            });
+
+            if (response.status === 401) {
+                showLoggedOutAccount();
+                return;
+            }
+
+            if (!response.ok) {
+                const data = await response.json().catch(() => ({}));
+                throw new Error(data.error || 'Impossible dâ€™enregistrer cette adresse.');
+            }
+
+            await loadAccountAddresses();
+        } catch (error) {
+            console.error('Erreur lors de lâ€™enregistrement de lâ€™adresse :', error);
+            alert(error.message || 'Impossible dâ€™enregistrer cette adresse.');
+        }
+    });
+}
+
+function escapeAccountHtml(value) {
+    return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
+async function editAccountAddress(id) {
+    try {
+        const response = await fetch('/api/account-addresses', {
+            method: 'GET',
+            credentials: 'include',
+            cache: 'no-store',
+        });
+
+        if (response.status === 401) {
+            showLoggedOutAccount();
+            return;
+        }
+
+        if (!response.ok) {
+            throw new Error('Impossible de rÃ©cupÃ©rer les adresses.');
+        }
+
+        const data = await response.json();
+        const addresses = Array.isArray(data.addresses) ? data.addresses : [];
+        const address = addresses.find(item => String(item.id) === String(id));
+
+        if (!address) {
+            alert('Cette adresse est introuvable.');
+            return;
+        }
+
+        showAddressForm(address);
+    } catch (error) {
+        console.error('Erreur lors de la rÃ©cupÃ©ration de lâ€™adresse :', error);
+        alert('Impossible de modifier cette adresse pour le moment.');
+    }
+}
+
+async function deleteAccountAddress(id) {
+    if (!confirm('Voulez-vous vraiment supprimer cette adresse ?')) {
+        return;
+    }
+
+    try {
+        const response = await fetch('/api/account-addresses?id=' + encodeURIComponent(id), {
+            method: 'DELETE',
+            credentials: 'include',
+        });
+
+        if (response.status === 401) {
+            showLoggedOutAccount();
+            return;
+        }
+
+        if (!response.ok) {
+            const data = await response.json().catch(() => ({}));
+            throw new Error(data.error || 'Impossible de supprimer cette adresse.');
+        }
+
+        await loadAccountAddresses();
+    } catch (error) {
+        console.error('Erreur lors de la suppression de lâ€™adresse :', error);
+        alert(error.message || 'Impossible de supprimer cette adresse.');
+    }
+}
+
+async function setDefaultAccountAddress(id) {
+    try {
+        const response = await fetch('/api/account-addresses', {
+            method: 'GET',
+            credentials: 'include',
+            cache: 'no-store',
+        });
+
+        if (response.status === 401) {
+            showLoggedOutAccount();
+            return;
+        }
+
+        if (!response.ok) {
+            throw new Error('Impossible de rÃ©cupÃ©rer les adresses.');
+        }
+
+        const data = await response.json();
+        const addresses = Array.isArray(data.addresses) ? data.addresses : [];
+        const address = addresses.find(item => String(item.id) === String(id));
+
+        if (!address) {
+            alert('Cette adresse est introuvable.');
+            return;
+        }
+
+        const updateResponse = await fetch('/api/account-addresses', {
+            method: 'PUT',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                id: address.id,
+                label: address.label || '',
+                recipientName: address.recipientName || '',
+                address: address.address || '',
+                phone: address.phone || '',
+                isDefault: true,
+            }),
+        });
+
+        if (updateResponse.status === 401) {
+            showLoggedOutAccount();
+            return;
+        }
+
+        if (!updateResponse.ok) {
+            const updateData = await updateResponse.json().catch(() => ({}));
+            throw new Error(updateData.error || 'Impossible de dÃ©finir cette adresse par dÃ©faut.');
+        }
+
+        await loadAccountAddresses();
+    } catch (error) {
+        console.error('Erreur lors de la dÃ©finition de lâ€™adresse par dÃ©faut :', error);
+        alert(error.message || 'Impossible de dÃ©finir cette adresse par dÃ©faut.');
+    }
+}
+async function loadAccountOrders() {
+    const loggedIn = document.getElementById('account-logged-in');
+
+    if (!loggedIn) return;
+
+    try {
+        const response = await fetch('/api/account-orders', {
+            method: 'GET',
+            credentials: 'include',
+            cache: 'no-store',
+        });
+
+        if (response.status === 401) {
+            showLoggedOutAccount();
+            return;
+        }
+
+        if (!response.ok) {
+            throw new Error('Impossible de rÃ©cupÃ©rer les commandes.');
+        }
+
+        const data = await response.json();
+
+        if (!Array.isArray(data.orders) || data.orders.length === 0) {
+            loggedIn.innerHTML = `
+                <div class="account-profile">
+                    <div class="account-icon">
+                        <i class="fas fa-box-open"></i>
+                    </div>
+                    <h2>Mes commandes</h2>
+                    <p>Tu n'as pas encore passÃ© de commande avec ce compte.</p>
+                </div>
+
+                <button type="button" onclick="loadAccount()">
+                    Retour Ã  mon compte
+                </button>
+            `;
+
+            return;
+        }
+
+        loggedIn.innerHTML = `
+            <div class="account-profile">
+                <div class="account-icon">
+                    <i class="fas fa-box"></i>
+                </div>
+                <h2>Mes commandes</h2>
+                <p>${data.orders.length} commande${data.orders.length > 1 ? 's' : ''}</p>
+            </div>
+
+            <div class="account-orders-list">
+                ${data.orders.map(order => {
+                    const date = new Date(order.createdAt).toLocaleDateString('fr-FR');
+
+                    const total = `${(order.totalCents / 100).toFixed(2).replace('.', ',')} â‚¬`;
+
+                    let status = 'Commande enregistrÃ©e';
+
+                    if (order.deliveredAt || order.shipmentStatus === 'delivered') {
+                        status = 'LivrÃ©e';
+                    } else if (order.shipmentStatus === 'shipped') {
+                        status = 'ExpÃ©diÃ©e';
+                    } else if (order.paymentStatus === 'paid') {
+                        status = 'PrÃ©paration de la commande';
+                    }
+
+                    return `
+                        <div class="account-order-card">
+                            <div class="account-order-header">
+                                <strong>${order.orderNumber}</strong>
+                                <span>${date}</span>
+                            </div>
+
+                            <div class="account-order-status">
+                                ${status}
+                            </div>
+
+                            <div class="account-order-items">
+                                ${order.items.map(item => `
+                                    <div class="account-order-item">
+                                        <span>
+                                            ${item.quantity} Ã— ${item.name}
+                                            â€” ${item.size}
+                                        </span>
+                                        <span>
+                                            ${(item.lineTotalCents / 100).toFixed(2).replace('.', ',')} â‚¬
+                                        </span>
+                                    </div>
+                                `).join('')}
+                            </div>
+
+                            <div class="account-order-total">
+                                <span>Total</span>
+                                <strong>${total}</strong>
+                            </div>
+
+                            ${order.trackingUrl ? `
+                                <a
+                                    href="${order.trackingUrl}"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="account-tracking-btn"
+                                >
+                                    Suivre mon colis
+                                </a>
+                            ` : ''}
+                        </div>
+                    `;
+                }).join('')}
+
+                <button type="button" onclick="loadAccount()">
+                    Retour Ã  mon compte
+                </button>
+            </div>
+        `;
+    } catch (error) {
+        console.error('Erreur lors du chargement des commandes :', error);
+
+        loggedIn.innerHTML = `
+            <div class="account-profile">
+                <div class="account-icon">
+                    <i class="fas fa-circle-exclamation"></i>
+                </div>
+
+                <h2>Mes commandes</h2>
+
+                <p>
+                    Impossible de rÃ©cupÃ©rer tes commandes pour le moment.
+                </p>
+            </div>
+
+            <button type="button" onclick="loadAccount()">
+                Retour Ã  mon compte
+            </button>
+        `;
+    }
+}
+
+        function openMayolInfo() {
+            showPage('about');
+            setTimeout(() => document.querySelector('.mayol-section').scrollIntoView({ behavior: 'smooth', block: 'center' }), 60);
+        }
+
+        function scrollToProduct() {
+            showPage('home');
+            setActiveProduct('authentique');
+            setTimeout(scrollToActiveProduct, 10);
+        }
+
+        function toggleFaq(element) {
+            const item = element.parentElement;
+            const wasOpen = item.classList.contains('open');
+            document.querySelectorAll('.faq-item').forEach(faq => faq.classList.remove('open'));
+            if (!wasOpen) item.classList.add('open');
+        }
+
+        function toggleReviews() {
+            const hiddenReviews = document.querySelectorAll('.review-card.hidden-review');
+            const button = document.getElementById('btn-review-action');
+            reviewsExpanded = !reviewsExpanded;
+            hiddenReviews.forEach(review => review.style.display = reviewsExpanded ? 'block' : 'none');
+            button.innerHTML = reviewsExpanded ? 'Voir moins d\'avis <i class="fas fa-chevron-up" style="margin-left:5px;"></i>' : 'Voir plus d\'avis <i class="fas fa-chevron-down" style="margin-left:5px;"></i>';
+        }
+
+        function showToast(message, isError = true) {
+            const toast = document.getElementById('toast-notification');
+            document.getElementById('toast-text').textContent = message;
+            document.getElementById('toast-icon').className = isError ? 'fas fa-exclamation-circle' : 'fas fa-check-circle';
+            toast.style.borderLeft = `4px solid ${isError ? 'var(--sunny-pink)' : 'var(--whatsapp)'}`;
+            toast.style.display = 'flex';
+            setTimeout(() => toast.classList.add('show'), 10);
+            setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.style.display = 'none', 400); }, 3000);
+        }
+
+        window.addEventListener('scroll', () => {
+            const product = products[activeProductId];
+            const button = document.getElementById(product.buttonId);
+            const sticky = document.getElementById('sticky-mini-cart');
+            const whatsapp = document.getElementById('whatsapp-btn');
+            const visible = window.innerWidth <= 768 && button.getBoundingClientRect().bottom < 0 && document.getElementById('home-page').classList.contains('active');
+            sticky.classList.toggle('visible', visible);
+            whatsapp.classList.toggle('adjust-up', visible);
+        });
+
+        document.querySelectorAll('.product-container').forEach(section => {
+            section.addEventListener('pointerdown', () => setActiveProduct(getProductIdFromSection(section.id)));
+        });
+
+        const productObserver = new IntersectionObserver(entries => {
+            const visibleProduct = entries.filter(entry => entry.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+            if (visibleProduct) setActiveProduct(getProductIdFromSection(visibleProduct.target.id));
+        }, { threshold: [0.35, 0.6] });
+        document.querySelectorAll('.product-container').forEach(section => productObserver.observe(section));
+
+        Object.keys(products).forEach(renderProductSlider);
+        Object.keys(products).forEach(updateProductButton);
+        updateStickyMiniCartText();
+        if (pendingPayment && !cart.length) clearCheckoutAttempt();
+        renderCart();
+        renderCollections();
+        initDeliveryQuote();
+        if (pendingPayment && cart.length) {
+            const status = document.getElementById('checkout-status');
+            status.className = 'checkout-status success';
+            status.textContent = `La commande ${pendingPayment.orderNumber} attend son paiement.`;
+            openPaymentModal(pendingPayment.total, pendingPayment.orderNumber);
+        }
+    </script>
+    <!-- MON COMPTE -->
+<div id="account-modal" class="account-modal" aria-hidden="true">
+    <div class="account-modal-overlay" onclick="closeAccount()"></div>
+
+    <div class="account-modal-content">
+        <button class="account-close" type="button" onclick="closeAccount()" aria-label="Fermer">
+            <i class="fas fa-times"></i>
+        </button>
+
+        <div id="account-logged-out">
+            <div class="account-icon">
+                <i class="fas fa-user"></i>
+            </div>
+
+            <h2>Mon compte</h2>
+            <p>Connecte-toi pour retrouver tes commandes et tes informations.</p>
+
+            <button class="google-login-btn" type="button" onclick="loginWithGoogle()">
+                <i class="fab fa-google"></i>
+                Continuer avec Google
+            </button>
+        </div>
+
+        <div id="account-logged-in" style="display: none;">
+            <div class="account-profile">
+                <img id="account-avatar" src="" alt="Photo de profil">
+                <h2 id="account-name">Mon compte</h2>
+                <p id="account-email"></p>
+            </div>
+
+            <div class="account-actions">
+                <button type="button" onclick="showAccountSection('orders')">
+                    <i class="fas fa-box"></i>
+                    Mes commandes
+                </button>
+
+                <button type="button" onclick="showAccountSection('addresses')">
+                    <i class="fas fa-location-dot"></i>
+                    Mes adresses
+                </button>
+
+                <button type="button" onclick="showAccountSection('profile')">
+                    <i class="fas fa-user-pen"></i>
+                    Mes informations
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- MODULE DE SUIVI DE LIVRAISON FORK -->
+<div id="order-tracking-section" class="bg-white rounded-xl p-6 shadow-sm border border-gray-100 my-4" style="display:none;">
+  <div class="flex justify-between items-center mb-6">
+    <div>
+      <h3 class="font-bold text-lg text-gray-900">Suivi de livraison en direct</h3>
+      <p id="tracking-info-text" class="text-sm text-gray-500 mt-1">
+        Transporteur : <span id="carrier-name" class="font-medium uppercase">Colissimo</span> | N° : <span id="tracking-num" class="font-mono text-gray-800">-</span>
+      </p>
+    </div>
+    <a id="carrier-link" href="#" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-black rounded-lg hover:bg-gray-800 transition-colors hidden">
+      Suivre sur le site officiel
+    </a>
+  </div>
+  <div class="relative flex items-center justify-between max-w-2xl mx-auto my-8">
+    <div class="flex flex-col items-center relative z-10 flex-1 step-item" data-step="pending"><div class="w-10 h-10 rounded-full flex items-center justify-center bg-gray-100 text-gray-400 border-2 border-gray-200 step-icon">📦</div><span class="text-xs mt-2 text-center font-medium text-gray-400">Confirmée</span></div>
+    <div class="flex flex-col items-center relative z-10 flex-1 step-item" data-step="processing"><div class="w-10 h-10 rounded-full flex items-center justify-center bg-gray-100 text-gray-400 border-2 border-gray-200 step-icon">🛠️</div><span class="text-xs mt-2 text-center font-medium text-gray-400">Préparation</span></div>
+    <div class="flex flex-col items-center relative z-10 flex-1 step-item" data-step="shipped"><div class="w-10 h-10 rounded-full flex items-center justify-center bg-gray-100 text-gray-400 border-2 border-gray-200 step-icon">🚚</div><span class="text-xs mt-2 text-center font-medium text-gray-400">Expédié</span></div>
+    <div class="flex flex-col items-center relative z-10 flex-1 step-item" data-step="delivered"><div class="w-10 h-10 rounded-full flex items-center justify-center bg-gray-100 text-gray-400 border-2 border-gray-200 step-icon">✨</div><span class="text-xs mt-2 text-center font-medium text-gray-400">Livré</span></div>
+    <div class="absolute top-5 left-0 right-0 h-0.5 bg-gray-200 -z-0 mx-10"></div>
+  </div>
+</div>
+<script>
+  function renderOrderTracking(order) {
+    const section = document.getElementById('order-tracking-section');
+    if (!section || !order || !order.trackingNumber) return;
+    section.style.display = 'block';
+    document.getElementById('carrier-name').textContent = order.carrier || 'colissimo';
+    document.getElementById('tracking-num').textContent = order.trackingNumber;
+    const links = {
+      colissimo: 'https://www.laposte.fr/outils/suivre-vos-envois?code=' + order.trackingNumber,
+      mondial_relay: 'https://www.mondialrelay.fr/suivi-de-colis?numeroColis=' + order.trackingNumber,
+      chronopost: 'https://www.chronopost.fr/tracking-no-dossier?listeNumeros=' + order.trackingNumber
+    };
+    const linkEl = document.getElementById('carrier-link');
+    linkEl.href = links[order.carrier] || links.colissimo;
+    linkEl.classList.remove('hidden');
+    const stepsOrder = ['pending', 'processing', 'shipped', 'delivered'];
+    const currentIndex = stepsOrder.indexOf(order.shippingStatus || 'pending');
+    document.querySelectorAll('.step-item').forEach((el, index) => {
+      const iconCircle = el.querySelector('.step-icon');
+      const textLabel = el.querySelector('span');
+      if (index <= currentIndex) {
+        iconCircle.className = "w-10 h-10 rounded-full flex items-center justify-center bg-black text-white step-icon ring-4 ring-gray-100";
+        textLabel.className = "text-xs mt-2 text-center font-medium text-black";
+      } else {
+        iconCircle.className = "w-10 h-10 rounded-full flex items-center justify-center bg-gray-100 text-gray-400 border-2 border-gray-200 step-icon";
+        textLabel.className = "text-xs mt-2 text-center font-medium text-gray-400";
+      }
+    });
+  }
+</script>
+</body>
+</html>
+

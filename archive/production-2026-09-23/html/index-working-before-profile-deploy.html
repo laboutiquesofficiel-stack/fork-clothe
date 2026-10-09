@@ -509,7 +509,397 @@
     .slide-arrow:first-child { left: 5px; }
     .slide-arrow:last-child { right: 5px; }
 }
-    </style>
+/* =========================
+   MON COMPTE
+   ========================= */
+
+.account-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+}
+
+.account-modal.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.account-modal-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(3px);
+}
+
+.account-modal-content {
+    position: relative;
+    z-index: 2;
+    width: min(92%, 420px);
+    max-height: 90vh;
+    overflow-y: auto;
+    background: var(--paper-white);
+    border-radius: 22px;
+    padding: 32px 26px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+    text-align: center;
+}
+
+.account-close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 38px;
+    height: 38px;
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--dark);
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+.account-icon {
+    width: 70px;
+    height: 70px;
+    margin: 5px auto 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--sunny-pink);
+    color: white;
+    font-size: 1.8rem;
+}
+
+.account-modal-content h2 {
+    margin: 0 0 8px;
+    color: var(--dark);
+}
+
+.account-modal-content p {
+    color: #666;
+    margin: 0 0 24px;
+    line-height: 1.5;
+}
+
+.google-login-btn {
+    width: 100%;
+    padding: 14px 18px;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    background: white;
+    color: var(--dark);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: 0.2s ease;
+}
+
+.google-login-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+}
+
+.google-login-btn i {
+    color: #4285F4;
+}
+
+.account-profile {
+    margin-bottom: 24px;
+}
+
+.account-profile img {
+    width: 76px;
+    height: 76px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 12px;
+}
+
+.account-profile h2 {
+    margin-bottom: 4px;
+}
+
+.account-profile p {
+    margin-bottom: 0;
+    font-size: 0.9rem;
+}
+
+.account-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.account-actions button {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid #e5e5e5;
+    border-radius: 12px;
+    background: white;
+    color: var(--dark);
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.account-actions button i {
+    width: 22px;
+    color: var(--sunny-pink);
+}
+.account-orders-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    width: 100%;
+}
+
+.account-order-card {
+    background: #fafafa;
+    border: 1px solid #e5e5e5;
+    border-radius: 16px;
+    padding: 16px;
+    text-align: left;
+}
+
+.account-order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+.account-order-header strong {
+    font-size: 15px;
+}
+
+.account-order-header span {
+    color: #777;
+    font-size: 13px;
+}
+
+.account-order-status {
+    display: inline-block;
+    margin-bottom: 14px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: #f0f0f0;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.account-order-items {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    border-top: 1px solid #e5e5e5;
+    padding-top: 12px;
+}
+
+.account-order-item {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 13px;
+}
+
+.account-order-total {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid #e5e5e5;
+}
+
+.account-tracking-btn {
+    display: block;
+    margin-top: 14px;
+    padding: 11px 14px;
+    border-radius: 10px;
+    background: #111;
+    color: #fff;
+    text-align: center;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+}
+    
+
+.account-addresses-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    width: 100%;
+    margin-top: 20px;
+}
+
+.account-address-card {
+    padding: 16px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 14px;
+    background: #fff;
+    text-align: left;
+}
+
+.account-address-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.account-address-header strong {
+    font-size: 16px;
+}
+
+.account-address-default {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 5px 8px;
+    border-radius: 999px;
+    background: #111;
+    color: #fff;
+}
+
+.account-address-card p {
+    margin: 0;
+    line-height: 1.6;
+    color: #555;
+}
+
+.account-address-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 14px;
+}
+
+.account-address-actions button {
+    border: 1px solid #ddd;
+    background: #fff;
+    border-radius: 8px;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.account-address-actions button:hover {
+    background: #f5f5f5;
+}
+
+.account-empty-state {
+    padding: 18px;
+    border-radius: 14px;
+    background: #f7f7f7;
+    color: #666;
+    line-height: 1.5;
+}
+
+.account-address-form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    width: 100%;
+    margin-top: 20px;
+    text-align: left;
+}
+
+.account-address-form label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.account-address-form input,
+.account-address-form textarea {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 11px 12px;
+    font: inherit;
+    background: #fff;
+    color: #111;
+}
+
+.account-address-form textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.account-address-form input:focus,
+.account-address-form textarea:focus {
+    outline: none;
+    border-color: #111;
+}
+
+.account-address-checkbox {
+    flex-direction: row !important;
+    align-items: center;
+    gap: 8px !important;
+    font-weight: 500 !important;
+}
+
+.account-address-checkbox input {
+    width: auto;
+}
+
+.account-address-form-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+.account-address-form-actions button {
+    width: 100%;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 14px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.account-address-form-actions button[type="submit"] {
+    background: #111;
+    color: #fff;
+}
+
+.account-address-form-actions button[type="button"] {
+    background: #eee;
+    color: #111;
+}
+
+@media (max-width: 480px) {
+    .account-address-card {
+        padding: 14px;
+    }
+
+    .account-address-actions {
+        flex-direction: column;
+    }
+
+    .account-address-actions button {
+        width: 100%;
+    }
+}
+    
+
+</style>
 </head>
 <body>
 
@@ -581,6 +971,11 @@
         <ul>
             <li class="nav-secondary"><span class="nav-link" onclick="showPage('home')">Accueil</span></li>
             <li class="nav-secondary"><span class="nav-link" onclick="showPage('about')">À Propos</span></li>
+            <li>
+    <button class="account-trigger" type="button" onclick="openAccount()" aria-label="Mon compte">
+        <i class="fas fa-user"></i>
+    </button>
+</li>
             <li><button class="cart-trigger" type="button" onclick="scrollToCart()" aria-label="Voir le panier"><i class="fas fa-shopping-bag"></i><span class="cart-count" id="cart-count">0</span></button></li>
             <li><a href="https://www.instagram.com/fork__off/" target="_blank" style="color: var(--sunny-pink); font-size: 1.2rem;"><i class="fab fa-instagram"></i></a></li>
             <li><button class="collections-nav-btn" type="button" onclick="openCollections()">Nos Collections</button></li>
@@ -1406,7 +1801,7 @@
             pendingPayment = { total, orderNumber };
             localStorage.setItem(PENDING_PAYMENT_STORAGE_KEY, JSON.stringify(pendingPayment));
             const paypalUrl = new URL('https://www.paypal.com/cgi-bin/webscr');
-            paypalUrl.search = new URLSearchParams({ cmd: '_xclick', business: 'Pialat210@gmail.com', currency_code: 'EUR', amount: total.toFixed(2), item_name: `Commande FORK ${orderNumber}`, custom: orderNumber }).toString();
+            paypalUrl.search = new URLSearchParams({ cmd: '_xclick', business: '[adresse-retiree]', currency_code: 'EUR', amount: total.toFixed(2), item_name: `Commande FORK ${orderNumber}`, custom: orderNumber }).toString();
             const paypalLink = document.getElementById('paypal-link');
             paypalLink.href = paypalUrl.toString();
             paypalLink.textContent = `Payer avec PayPal (${formatPrice(total)})`;
@@ -1554,6 +1949,738 @@
             document.getElementById(`${pageId}-page`).classList.add('active');
             window.scrollTo(0, 0);
         }
+        // =========================
+// MON COMPTE / GOOGLE
+// =========================
+
+function openAccount() {
+    const modal = document.getElementById('account-modal');
+
+    if (!modal) return;
+
+    modal.classList.add('active');
+    modal.setAttribute('aria-hidden', 'false');
+
+    loadAccount();
+}
+
+function closeAccount() {
+    const modal = document.getElementById('account-modal');
+
+    if (!modal) return;
+
+    modal.classList.remove('active');
+    modal.setAttribute('aria-hidden', 'true');
+}
+
+function loginWithGoogle() {
+    window.location.href = '/.netlify/functions/auth-google';
+}
+
+async function loadAccount() {
+    try {
+        const response = await fetch('/.netlify/functions/me', {
+            credentials: 'include',
+        });
+
+        if (!response.ok) {
+            showLoggedOutAccount();
+            return;
+        }
+
+        const data = await response.json();
+
+        if (!data.authenticated || !data.user) {
+            showLoggedOutAccount();
+            return;
+        }
+
+        showLoggedInAccount(data.user);
+    } catch (error) {
+        console.error('Erreur lors du chargement du compte :', error);
+        showLoggedOutAccount();
+    }
+}
+
+function showLoggedOutAccount() {
+    const loggedOut = document.getElementById('account-logged-out');
+    const loggedIn = document.getElementById('account-logged-in');
+
+    if (loggedOut) loggedOut.style.display = 'block';
+    if (loggedIn) loggedIn.style.display = 'none';
+}
+
+let accountHomeMarkup = null;
+
+function showLoggedInAccount(user) {
+    const loggedOut = document.getElementById('account-logged-out');
+    const loggedIn = document.getElementById('account-logged-in');
+
+    if (!loggedIn) return;
+
+    // On mémorise une seule fois le contenu original de "Mon compte".
+    if (accountHomeMarkup === null) {
+        accountHomeMarkup = loggedIn.innerHTML;
+    }
+
+    // Si "Mes commandes" a remplacé le contenu, on restaure "Mon compte".
+    if (!document.getElementById('account-name')) {
+        loggedIn.innerHTML = accountHomeMarkup;
+    }
+
+    if (loggedOut) loggedOut.style.display = 'none';
+    loggedIn.style.display = 'block';
+
+    const name = document.getElementById('account-name');
+    const email = document.getElementById('account-email');
+    const avatar = document.getElementById('account-avatar');
+
+    if (name) {
+        name.textContent = user.name || 'Mon compte';
+    }
+
+    if (email) {
+        email.textContent = user.email || '';
+    }
+
+    if (avatar) {
+        if (user.avatarUrl) {
+            avatar.src = user.avatarUrl;
+            avatar.style.display = 'inline-block';
+        } else {
+            avatar.style.display = 'none';
+        }
+    }
+}
+
+async function showAccountSection(section) {
+    if (section === 'orders') {
+        await loadAccountOrders();
+        return;
+    }
+
+    if (section === 'addresses') {
+    await loadAccountAddresses();
+    return;
+}
+
+    if (section === 'profile') {
+        await loadAccountProfile();
+        return;
+    }
+}
+
+async function loadAccountProfile() {
+    const loggedIn = document.getElementById('account-logged-in');
+
+    if (!loggedIn) return;
+
+    try {
+        const response = await fetch('/api/account-profile', {
+            method: 'GET',
+            credentials: 'include',
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.user) {
+            alert(data.error || 'Impossible de charger vos informations.');
+            return;
+        }
+
+        loggedIn.innerHTML = `
+            <div class="account-section">
+                <button type="button" id="account-profile-back" class="account-back-button">
+                    Retour &agrave; mon compte
+                </button>
+
+                <h2>Mes informations</h2>
+
+                <form id="account-profile-form" class="account-profile-form">
+                    <label for="account-profile-name">Nom</label>
+                    <input
+                        type="text"
+                        id="account-profile-name"
+                        name="name"
+                        value="${escapeAccountHtml(data.user.name || '')}"
+                        required
+                    >
+
+                    <label for="account-profile-email">E-mail</label>
+                    <input
+                        type="email"
+                        id="account-profile-email"
+                        value="${escapeAccountHtml(data.user.email || '')}"
+                        disabled
+                    >
+
+                    <label for="account-profile-phone">T&eacute;l&eacute;phone</label>
+                    <input
+                        type="tel"
+                        id="account-profile-phone"
+                        name="phone"
+                        value="${escapeAccountHtml(data.user.phone || '')}"
+                    >
+
+                    <div class="account-form-actions">
+                        <button type="submit">Enregistrer</button>
+                    </div>
+                </form>
+            </div>
+        `;
+
+        const backButton = document.getElementById('account-profile-back');
+
+        if (backButton) {
+            backButton.addEventListener('click', () => {
+                showLoggedInAccount(data.user);
+            });
+        }
+
+        const form = document.getElementById('account-profile-form');
+
+        if (!form) return;
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const nameInput = document.getElementById('account-profile-name');
+            const phoneInput = document.getElementById('account-profile-phone');
+
+            const name = nameInput?.value.trim() || '';
+            const phone = phoneInput?.value.trim() || '';
+
+            if (!name) {
+                alert('Le nom est obligatoire.');
+                return;
+            }
+
+            try {
+                const saveResponse = await fetch('/api/account-profile', {
+                    method: 'PUT',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name,
+                        phone,
+                    }),
+                });
+
+                const saveData = await saveResponse.json();
+
+                if (!saveResponse.ok || !saveData.user) {
+                    alert(saveData.error || 'Impossible d\u2019enregistrer vos informations.');
+                    return;
+                }
+
+                alert('Vos informations ont bien \u00e9t\u00e9 enregistr\u00e9es.');
+                showLoggedInAccount(saveData.user);
+            } catch (error) {
+                console.error('Account profile save failed', error);
+                alert('Une erreur est survenue. Veuillez r\u00e9essayer.');
+            }
+        });
+    } catch (error) {
+        console.error('Account profile load failed', error);
+        alert('Impossible de charger vos informations.');
+    }
+}
+
+async function loadAccountAddresses() {
+    const loggedIn = document.getElementById('account-logged-in');
+
+    if (!loggedIn) return;
+
+    try {
+        const response = await fetch('/api/account-addresses', {
+            method: 'GET',
+            credentials: 'include',
+            cache: 'no-store',
+        });
+
+        if (response.status === 401) {
+            showLoggedOutAccount();
+            return;
+        }
+
+        if (!response.ok) {
+            throw new Error('Impossible de recuperer les adresses.');
+        }
+
+        const data = await response.json();
+        const addresses = Array.isArray(data.addresses) ? data.addresses : [];
+
+        loggedIn.innerHTML = `
+            <div class="account-profile">
+                <div class="account-icon"><i class="fas fa-location-dot"></i></div>
+                <h2>Mes adresses</h2>
+                <p>${addresses.length} adresse${addresses.length > 1 ? 's' : ''} enregistrée${addresses.length > 1 ? 's' : ''}</p>
+            </div>
+
+            <div class="account-addresses-list">
+                ${
+                    addresses.length === 0
+                        ? `
+                            <div class="account-empty-state">
+                                Vous n'avez encore aucune adresse enregistrée.
+                            </div>
+                        `
+                        : addresses.map(address => `
+                            <div class="account-address-card">
+                                <div class="account-address-header">
+                                    <strong>${escapeAccountHtml(address.label || 'Adresse')}</strong>
+                                    ${address.isDefault ? '<span class="account-address-default">Adresse par défaut</span>' : ''}
+                                </div>
+
+                                <p>
+                                    <strong>${escapeAccountHtml(address.recipientName || '')}</strong><br>
+                                    ${escapeAccountHtml(address.address || '')}
+                                    ${address.phone ? `<br>${escapeAccountHtml(address.phone)}` : ''}
+                                </p>
+
+                                <div class="account-address-actions">
+                                    <button type="button" onclick="editAccountAddress('${escapeAccountHtml(address.id)}')">
+                                        Modifier
+                                    </button>
+
+                                    <button type="button" onclick="deleteAccountAddress('${escapeAccountHtml(address.id)}')">
+                                        Supprimer
+                                    </button>
+
+                                    ${
+                                        address.isDefault
+                                            ? ''
+                                            : `
+                                                <button type="button" onclick="setDefaultAccountAddress('${escapeAccountHtml(address.id)}')">
+                                                    Définir par défaut
+                                                </button>
+                                            `
+                                    }
+                                </div>
+                            </div>
+                        `
+                    ).join('')
+                }
+
+                <button type="button" onclick="showAddAddressForm()">
+                    <i class="fas fa-plus"></i>
+                    Ajouter une adresse
+                </button>
+
+                <button type="button" onclick="loadAccount()">
+                    Retour à mon compte
+                </button>
+            </div>
+        `;
+    } catch (error) {
+        console.error('Erreur lors du chargement des adresses :', error);
+
+        loggedIn.innerHTML = `
+            <div class="account-profile">
+                <div class="account-icon"><i class="fas fa-circle-exclamation"></i></div>
+                <h2>Mes adresses</h2>
+                <p>Impossible de récupérer tes adresses pour le moment.</p>
+            </div>
+
+            <button type="button" onclick="loadAccount()">
+                Retour à mon compte
+            </button>
+        `;
+    }
+}
+
+function showAddAddressForm() {
+    showAddressForm();
+}
+
+function showAddressForm(address = null) {
+    const loggedIn = document.getElementById('account-logged-in');
+
+    if (!loggedIn) return;
+
+    const isEdit = Boolean(address);
+    const safeAddress = address || {};
+
+    loggedIn.innerHTML = `
+        <div class="account-profile">
+            <div class="account-icon"><i class="fas fa-location-dot"></i></div>
+            <h2>${isEdit ? 'Modifier mon adresse' : 'Ajouter une adresse'}</h2>
+            <p>${isEdit ? 'Modifiez les informations de cette adresse.' : 'Enregistrez une nouvelle adresse pour vos commandes.'}</p>
+        </div>
+
+        <form id="account-address-form" class="account-address-form">
+            <label>
+                Nom de l'adresse
+                <input
+                    id="address-label"
+                    type="text"
+                    value="${escapeAccountHtml(safeAddress.label || '')}"
+                    required
+                >
+            </label>
+
+            <label>
+                Nom du destinataire
+                <input
+                    id="address-recipient"
+                    type="text"
+                    value="${escapeAccountHtml(safeAddress.recipientName || '')}"
+                    required
+                >
+            </label>
+
+            <label>
+                Adresse complète
+                <textarea
+                    id="address-line"
+                    required
+                >${escapeAccountHtml(safeAddress.address || '')}</textarea>
+            </label>
+
+            <label>
+                Téléphone
+                <input
+                    id="address-phone"
+                    type="tel"
+                    value="${escapeAccountHtml(safeAddress.phone || '')}"
+                >
+            </label>
+
+            <label class="account-address-checkbox">
+                <input
+                    id="address-default"
+                    type="checkbox"
+                    ${safeAddress.isDefault ? 'checked' : ''}
+                >
+                Définir comme adresse par défaut
+            </label>
+
+            <div class="account-address-form-actions">
+                <button type="submit">
+                    ${isEdit ? 'Enregistrer les modifications' : 'Ajouter cette adresse'}
+                </button>
+
+                <button type="button" onclick="loadAccountAddresses()">
+                    Annuler
+                </button>
+            </div>
+        </form>
+    `;
+
+    const form = document.getElementById('account-address-form');
+
+    if (!form) return;
+
+    form.addEventListener('submit', async event => {
+        event.preventDefault();
+
+        const payload = {
+            label: document.getElementById('address-label').value.trim(),
+            recipientName: document.getElementById('address-recipient').value.trim(),
+            address: document.getElementById('address-line').value.trim(),
+            phone: document.getElementById('address-phone').value.trim(),
+            isDefault: document.getElementById('address-default').checked,
+        };
+
+        if (isEdit) {
+            payload.id = address.id;
+        }
+
+        try {
+            const response = await fetch('/api/account-addresses', {
+                method: isEdit ? 'PUT' : 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload),
+            });
+
+            if (response.status === 401) {
+                showLoggedOutAccount();
+                return;
+            }
+
+            if (!response.ok) {
+                const data = await response.json().catch(() => ({}));
+                throw new Error(data.error || 'Impossible d’enregistrer cette adresse.');
+            }
+
+            await loadAccountAddresses();
+        } catch (error) {
+            console.error('Erreur lors de l’enregistrement de l’adresse :', error);
+            alert(error.message || 'Impossible d’enregistrer cette adresse.');
+        }
+    });
+}
+
+function escapeAccountHtml(value) {
+    return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
+async function editAccountAddress(id) {
+    try {
+        const response = await fetch('/api/account-addresses', {
+            method: 'GET',
+            credentials: 'include',
+            cache: 'no-store',
+        });
+
+        if (response.status === 401) {
+            showLoggedOutAccount();
+            return;
+        }
+
+        if (!response.ok) {
+            throw new Error('Impossible de récupérer les adresses.');
+        }
+
+        const data = await response.json();
+        const addresses = Array.isArray(data.addresses) ? data.addresses : [];
+        const address = addresses.find(item => String(item.id) === String(id));
+
+        if (!address) {
+            alert('Cette adresse est introuvable.');
+            return;
+        }
+
+        showAddressForm(address);
+    } catch (error) {
+        console.error('Erreur lors de la récupération de l’adresse :', error);
+        alert('Impossible de modifier cette adresse pour le moment.');
+    }
+}
+
+async function deleteAccountAddress(id) {
+    if (!confirm('Voulez-vous vraiment supprimer cette adresse ?')) {
+        return;
+    }
+
+    try {
+        const response = await fetch('/api/account-addresses?id=' + encodeURIComponent(id), {
+            method: 'DELETE',
+            credentials: 'include',
+        });
+
+        if (response.status === 401) {
+            showLoggedOutAccount();
+            return;
+        }
+
+        if (!response.ok) {
+            const data = await response.json().catch(() => ({}));
+            throw new Error(data.error || 'Impossible de supprimer cette adresse.');
+        }
+
+        await loadAccountAddresses();
+    } catch (error) {
+        console.error('Erreur lors de la suppression de l’adresse :', error);
+        alert(error.message || 'Impossible de supprimer cette adresse.');
+    }
+}
+
+async function setDefaultAccountAddress(id) {
+    try {
+        const response = await fetch('/api/account-addresses', {
+            method: 'GET',
+            credentials: 'include',
+            cache: 'no-store',
+        });
+
+        if (response.status === 401) {
+            showLoggedOutAccount();
+            return;
+        }
+
+        if (!response.ok) {
+            throw new Error('Impossible de récupérer les adresses.');
+        }
+
+        const data = await response.json();
+        const addresses = Array.isArray(data.addresses) ? data.addresses : [];
+        const address = addresses.find(item => String(item.id) === String(id));
+
+        if (!address) {
+            alert('Cette adresse est introuvable.');
+            return;
+        }
+
+        const updateResponse = await fetch('/api/account-addresses', {
+            method: 'PUT',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                id: address.id,
+                label: address.label || '',
+                recipientName: address.recipientName || '',
+                address: address.address || '',
+                phone: address.phone || '',
+                isDefault: true,
+            }),
+        });
+
+        if (updateResponse.status === 401) {
+            showLoggedOutAccount();
+            return;
+        }
+
+        if (!updateResponse.ok) {
+            const updateData = await updateResponse.json().catch(() => ({}));
+            throw new Error(updateData.error || 'Impossible de définir cette adresse par défaut.');
+        }
+
+        await loadAccountAddresses();
+    } catch (error) {
+        console.error('Erreur lors de la définition de l’adresse par défaut :', error);
+        alert(error.message || 'Impossible de définir cette adresse par défaut.');
+    }
+}
+async function loadAccountOrders() {
+    const loggedIn = document.getElementById('account-logged-in');
+
+    if (!loggedIn) return;
+
+    try {
+        const response = await fetch('/api/account-orders', {
+            method: 'GET',
+            credentials: 'include',
+            cache: 'no-store',
+        });
+
+        if (response.status === 401) {
+            showLoggedOutAccount();
+            return;
+        }
+
+        if (!response.ok) {
+            throw new Error('Impossible de récupérer les commandes.');
+        }
+
+        const data = await response.json();
+
+        if (!Array.isArray(data.orders) || data.orders.length === 0) {
+            loggedIn.innerHTML = `
+                <div class="account-profile">
+                    <div class="account-icon">
+                        <i class="fas fa-box-open"></i>
+                    </div>
+                    <h2>Mes commandes</h2>
+                    <p>Tu n'as pas encore passé de commande avec ce compte.</p>
+                </div>
+
+                <button type="button" onclick="loadAccount()">
+                    Retour à mon compte
+                </button>
+            `;
+
+            return;
+        }
+
+        loggedIn.innerHTML = `
+            <div class="account-profile">
+                <div class="account-icon">
+                    <i class="fas fa-box"></i>
+                </div>
+                <h2>Mes commandes</h2>
+                <p>${data.orders.length} commande${data.orders.length > 1 ? 's' : ''}</p>
+            </div>
+
+            <div class="account-orders-list">
+                ${data.orders.map(order => {
+                    const date = new Date(order.createdAt).toLocaleDateString('fr-FR');
+
+                    const total = `${(order.totalCents / 100).toFixed(2).replace('.', ',')} €`;
+
+                    let status = 'Commande enregistrée';
+
+                    if (order.deliveredAt || order.shipmentStatus === 'delivered') {
+                        status = 'Livrée';
+                    } else if (order.shipmentStatus === 'shipped') {
+                        status = 'Expédiée';
+                    } else if (order.paymentStatus === 'paid') {
+                        status = 'Préparation de la commande';
+                    }
+
+                    return `
+                        <div class="account-order-card">
+                            <div class="account-order-header">
+                                <strong>${order.orderNumber}</strong>
+                                <span>${date}</span>
+                            </div>
+
+                            <div class="account-order-status">
+                                ${status}
+                            </div>
+
+                            <div class="account-order-items">
+                                ${order.items.map(item => `
+                                    <div class="account-order-item">
+                                        <span>
+                                            ${item.quantity} × ${item.name}
+                                            — ${item.size}
+                                        </span>
+                                        <span>
+                                            ${(item.lineTotalCents / 100).toFixed(2).replace('.', ',')} €
+                                        </span>
+                                    </div>
+                                `).join('')}
+                            </div>
+
+                            <div class="account-order-total">
+                                <span>Total</span>
+                                <strong>${total}</strong>
+                            </div>
+
+                            ${order.trackingUrl ? `
+                                <a
+                                    href="${order.trackingUrl}"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="account-tracking-btn"
+                                >
+                                    Suivre mon colis
+                                </a>
+                            ` : ''}
+                        </div>
+                    `;
+                }).join('')}
+
+                <button type="button" onclick="loadAccount()">
+                    Retour à mon compte
+                </button>
+            </div>
+        `;
+    } catch (error) {
+        console.error('Erreur lors du chargement des commandes :', error);
+
+        loggedIn.innerHTML = `
+            <div class="account-profile">
+                <div class="account-icon">
+                    <i class="fas fa-circle-exclamation"></i>
+                </div>
+
+                <h2>Mes commandes</h2>
+
+                <p>
+                    Impossible de récupérer tes commandes pour le moment.
+                </p>
+            </div>
+
+            <button type="button" onclick="loadAccount()">
+                Retour à mon compte
+            </button>
+        `;
+    }
+}
 
         function openMayolInfo() {
             showPage('about');
@@ -1625,5 +2752,54 @@
             openPaymentModal(pendingPayment.total, pendingPayment.orderNumber);
         }
     </script>
+    <!-- MON COMPTE -->
+<div id="account-modal" class="account-modal" aria-hidden="true">
+    <div class="account-modal-overlay" onclick="closeAccount()"></div>
+
+    <div class="account-modal-content">
+        <button class="account-close" type="button" onclick="closeAccount()" aria-label="Fermer">
+            <i class="fas fa-times"></i>
+        </button>
+
+        <div id="account-logged-out">
+            <div class="account-icon">
+                <i class="fas fa-user"></i>
+            </div>
+
+            <h2>Mon compte</h2>
+            <p>Connecte-toi pour retrouver tes commandes et tes informations.</p>
+
+            <button class="google-login-btn" type="button" onclick="loginWithGoogle()">
+                <i class="fab fa-google"></i>
+                Continuer avec Google
+            </button>
+        </div>
+
+        <div id="account-logged-in" style="display: none;">
+            <div class="account-profile">
+                <img id="account-avatar" src="" alt="Photo de profil">
+                <h2 id="account-name">Mon compte</h2>
+                <p id="account-email"></p>
+            </div>
+
+            <div class="account-actions">
+                <button type="button" onclick="showAccountSection('orders')">
+                    <i class="fas fa-box"></i>
+                    Mes commandes
+                </button>
+
+                <button type="button" onclick="showAccountSection('addresses')">
+                    <i class="fas fa-location-dot"></i>
+                    Mes adresses
+                </button>
+
+                <button type="button" onclick="showAccountSection('profile')">
+                    <i class="fas fa-user-pen"></i>
+                    Mes informations
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>

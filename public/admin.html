@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <title>FORK · Gestion des commandes</title>
+  <link rel="icon" href="logo.png" type="image/png">
+  <link rel="stylesheet" href="assets/css/fork.css">
+  <link rel="stylesheet" href="assets/css/admin.css">
+  <script src="assets/js/admin.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap admin-head">
+      <a href="/" class="brand"><img src="logo.png" alt="" width="40" height="40"><span>FORK</span></a>
+      <span class="up">Gestion des commandes</span>
+      <button type="button" class="link" id="lock" hidden>Verrouiller</button>
+    </div>
+  </header>
+
+  <main class="wrap admin-main">
+    <section id="loginView" class="admin-login" hidden>
+      <h1>Accès boutique</h1>
+      <form id="loginForm" class="stack" novalidate>
+        <div class="field">
+          <label for="token">Code d'accès</label>
+          <input id="token" type="password" autocomplete="current-password" required>
+        </div>
+        <p class="hint">Le code est celui de la variable ADMIN_TOKEN sur Netlify. Il reste en mémoire seulement le temps de cet onglet.</p>
+        <p class="notice err" id="loginError" hidden></p>
+        <button type="submit" class="btn">Entrer</button>
+      </form>
+    </section>
+
+    <section id="ordersView" hidden>
+      <div class="sec-head">
+        <h1>Commandes</h1>
+        <div class="tabs" role="tablist" aria-label="Filtrer par statut">
+          <button class="tab" role="tab" data-status="" aria-selected="true">Toutes</button>
+          <button class="tab" role="tab" data-status="paid" aria-selected="false">À préparer</button>
+          <button class="tab" role="tab" data-status="preparing" aria-selected="false">En préparation</button>
+          <button class="tab" role="tab" data-status="shipped" aria-selected="false">Expédiées</button>
+          <button class="tab" role="tab" data-status="delivered" aria-selected="false">Livrées</button>
+          <button class="tab" role="tab" data-status="pending_payment" aria-selected="false">Non payées</button>
+          <button class="tab" role="tab" data-status="cancelled" aria-selected="false">Annulées</button>
+        </div>
+      </div>
+      <div class="admin-list" id="orderList" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+</body>
+</html>

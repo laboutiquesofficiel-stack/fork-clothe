@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>FORK · La vibe de Toulon dans ton dressing</title>
+  <meta name="description" content="FORK, marque de vêtements de Toulon. T-shirts en séries limitées, livraison offerte à moins de 10 km de Toulon.">
+  <link rel="icon" href="logo.png" type="image/png">
+  <link rel="stylesheet" href="assets/css/fork.css">
+  <script src="assets/js/app.js" defer></script>
+</head>
+<body>
+  <div class="annonce">
+    <div class="wrap">Livraison offerte à moins de 10 km de Toulon · Colissimo suivi en France métropolitaine</div>
+  </div>
+
+  <header class="site-header" id="top">
+    <div class="wrap hrow">
+      <div class="hside">
+        <button class="ico burger" id="menuOpen" aria-label="Ouvrir le menu" aria-controls="menuDrawer">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        </button>
+        <a class="ico" href="https://www.instagram.com/fork__off/" target="_blank" rel="noopener" aria-label="Instagram FORK">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>
+          <span class="txt">Instagram</span>
+        </a>
+      </div>
+      <a href="#top" class="brand" aria-label="FORK, accueil">
+        <img src="logo.png" alt="" width="46" height="46">
+        <span>FORK</span>
+      </a>
+      <div class="hside right">
+        <button class="ico" id="accountOpen" aria-controls="accountDrawer">
+          <span id="accountIcon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg></span>
+          <span class="txt" id="accountLabel">Compte</span>
+        </button>
+        <button class="ico" id="cartOpen" aria-controls="cartDrawer">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 8h14l-1 12H6L5 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+          <span class="txt">Panier</span>
+          <span class="count" id="cartCount">0</span>
+        </button>
+      </div>
+    </div>
+    <nav class="mainnav" aria-label="Navigation principale">
+      <a href="#produits" data-filter="all">Le drop</a>
+      <a href="#produits" data-filter="homme">Homme</a>
+      <a href="#produits" data-filter="femme">Femme</a>
+      <a href="#match">Jour de match</a>
+      <a href="#histoire">À propos</a>
+      <a href="#faq">Aide</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-txt">
+        <span class="up">Depuis 83 · Toulon</span>
+        <h1>La vibe de Toulon dans ton dressing</h1>
+        <p>T-shirts pensés à Toulon, sortis en drops limités. Coton épais, finitions propres.</p>
+        <div class="hero-ctas">
+          <a class="btn light" href="#produits">Découvrir le drop</a>
+          <a class="btn out light-out" href="#histoire">Notre histoire</a>
+        </div>
+      </div>
+      <div class="hero-img">
+        <img src="img_4233.jpeg" alt="Dos du t-shirt FORK L'Authentique rouge et noir porté sur le port de Toulon au coucher du soleil" width="875" height="1523" fetchpriority="high">
+      </div>
+    </section>
+
+    <section class="sec wrap" aria-label="Catégories">
+      <div class="cats">
+        <a class="cat" href="#produits" data-filter="homme"><div class="cat-img"><img src="img_4231.jpeg" alt="T-shirt FORK homme porté de dos" loading="lazy" width="855" height="1498"></div><span>T-shirts homme</span></a>
+        <a class="cat" href="#produits" data-filter="femme"><div class="cat-img"><img src="assets/products/lou-faron/lou-faron-face-porte.jpeg" alt="T-shirt FORK Lou Faron léopard porté" loading="lazy" width="534" height="1024"></div><span>T-shirts femme</span></a>
+        <a class="cat" href="#match"><div class="cat-img"><img src="img_3845.jpg" alt="T-shirt FORK porté avec un ballon de rugby face à la rade" loading="lazy" width="1094" height="2032"></div><span>Jour de match</span></a>
+        <a class="cat" href="#histoire"><div class="cat-img"><img src="img_3847.jpg" alt="T-shirt FORK posé sur les rochers au bord de l'eau" loading="lazy" width="1086" height="2029"></div><span>L'histoire FORK</span></a>
+      </div>
+    </section>
+
+    <section class="sec wrap" id="produits">
+      <div class="sec-head">
+        <h2>Le drop</h2>
+        <div class="tabs" role="tablist" aria-label="Filtrer les produits">
+          <button class="tab" role="tab" data-tab="all" aria-selected="true">Tout</button>
+          <button class="tab" role="tab" data-tab="homme" aria-selected="false">Homme</button>
+          <button class="tab" role="tab" data-tab="femme" aria-selected="false">Femme</button>
+          <button class="tab" role="tab" data-tab="out" aria-selected="false">Épuisé</button>
+        </div>
+      </div>
+      <div class="pgrid" id="productGrid"></div>
+    </section>
+
+    <section class="split dark" id="match">
+      <div class="split-img"><img src="img_3841.jpg" alt="Dos du t-shirt FORK face à la mer à Toulon" loading="lazy" width="1086" height="2040"></div>
+      <div class="split-txt">
+        <span class="up">Jour de match</span>
+        <h2>Retrouve-nous à la Guinguette de Mayol</h2>
+        <p>Les jours de match à domicile, FORK installe son stand à la Guinguette de Mayol avec le drop du moment. Viens essayer, récupérer ta commande ou parler rugby.</p>
+        <div class="chips"><span class="chip">Face aux poteaux</span><span class="chip">Ballon ovale</span><span class="chip">Rouge &amp; noir</span></div>
+        <a class="btn light" href="https://www.instagram.com/fork__off/" target="_blank" rel="noopener">Les dates sur Instagram</a>
+      </div>
+    </section>
+
+    <section class="split" id="histoire">
+      <div class="split-txt">
+        <span class="up danger">À propos</span>
+        <h2>L'histoire de FORK</h2>
+        <p>FORK, c'est une identité née à Toulon : la rade, le Faron, la culture d'ici. On sort nos pièces en drops limités pour éviter la surproduction, avec un coton épais et des finitions propres.</p>
+        <div class="chips"><span class="chip">Téléphérique</span><span class="chip">Stade Mayol</span><span class="chip">Port de Toulon</span></div>
+        <a class="btn out" href="#produits">Voir le drop</a>
+      </div>
+      <div class="split-img"><img src="img_4232.jpeg" alt="T-shirt FORK porté de dos sur le port de Toulon" loading="lazy" width="880" height="1504"></div>
+    </section>
+
+    <div class="wrap">
+      <div class="trust">
+        <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="10" width="16" height="11"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><b>Paiement sécurisé</b><span>Carte bancaire via SumUp</span></div>
+        <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7z"/><circle cx="7" cy="18" r="1.6"/><circle cx="17" cy="18" r="1.6"/></svg><b>Livraison offerte</b><span>À moins de 10 km de Toulon</span></div>
+        <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3 3 7.5v9L12 21l9-4.5v-9L12 3Z"/><path d="m3 7.5 9 4.5 9-4.5M12 12v9"/></svg><b>Colissimo suivi</b><span>7,64 € au-delà de 10 km</span></div>
+        <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg><b>Compte client</b><span>Commandes et suivi au même endroit</span></div>
+      </div>
+    </div>
+
+    <section class="sec wrap" id="faq">
+      <div class="sec-head"><h2>Questions fréquentes</h2></div>
+      <div class="faq">
+        <details><summary>Quels sont les délais et frais de livraison ?</summary><p>Les commandes sont expédiées en Colissimo avec suivi, en France métropolitaine, en général 1 à 3 jours ouvrés après la validation du paiement ; le délai de transport dépend ensuite de La Poste. La livraison est offerte à moins de 10 km du centre de Toulon. Au-delà, elle coûte 7,64 €. Le montant exact est calculé à partir de ton adresse et affiché avant le paiement.</p></details>
+        <details><summary>Quelle taille choisir ?</summary><p>La coupe est droite et moderne. Prends ta taille habituelle pour un porté classique, ou une taille au-dessus pour un style oversize.</p></details>
+        <details><summary>Dois-je créer un compte pour commander ?</summary><p>Non. Tu peux commander sans compte. Si tu te connectes plus tard avec Google en utilisant la même adresse e-mail, ta commande apparaît automatiquement dans « Mes commandes ».</p></details>
+        <details><summary>Comment suivre mon colis ?</summary><p>Dès l'expédition, tu reçois un e-mail avec le numéro de suivi et le bouton « Suivre mon colis ». Le suivi est aussi visible dans ton compte, rubrique « Mes commandes ».</p></details>
+        <details><summary>Puis-je modifier ou annuler ma commande ?</summary><p>Oui, tant que le colis n'a pas été expédié. Écris-nous sur WhatsApp au 07 66 75 18 40 avec ton numéro de commande.</p></details>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="fcols">
+        <div>
+          <div class="flogo"><img src="logo.png" alt="" width="56" height="56">FORK</div>
+          <p class="muted">La vibe de Toulon dans ton dressing.</p>
+        </div>
+        <div><h4>Boutique</h4><ul><li><a href="#produits" data-filter="all">Le drop</a></li><li><a href="#produits" data-filter="homme">Homme</a></li><li><a href="#produits" data-filter="femme">Femme</a></li></ul></div>
+        <div><h4>FORK</h4><ul><li><a href="#histoire">Notre histoire</a></li><li><a href="#match">Jour de match</a></li><li><button type="button" data-open-account>Mon compte</button></li></ul></div>
+        <div><h4>Aide</h4><ul><li><a href="#faq">FAQ</a></li><li><a href="https://wa.me/33766751840" target="_blank" rel="noopener">WhatsApp · 07 66 75 18 40</a></li><li><a href="https://www.instagram.com/fork__off/" target="_blank" rel="noopener">Instagram · @fork__off</a></li></ul></div>
+      </div>
+      <div class="fbottom"><span>© <span id="year">2026</span> FORK · fork-clothe.com</span><span class="flegal"><a href="mentions-legales.html">Mentions légales</a> · <a href="cgv.html">CGV</a> · <a href="confidentialite.html">Confidentialité</a></span></div>
+    </div>
+  </footer>
+
+  <div class="overlay" id="overlay" hidden></div>
+
+  <aside class="drawer left" id="menuDrawer" hidden aria-label="Menu">
+    <div class="dhead"><h3>Menu</h3><button class="x" data-close aria-label="Fermer le menu">✕</button></div>
+    <div class="dbody">
+      <nav class="mnav-links">
+        <a href="#produits" data-filter="all">Le drop</a>
+        <a href="#produits" data-filter="homme">Homme</a>
+        <a href="#produits" data-filter="femme">Femme</a>
+        <a href="#match">Jour de match</a>
+        <a href="#histoire">À propos</a>
+        <a href="#faq">Aide</a>
+        <button type="button" data-open-account>Mon compte</button>
+      </nav>
+    </div>
+  </aside>
+
+  <aside class="drawer wide" id="productDrawer" hidden aria-label="Fiche produit">
+    <div class="dhead"><h3 id="productTitle">Produit</h3><button class="x" data-close aria-label="Fermer la fiche produit">✕</button></div>
+    <div class="sheet" id="productSheet"></div>
+  </aside>
+
+  <aside class="drawer" id="cartDrawer" hidden aria-label="Panier">
+    <div class="dhead"><h3 id="cartTitle">Panier</h3><button class="x" data-close aria-label="Fermer le panier">✕</button></div>
+    <div class="steps" id="cartSteps"><span data-step="cart">Panier</span><span data-step="delivery">Livraison</span><span data-step="payment">Paiement</span></div>
+    <div class="dbody" id="cartBody"></div>
+    <div class="dfoot" id="cartFoot"></div>
+  </aside>
+
+  <aside class="drawer" id="accountDrawer" hidden aria-label="Mon compte">
+    <div class="dhead"><h3>Mon compte</h3><button class="x" data-close aria-label="Fermer mon compte">✕</button></div>
+    <div class="acct-tabs" id="accountTabs" role="tablist" hidden>
+      <button role="tab" data-acct="orders" aria-selected="true">Mes commandes</button>
+      <button role="tab" data-acct="addresses" aria-selected="false">Mes adresses</button>
+      <button role="tab" data-acct="info" aria-selected="false">Mes informations</button>
+    </div>
+    <div class="dbody" id="accountBody"></div>
+  </aside>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+</body>
+</html>

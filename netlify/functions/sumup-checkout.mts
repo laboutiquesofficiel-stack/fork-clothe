@@ -1,18 +1,31 @@
 import { randomBytes } from "node:crypto";
-import type { Config } from "@netlify/functions";
-import { eq } from "drizzle-orm";
+import type { Config, Context } from "@netlify/functions";
+import { and, desc, eq, ne } from "drizzle-orm";
 import { db } from "../../db/index.js";
-import { orders } from "../../db/schema.js";
+import { orders, payments } from "../../db/schema.js";
+import { confirmSumUpCheckout } from "../../lib/sumup.js";
+
+/**
+ * Crée un paiement SumUp pour une commande existante.
+ *
+ * Le montant vient toujours de la base, jamais du navigateur. Le navigateur
+ * ne reçoit que l'URL de la page de paiement SumUp. La confirmation du
+ * paiement est faite uniquement par le webhook (/api/sumup-webhook).
+ */
 
 type SumUpCheckoutResponse = {
+  id?: unknown;
   hosted_checkout_url?: unknown;
+  error_code?: unknown;
+  message?: unknown;
+  param?: unknown;
 };
 
 function cleanOrderNumber(value: unknown): string {
   return typeof value === "string" ? value.trim().slice(0, 80) : "";
 }
 
-export default async (request: Request) => {
+export default async (request: Request, context: Context) => {
   if (request.method !== "POST") {
     return Response.json({ error: "Méthode non autorisée." }, { status: 405 });
   }
@@ -24,20 +37,49 @@ export default async (request: Request) => {
       return Response.json({ error: "Le paiement par carte n’est pas encore configuré." }, { status: 503 });
     }
 
-    const body = await request.json();
+    const body = await request.json().catch(() => null);
     const orderNumber = cleanOrderNumber(body?.orderNumber);
     if (!orderNumber) {
       return Response.json({ error: "Numéro de commande invalide." }, { status: 400 });
     }
 
     const [order] = await db
-      .select({ orderNumber: orders.orderNumber, totalCents: orders.totalCents, currency: orders.currency })
+      .select({
+        id: orders.id,
+        orderNumber: orders.orderNumber,
+        totalCents: orders.totalCents,
+        currency: orders.currency,
+        status: orders.status,
+        paymentStatus: orders.paymentStatus,
+      })
       .from(orders)
       .where(eq(orders.orderNumber, orderNumber))
       .limit(1);
 
     if (!order || order.totalCents <= 0) {
       return Response.json({ error: "Commande introuvable." }, { status: 404 });
+    }
+
+    // Une commande déjà réglée, annulée ou expédiée ne peut pas être payée une seconde fois.
+    if (order.paymentStatus === "paid" || order.status !== "pending_payment") {
+      return Response.json(
+        { error: "Cette commande est déjà réglée ou n’est plus payable.", status: order.status },
+        { status: 409 },
+      );
+    }
+
+    // Avant d'ouvrir un nouveau paiement, on vérifie chez SumUp qu'aucun paiement
+    // déjà lancé pour cette commande n'a abouti : c'est ce qui évite un double paiement.
+    const previous = await db
+      .select({ checkoutId: payments.providerPaymentId })
+      .from(payments)
+      .where(and(eq(payments.orderId, order.id), eq(payments.provider, "sumup"), ne(payments.status, "paid")))
+      .orderBy(desc(payments.createdAt))
+      .limit(3);
+    for (const { checkoutId } of previous) {
+      if (checkoutId && (await confirmSumUpCheckout(checkoutId)) === "paid") {
+        return Response.json({ error: "Cette commande est déjà payée.", status: "paid" }, { status: 409 });
+      }
     }
 
     const origin = new URL(request.url).origin;
@@ -54,16 +96,50 @@ export default async (request: Request) => {
         currency: order.currency,
         description: `Commande FORK ${order.orderNumber}`,
         merchant_code: merchantCode,
+        // Adresse que SumUp appelle quand le statut du paiement change.
+        return_url: `${origin}/api/sumup-webhook`,
+        // Page où le client revient : elle ne vaut jamais preuve de paiement.
         redirect_url: `${origin}/?payment=sumup&order=${encodeURIComponent(order.orderNumber)}`,
         hosted_checkout: { enabled: true },
       }),
+      signal: AbortSignal.timeout(10000),
     });
 
     const result = (await sumupResponse.json().catch(() => ({}))) as SumUpCheckoutResponse;
-    if (!sumupResponse.ok || typeof result.hosted_checkout_url !== "string") {
-      console.error("SumUp checkout creation failed", sumupResponse.status);
-      return Response.json({ error: "Impossible de créer le paiement par carte." }, { status: 502 });
+    if (
+      !sumupResponse.ok ||
+      typeof result.id !== "string" ||
+      !result.id.trim() ||
+      typeof result.hosted_checkout_url !== "string"
+    ) {
+      // Code et message d'erreur de SumUp (jamais la clé) : visibles dans les logs, et
+      // affichés au client uniquement hors production pour faciliter les tests.
+      const reason = `HTTP ${sumupResponse.status} ${String(result.error_code ?? "")} ${String(result.message ?? "")}${result.param ? ` (champ : ${String(result.param)})` : ""}`.trim();
+      console.error("SumUp checkout creation failed", reason);
+      const isProduction = context?.deploy?.context === "production";
+      return Response.json(
+        { error: isProduction ? "Impossible de créer le paiement par carte." : `Impossible de créer le paiement par carte (SumUp : ${reason}).` },
+        { status: 502 },
+      );
     }
+
+    await db
+      .update(orders)
+      .set({ paymentProvider: "sumup", paymentReference: result.id })
+      .where(eq(orders.id, order.id));
+
+    // Trace du paiement en attente : le webhook la passera à « paid » après vérification.
+    await db
+      .insert(payments)
+      .values({
+        orderId: order.id,
+        provider: "sumup",
+        providerPaymentId: result.id,
+        amountCents: order.totalCents,
+        currency: order.currency,
+        status: "pending",
+      })
+      .onConflictDoNothing();
 
     return Response.json({ checkoutUrl: result.hosted_checkout_url });
   } catch (error) {
