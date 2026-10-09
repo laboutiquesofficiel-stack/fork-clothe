@@ -61,7 +61,19 @@ export default async (req: Request, context: Context) => {
   }
 
   const url = new URL(req.url);
-  const origin = url.origin;
+
+  // En production, tout le parcours se fait sur l'adresse principale du site
+  // (Netlify la fournit dans URL, ex. https://fork-clothe.com). Une visite via
+  // www. ou une autre adresse est d'abord renvoyée vers elle : l'adresse de
+  // retour envoyée à Google est ainsi toujours celle enregistrée chez Google,
+  // et le cookie de sécurité est posé sur le bon domaine.
+  const isProduction = context?.deploy?.context === "production";
+  const canonical = isProduction && process.env.URL ? new URL(process.env.URL).origin : url.origin;
+  if (url.origin !== canonical) {
+    return redirectTo(`${canonical}${url.pathname}${url.search}`);
+  }
+
+  const origin = canonical;
   const redirectUri = `${origin}${CALLBACK_PATH}`;
   const clearState = stateCookie("", 0);
   // Hors production, la raison d'un échec est ajoutée à l'adresse de retour (jamais de secret).
