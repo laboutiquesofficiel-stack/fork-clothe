@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /admin.html
+Disallow: /api/
+Disallow: /.netlify/
+
+Sitemap: https://fork-clothe.com/sitemap.xml
