@@ -247,3 +247,12 @@ h1, h2, h3, h4 { margin: 0; text-transform: uppercase; font-weight: 900; letter-
 .btn.light-out:hover { background: var(--white); color: var(--ink); }
 .sheet-info p { margin: 0; }
 .flegal a { color: inherit; } .flegal a:hover { color: var(--white); text-decoration: underline; }
+
+/* Bande d'ambiance */
+.mood { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; max-width: 1400px; margin-inline: auto; }
+.mood img { width: 100%; height: clamp(220px, 28vw, 380px); object-fit: cover; object-position: 50% 40%; display: block; }
+@media (max-width: 760px) {
+  .mood { grid-auto-flow: column; grid-template-columns: none; grid-auto-columns: 44%; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
+  .mood::-webkit-scrollbar { display: none; }
+  .mood img { scroll-snap-align: start; }
+}

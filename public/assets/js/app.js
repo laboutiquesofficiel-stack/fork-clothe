@@ -82,25 +82,6 @@
         { src: "assets/products/les-boutades/les-boutades-clocher.jpg", alt: "Le clocher de la chapelle face à la mer" },
       ],
     },
-    {
-      id: "authentique-noir",
-      sku: null,
-      name: "L'Authentique",
-      color: "Impression noire",
-      category: "homme",
-      priceCents: 3000,
-      sizes: ["S", "M", "L", "XL", "2XL", "3XL"],
-      available: false,
-      isNew: false,
-      description: "La version à impression noire de L'Authentique. Épuisée pour le moment.",
-      images: [
-        { src: "img_3845.jpg", alt: "L'Authentique impression noire porté de face" },
-        { src: "img_3846.jpg", alt: "Dos de L'Authentique impression noire" },
-        { src: "img_3841.jpg", alt: "L'Authentique impression noire face à la mer" },
-        { src: "img_3848.jpg", alt: "Face de L'Authentique impression noire posé sur les rochers" },
-        { src: "img_3847.jpg", alt: "Dos de L'Authentique impression noire posé sur les rochers" },
-      ],
-    },
   ];
   const bySku = new Map(PRODUCTS.filter((p) => p.sku).map((p) => [p.sku, p]));
   const byId = new Map(PRODUCTS.map((p) => [p.id, p]));
