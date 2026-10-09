@@ -263,3 +263,13 @@ h1, h2, h3, h4 { margin: 0; text-transform: uppercase; font-weight: 900; letter-
 /* Jour de match : rouge et noir, couleurs du RCT */
 #match .btn.light:hover { background: var(--red); border-color: var(--red); }
 .site-footer .muted { color: var(--rade-soft); }
+
+/* Fiche produit : matière, tailles, entretien */
+.pinfo { border-top: 1px solid var(--line); }
+.pinfo details { border-bottom: 1px solid var(--line); }
+.pinfo summary { display: flex; justify-content: space-between; padding-block: 14px; font-weight: 700; font-size: .82rem; text-transform: uppercase; letter-spacing: .06em; cursor: pointer; list-style: none; }
+.pinfo summary::-webkit-details-marker { display: none; }
+.pinfo summary::after { content: "+"; }
+.pinfo details[open] summary::after { content: "–"; }
+.pinfo p, .pinfo ul { margin: 0 0 12px; font-size: .88rem; }
+.pinfo ul { padding-left: 18px; display: grid; gap: 4px; }
