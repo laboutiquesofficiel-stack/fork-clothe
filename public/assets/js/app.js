@@ -68,10 +68,13 @@
       isNew: true,
       description: "Un noir profond et graphique, inspiré des expressions du Sud.",
       images: [
-        { src: "assets/products/les-boutades/les-boutades-face-toulon.jpeg", alt: "Les Boutades noir porté de face à Toulon" },
-        { src: "assets/products/les-boutades/les-boutades-dos-toulon.jpeg", alt: "Les Boutades noir porté de dos à Toulon" },
-        { src: "assets/products/les-boutades/les-boutades-face-studio.jpeg", alt: "Les Boutades noir de face en studio" },
-        { src: "assets/products/les-boutades/les-boutades-dos-studio.jpeg", alt: "Les Boutades noir de dos en studio" },
+        { src: "assets/products/les-boutades/les-boutades-face-calanque.jpg", alt: "Les Boutades noir porté de face au-dessus de la calanque" },
+        { src: "assets/products/les-boutades/les-boutades-dos-calanque.jpg", alt: "Dos des Boutades : Calanque, Fada, Mistral, Cigale, Jaune, Rade, Pétanque" },
+        { src: "assets/products/les-boutades/les-boutades-dos-ancre.jpg", alt: "Dos des Boutades noir suspendu face à la rade" },
+        { src: "assets/products/les-boutades/les-boutades-dos-rugby.jpg", alt: "Les Boutades porté de dos, ballon de rugby en main" },
+        { src: "assets/products/les-boutades/les-boutades-face-sourire.jpg", alt: "Les Boutades noir porté de face, mains sur les hanches" },
+        { src: "assets/products/les-boutades/les-boutades-dos-chapelle.jpg", alt: "Les Boutades porté de dos face à la mer et à la chapelle" },
+        { src: "assets/products/les-boutades/les-boutades-dos-bateaux.jpg", alt: "Les Boutades porté de dos face aux voiliers" },
       ],
     },
     {
