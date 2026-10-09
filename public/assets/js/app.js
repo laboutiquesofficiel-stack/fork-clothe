@@ -18,6 +18,7 @@
   const PRODUCTS = [
     {
       id: "authentique",
+      keywords: ["rugby", "rct", "ballon", "ovale", "degun", "match", "blanc", "rouge", "noir", "vibe"],
       sku: "fork-authentique",
       name: "L'Authentique",
       color: "Rouge & noir",
@@ -39,6 +40,7 @@
     },
     {
       id: "lou-faron",
+      keywords: ["leopard", "faron", "telepherique", "montagne", "584", "blanc", "femme"],
       sku: "fork-lou-faron",
       name: "Lou Faron",
       color: "Léopard",
@@ -62,6 +64,7 @@
     },
     {
       id: "les-boutades",
+      keywords: ["calanque", "fada", "mistral", "cigale", "jaune", "rade", "petanque", "provence", "noir", "mots"],
       sku: "fork-les-boutades",
       name: "Les Boutades",
       color: "Noir",
@@ -241,6 +244,53 @@
     const card = e.target.closest("[data-product]");
     if (card) openProduct(card.dataset.product);
     if (e.target.closest("[data-open-account]")) openAccount();
+  });
+
+  // ---------------------------------------------------------------------------
+  // Recherche : suggestions à chaque lettre tapée (sans accents ni majuscules)
+  // ---------------------------------------------------------------------------
+  const norm = (v) => String(v ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  const searchIndex = PRODUCTS.map((p) => ({
+    p,
+    name: norm(`t-shirt ${p.name}`),
+    text: norm([p.name, p.color, p.category === "femme" ? "femme" : "homme", p.description, ...(p.keywords ?? [])].join(" ")),
+  }));
+  function renderSearch() {
+    const raw = $("#searchInput").value.trim();
+    const terms = norm(raw).split(/\s+/).filter(Boolean);
+    const list = terms.length
+      ? searchIndex
+          .filter((e) => terms.every((t) => e.text.includes(t)))
+          .map((e) => ({ p: e.p, score: terms.reduce((n, t) => n + (e.name.includes(t) ? 2 : 1), 0) }))
+          .sort((a, b) => b.score - a.score || Number(b.p.available) - Number(a.p.available))
+          .map((e) => e.p)
+      : PRODUCTS.filter((p) => p.available);
+    $("#searchHint").textContent = !terms.length
+      ? "Suggestions"
+      : list.length
+        ? `${list.length} article${list.length > 1 ? "s" : ""}`
+        : `Aucun article ne correspond à « ${raw} ».`;
+    $("#searchResults").innerHTML = list
+      .map(
+        (p) => `<button type="button" class="sresult" data-product="${esc(p.id)}">
+          <img src="${esc(p.images[0].src)}" alt="" loading="lazy">
+          <span><b>T-shirt ${esc(p.name)}</b><span class="pmeta">${esc(p.color)} · ${p.category === "femme" ? "Femme" : "Homme"}</span><span>${p.available ? euros(p.priceCents) : "Épuisé"}</span></span>
+        </button>`,
+      )
+      .join("");
+  }
+  $("#searchInput").addEventListener("input", renderSearch);
+  $("#searchInput").addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      const first = $("#searchResults .sresult");
+      if (first) openProduct(first.dataset.product);
+    }
+  });
+  $("#searchOpen").addEventListener("click", () => {
+    openDrawer("searchDrawer");
+    renderSearch();
+    $("#searchInput").focus();
   });
 
   // ---------------------------------------------------------------------------
