@@ -34,7 +34,11 @@
         <button class="ico burger" id="menuOpen" aria-label="Ouvrir le menu" aria-controls="menuDrawer">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
         </button>
-        <a class="ico" href="https://www.instagram.com/fork__off/" target="_blank" rel="noopener" aria-label="Instagram FORK">
+        <button class="ico" id="searchOpen" aria-label="Rechercher un article" aria-controls="searchDrawer">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <span class="txt">Rechercher</span>
+        </button>
+        <a class="ico ig" href="https://www.instagram.com/fork__off/" target="_blank" rel="noopener" aria-label="Instagram FORK">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>
           <span class="txt">Instagram</span>
         </a>
@@ -180,6 +184,7 @@
         <a href="#histoire">À propos</a>
         <a href="#faq">Aide</a>
         <button type="button" data-open-account>Mon compte</button>
+        <a href="https://www.instagram.com/fork__off/" target="_blank" rel="noopener">Instagram · @fork__off</a>
       </nav>
     </div>
   </aside>
@@ -187,6 +192,18 @@
   <aside class="drawer wide" id="productDrawer" hidden aria-label="Fiche produit">
     <div class="dhead"><h3 id="productTitle">Produit</h3><button class="x" data-close aria-label="Fermer la fiche produit">✕</button></div>
     <div class="sheet" id="productSheet"></div>
+  </aside>
+
+  <aside class="drawer" id="searchDrawer" hidden aria-label="Rechercher un article">
+    <div class="dhead"><h3>Rechercher</h3><button class="x" data-close aria-label="Fermer la recherche">✕</button></div>
+    <div class="dbody">
+      <div class="search-field">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input type="search" id="searchInput" placeholder="Un t-shirt, une couleur, un mot…" autocomplete="off" enterkeyhint="search" aria-label="Rechercher un article" aria-controls="searchResults">
+      </div>
+      <p class="hint" id="searchHint" aria-live="polite"></p>
+      <div class="search-results" id="searchResults"></div>
+    </div>
   </aside>
 
   <aside class="drawer" id="cartDrawer" hidden aria-label="Panier">
