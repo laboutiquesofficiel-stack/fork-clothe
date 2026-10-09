@@ -82,7 +82,7 @@
       sizes: ["S", "M", "L", "XL", "2XL", "3XL"],
       available: false,
       isNew: false,
-      description: "La version à impression noire de L'Authentique. Épuisée pour ce drop.",
+      description: "La version à impression noire de L'Authentique. Épuisée pour le moment.",
       images: [
         { src: "img_3845.jpg", alt: "L'Authentique impression noire porté de face" },
         { src: "img_3846.jpg", alt: "Dos de L'Authentique impression noire" },
@@ -287,7 +287,7 @@
                 .join("")}</div><p class="hint">Coupe droite : ta taille habituelle, ou une au-dessus pour un style oversize.</p></div>
               <div class="field"><span class="up">Quantité</span><div class="qty"><button type="button" data-qty="-1" aria-label="Diminuer">−</button><span>${sheet.qty}</span><button type="button" data-qty="1" aria-label="Augmenter">+</button></div></div>
               <button type="button" class="btn full" id="addToCart" ${canBuy ? "" : "disabled"}>${sheet.size ? `Ajouter au panier · ${euros(p.priceCents * sheet.qty)}` : "Choisis ta taille"}</button>`
-            : `<p class="notice">Ce modèle est épuisé pour ce drop. Suis-nous sur Instagram pour la prochaine sortie.</p>`
+            : `<p class="notice">Ce modèle est épuisé pour le moment. Suis-nous sur Instagram pour être au courant de son retour.</p>`
         }
         <p class="hint">Livraison offerte à moins de 10 km de Toulon, 7,64 € au-delà. Le montant exact est calculé avant le paiement.</p>
       </div>`;
@@ -381,7 +381,7 @@
     const body = $("#cartBody");
     const foot = $("#cartFoot");
     if (!cart.length) {
-      body.innerHTML = `<div class="empty"><h4>C'est un peu vide ici</h4><p class="muted">Le drop FORK t'attend.</p><a class="btn" href="#produits" data-close>Voir le drop</a></div>`;
+      body.innerHTML = `<div class="empty"><h4>C'est un peu vide ici</h4><p class="muted">La collection FORK t'attend.</p><a class="btn" href="#produits" data-close>Voir la collection</a></div>`;
       foot.innerHTML = "";
       return;
     }
@@ -792,7 +792,7 @@
     }
     const orders = Array.isArray(data.orders) ? data.orders : [];
     if (!orders.length) {
-      body.innerHTML = `<div class="empty"><h4>Vous n'avez pas encore de commande.</h4><a class="btn" href="#produits" data-close>Voir le drop</a></div>`;
+      body.innerHTML = `<div class="empty"><h4>Vous n'avez pas encore de commande.</h4><a class="btn" href="#produits" data-close>Voir la collection</a></div>`;
       return;
     }
     body.innerHTML = orders
