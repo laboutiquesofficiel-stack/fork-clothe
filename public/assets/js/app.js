@@ -28,11 +28,13 @@
       isNew: false,
       description: "Le classique rouge et noir : coupe droite, coton épais, impression « Chez nous à Toulon on craint degun ».",
       images: [
-        { src: "img_4222.jpeg", alt: "L'Authentique rouge et noir porté de face" },
-        { src: "img_4231.jpeg", alt: "Dos de L'Authentique rouge et noir" },
-        { src: "img_4227.jpeg", alt: "Détail du logo de L'Authentique" },
-        { src: "img_4228.jpeg", alt: "L'Authentique porté de dos sur le port de Toulon" },
-        { src: "img_4232.jpeg", alt: "L'Authentique porté de dos face aux bateaux" },
+        { src: "assets/products/authentique/authentique-face-porte.jpg", alt: "L'Authentique rouge et noir porté de face devant la mer" },
+        { src: "assets/products/authentique/authentique-dos-ancre.jpg", alt: "Dos de L'Authentique rouge et noir suspendu face à la rade" },
+        { src: "assets/products/authentique/authentique-dos-mer.jpg", alt: "Dos de L'Authentique rouge et noir tenu face à la mer" },
+        { src: "assets/products/authentique/authentique-detail-ballon.jpg", alt: "Détail du logo vibe toulonnaise de L'Authentique avec un ballon de rugby" },
+        { src: "assets/products/authentique/authentique-face-cintre-mer.jpg", alt: "Face de L'Authentique sur cintre au bord de l'eau" },
+        { src: "assets/products/authentique/authentique-porte-sentier.jpg", alt: "L'Authentique porté sur le sentier du littoral" },
+        { src: "assets/products/authentique/authentique-imprime-detail.jpg", alt: "Gros plan sur l'impression « Chez nous à Toulon on craint degun »" },
       ],
     },
     {
@@ -47,11 +49,15 @@
       isNew: true,
       description: "Le modèle léopard, pensé comme une pièce forte du vestiaire féminin.",
       images: [
-        { src: "assets/products/lou-faron/lou-faron-face-porte.jpeg", alt: "T-shirt Lou Faron léopard porté de face" },
-        { src: "assets/products/lou-faron/lou-faron-dos-porte.jpeg", alt: "T-shirt Lou Faron léopard porté de dos" },
-        { src: "assets/products/lou-faron/lou-faron-face-produit.jpeg", alt: "Face du t-shirt Lou Faron léopard" },
-        { src: "assets/products/lou-faron/lou-faron-dos-produit.jpeg", alt: "Dos du t-shirt Lou Faron léopard" },
-        { src: "assets/products/lou-faron/lou-faron-dos-panorama.jpeg", alt: "Lou Faron devant le panorama de Toulon" },
+        { src: "assets/products/lou-faron/lou-faron-face-maison-bleue.jpg", alt: "Lou Faron porté de face devant une maison aux volets bleus" },
+        { src: "assets/products/lou-faron/lou-faron-dos-faron.jpg", alt: "Dos du Lou Faron : le Faron en léopard, le téléphérique et « Alt. 584m »" },
+        { src: "assets/products/lou-faron/lou-faron-dos-ancre.jpg", alt: "Dos du Lou Faron suspendu face à la rade" },
+        { src: "assets/products/lou-faron/lou-faron-face-mer.jpg", alt: "Lou Faron porté face à la mer" },
+        { src: "assets/products/lou-faron/lou-faron-imprime-detail.jpg", alt: "Gros plan sur l'impression Faron léopard" },
+        { src: "assets/products/lou-faron/lou-faron-face-calanque.jpg", alt: "Lou Faron porté de face au-dessus de la calanque" },
+        { src: "assets/products/lou-faron/lou-faron-face-rochers.jpg", alt: "Lou Faron porté sur le sentier au bord de l'eau" },
+        { src: "assets/products/lou-faron/lou-faron-face-rocher-mer.jpg", alt: "Face du Lou Faron posé sur un rocher face à la mer" },
+        { src: "assets/products/lou-faron/lou-faron-statue.jpg", alt: "Statue blanche sur le ciel bleu" },
       ],
     },
     {
@@ -66,10 +72,14 @@
       isNew: true,
       description: "Un noir profond et graphique, inspiré des expressions du Sud.",
       images: [
-        { src: "assets/products/les-boutades/les-boutades-face-toulon.jpeg", alt: "Les Boutades noir porté de face à Toulon" },
-        { src: "assets/products/les-boutades/les-boutades-dos-toulon.jpeg", alt: "Les Boutades noir porté de dos à Toulon" },
-        { src: "assets/products/les-boutades/les-boutades-face-studio.jpeg", alt: "Les Boutades noir de face en studio" },
-        { src: "assets/products/les-boutades/les-boutades-dos-studio.jpeg", alt: "Les Boutades noir de dos en studio" },
+        { src: "assets/products/les-boutades/les-boutades-face-calanque.jpg", alt: "Les Boutades noir porté de face au-dessus de la calanque" },
+        { src: "assets/products/les-boutades/les-boutades-dos-calanque.jpg", alt: "Dos des Boutades : Calanque, Fada, Mistral, Cigale, Jaune, Rade, Pétanque" },
+        { src: "assets/products/les-boutades/les-boutades-face-cintre.jpg", alt: "Les Boutades noir sur cintre devant un mur blanc aux fenêtres bleues" },
+        { src: "assets/products/les-boutades/les-boutades-dos-ancre.jpg", alt: "Dos des Boutades noir suspendu face à la rade" },
+        { src: "assets/products/les-boutades/les-boutades-dos-rugby.jpg", alt: "Les Boutades porté de dos, ballon de rugby en main" },
+        { src: "assets/products/les-boutades/les-boutades-face-sourire.jpg", alt: "Les Boutades noir porté de face, mains sur les hanches" },
+        { src: "assets/products/les-boutades/les-boutades-dos-chapelle.jpg", alt: "Les Boutades porté de dos face à la mer et à la chapelle" },
+        { src: "assets/products/les-boutades/les-boutades-clocher.jpg", alt: "Le clocher de la chapelle face à la mer" },
       ],
     },
     {
@@ -82,7 +92,7 @@
       sizes: ["S", "M", "L", "XL", "2XL", "3XL"],
       available: false,
       isNew: false,
-      description: "La version à impression noire de L'Authentique. Épuisée pour ce drop.",
+      description: "La version à impression noire de L'Authentique. Épuisée pour le moment.",
       images: [
         { src: "img_3845.jpg", alt: "L'Authentique impression noire porté de face" },
         { src: "img_3846.jpg", alt: "Dos de L'Authentique impression noire" },
@@ -287,7 +297,7 @@
                 .join("")}</div><p class="hint">Coupe droite : ta taille habituelle, ou une au-dessus pour un style oversize.</p></div>
               <div class="field"><span class="up">Quantité</span><div class="qty"><button type="button" data-qty="-1" aria-label="Diminuer">−</button><span>${sheet.qty}</span><button type="button" data-qty="1" aria-label="Augmenter">+</button></div></div>
               <button type="button" class="btn full" id="addToCart" ${canBuy ? "" : "disabled"}>${sheet.size ? `Ajouter au panier · ${euros(p.priceCents * sheet.qty)}` : "Choisis ta taille"}</button>`
-            : `<p class="notice">Ce modèle est épuisé pour ce drop. Suis-nous sur Instagram pour la prochaine sortie.</p>`
+            : `<p class="notice">Ce modèle est épuisé pour le moment. Suis-nous sur Instagram pour être au courant de son retour.</p>`
         }
         <p class="hint">Livraison offerte à moins de 10 km de Toulon, 7,64 € au-delà. Le montant exact est calculé avant le paiement.</p>
       </div>`;
@@ -381,7 +391,7 @@
     const body = $("#cartBody");
     const foot = $("#cartFoot");
     if (!cart.length) {
-      body.innerHTML = `<div class="empty"><h4>C'est un peu vide ici</h4><p class="muted">Le drop FORK t'attend.</p><a class="btn" href="#produits" data-close>Voir le drop</a></div>`;
+      body.innerHTML = `<div class="empty"><h4>C'est un peu vide ici</h4><p class="muted">La collection FORK t'attend.</p><a class="btn" href="#produits" data-close>Voir la collection</a></div>`;
       foot.innerHTML = "";
       return;
     }
@@ -792,7 +802,7 @@
     }
     const orders = Array.isArray(data.orders) ? data.orders : [];
     if (!orders.length) {
-      body.innerHTML = `<div class="empty"><h4>Vous n'avez pas encore de commande.</h4><a class="btn" href="#produits" data-close>Voir le drop</a></div>`;
+      body.innerHTML = `<div class="empty"><h4>Vous n'avez pas encore de commande.</h4><a class="btn" href="#produits" data-close>Voir la collection</a></div>`;
       return;
     }
     body.innerHTML = orders
