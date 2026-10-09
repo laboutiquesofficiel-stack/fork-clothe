@@ -2,11 +2,14 @@
    hero partagé texte/photo, tuiles, grille produits à onglets, blocs éditoriaux,
    réassurance, FAQ, footer. Tiroirs pour panier, compte et fiche produit. */
 :root {
-  --bg: #ffffff;
-  --soft: #f3f3f1;
+  --bg: #f8f4ec;
+  --soft: #efe8db;
   --ink: #111111;
-  --muted: #6b6b6b;
-  --line: #e4e4e2;
+  --muted: #6a6358;
+  --line: #e2d9c8;
+  --rade: #0e2a3f;
+  --rade-soft: #b9c7d1;
+  --volet: #1b8fa3;
   --red: #c8102e;
   --ok: #1f7a4a;
   --warn: #9a6100;
@@ -33,9 +36,9 @@ h1, h2, h3, h4 { margin: 0; text-transform: uppercase; font-weight: 900; letter-
 
 /* Boutons */
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: var(--ink); color: var(--white); padding: 14px 26px; text-transform: uppercase; font-weight: 700; font-size: .78rem; letter-spacing: .08em; border: 1px solid var(--ink); min-height: 48px; }
-.btn:hover { background: var(--red); border-color: var(--red); }
+.btn:hover { background: var(--volet); border-color: var(--volet); }
 .btn.light { background: var(--white); color: var(--ink); border-color: var(--white); }
-.btn.light:hover { background: var(--red); color: var(--white); border-color: var(--red); }
+.btn.light:hover { background: var(--volet); color: var(--white); border-color: var(--volet); }
 .btn.out { background: transparent; color: var(--ink); }
 .btn.out:hover { background: var(--ink); color: var(--white); }
 .btn.full { width: 100%; }
@@ -45,7 +48,7 @@ h1, h2, h3, h4 { margin: 0; text-transform: uppercase; font-weight: 900; letter-
 .danger { color: var(--red); }
 
 /* Barre d'annonce */
-.annonce { background: var(--ink); color: var(--white); font-size: .72rem; }
+.annonce { background: var(--rade); color: var(--white); font-size: .72rem; }
 .annonce .wrap { display: flex; justify-content: center; align-items: center; gap: 12px; padding-block: 9px; text-align: center; text-transform: uppercase; letter-spacing: .07em; font-weight: 600; }
 
 /* Header */
@@ -73,10 +76,10 @@ h1, h2, h3, h4 { margin: 0; text-transform: uppercase; font-weight: 900; letter-
 }
 
 /* Hero */
-.hero { display: grid; grid-template-columns: 1.05fr 1fr; background: var(--ink); color: var(--white); }
+.hero { display: grid; grid-template-columns: 1.05fr 1fr; background: var(--rade); color: var(--white); }
 .hero-txt { display: grid; align-content: end; gap: 18px; padding: clamp(28px, 5vw, 72px) clamp(16px, 4vw, 56px); min-width: 0; }
 .hero-txt h1 { font-size: clamp(2.6rem, 6.4vw, 6rem); }
-.hero-txt p { margin: 0; color: #cfcfcf; max-width: 42ch; font-size: 1.05rem; }
+.hero-txt p { margin: 0; color: var(--rade-soft); max-width: 42ch; font-size: 1.05rem; }
 .hero-ctas { display: flex; flex-wrap: wrap; gap: 10px; }
 .hero-img { position: relative; min-height: 420px; max-height: 760px; overflow: hidden; }
 .hero-img img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%; }
@@ -112,7 +115,7 @@ h1, h2, h3, h4 { margin: 0; text-transform: uppercase; font-weight: 900; letter-
 .pimg img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: opacity .35s; }
 .pimg img.back { opacity: 0; }
 @media (hover: hover) { .pcard:hover .pimg img.back { opacity: 1; } }
-.pbadge { position: absolute; top: 10px; left: 10px; z-index: 2; background: var(--white); color: var(--ink); font-size: .64rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; padding: 4px 8px; }
+.pbadge { position: absolute; top: 10px; left: 10px; z-index: 2; background: var(--red); color: var(--white); font-size: .64rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; padding: 4px 8px; }
 .pbadge.out { background: var(--ink); color: var(--white); }
 .pname { font-weight: 800; font-size: .88rem; text-transform: uppercase; letter-spacing: .03em; }
 .pmeta { font-size: .8rem; color: var(--muted); }
@@ -154,14 +157,14 @@ h1, h2, h3, h4 { margin: 0; text-transform: uppercase; font-weight: 900; letter-
 .faq p { margin: 0 0 18px; color: var(--muted); max-width: 65ch; }
 
 /* Footer */
-.site-footer { background: var(--ink); color: var(--white); padding-block: 56px 28px; }
+.site-footer { background: var(--rade); color: var(--white); padding-block: 56px 28px; }
 .fcols { display: grid; grid-template-columns: 1.4fr repeat(3, 1fr); gap: 32px; }
 .fcols h4 { font-size: .74rem; letter-spacing: .1em; margin-bottom: 14px; }
-.fcols ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; font-size: .9rem; color: #cfcfcf; }
+.fcols ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; font-size: .9rem; color: var(--rade-soft); }
 .fcols a:hover, .fcols button:hover { color: var(--white); text-decoration: underline; }
 .flogo { display: flex; align-items: center; gap: 12px; font-weight: 900; font-size: 2.6rem; letter-spacing: .06em; line-height: 1; }
 .flogo img { width: 56px; height: 56px; filter: invert(1); }
-.fbottom { margin-top: 44px; padding-top: 20px; border-top: 1px solid #333; display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-size: .76rem; color: #9a9a9a; }
+.fbottom { margin-top: 44px; padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, .14); display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-size: .76rem; color: #8ea2b1; }
 @media (max-width: 800px) { .fcols { grid-template-columns: 1fr 1fr; } .fcols > div:first-child { grid-column: 1 / -1; } }
 
 /* Tiroirs */
@@ -256,3 +259,7 @@ h1, h2, h3, h4 { margin: 0; text-transform: uppercase; font-weight: 900; letter-
   .mood::-webkit-scrollbar { display: none; }
   .mood img { scroll-snap-align: start; }
 }
+
+/* Jour de match : rouge et noir, couleurs du RCT */
+#match .btn.light:hover { background: var(--red); border-color: var(--red); }
+.site-footer .muted { color: var(--rade-soft); }
