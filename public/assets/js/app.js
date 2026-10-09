@@ -70,11 +70,12 @@
       images: [
         { src: "assets/products/les-boutades/les-boutades-face-calanque.jpg", alt: "Les Boutades noir porté de face au-dessus de la calanque" },
         { src: "assets/products/les-boutades/les-boutades-dos-calanque.jpg", alt: "Dos des Boutades : Calanque, Fada, Mistral, Cigale, Jaune, Rade, Pétanque" },
+        { src: "assets/products/les-boutades/les-boutades-face-cintre.jpg", alt: "Les Boutades noir sur cintre devant un mur blanc aux fenêtres bleues" },
         { src: "assets/products/les-boutades/les-boutades-dos-ancre.jpg", alt: "Dos des Boutades noir suspendu face à la rade" },
         { src: "assets/products/les-boutades/les-boutades-dos-rugby.jpg", alt: "Les Boutades porté de dos, ballon de rugby en main" },
         { src: "assets/products/les-boutades/les-boutades-face-sourire.jpg", alt: "Les Boutades noir porté de face, mains sur les hanches" },
         { src: "assets/products/les-boutades/les-boutades-dos-chapelle.jpg", alt: "Les Boutades porté de dos face à la mer et à la chapelle" },
-        { src: "assets/products/les-boutades/les-boutades-dos-bateaux.jpg", alt: "Les Boutades porté de dos face aux voiliers" },
+        { src: "assets/products/les-boutades/les-boutades-clocher.jpg", alt: "Le clocher de la chapelle face à la mer" },
       ],
     },
     {
