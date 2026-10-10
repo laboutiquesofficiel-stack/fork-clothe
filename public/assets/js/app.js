@@ -229,6 +229,7 @@
           <div class="pimg">${badge}<img src="${esc(p.images[0].src)}" alt="${esc(p.images[0].alt)}" loading="lazy">${back}</div>
           <span class="pname">T-shirt ${esc(p.name)}</span>
           <span class="pmeta">${esc(p.color)} · ${p.category === "femme" ? "Femme" : "Homme"}</span>
+          ${ratingLine(p.sku)}
           <span class="price">${p.available ? euros(p.priceCents) : `<s>${euros(p.priceCents)}</s> · Épuisé`}</span>
         </button>`;
       })
@@ -294,6 +295,292 @@
   });
 
   // ---------------------------------------------------------------------------
+  // Avis clients (acheteurs vérifiés uniquement, contrôlé côté serveur)
+  // ---------------------------------------------------------------------------
+  let reviewSummary = {};
+  const reviewCache = new Map();
+  const starIcons = (value) => {
+    const v = Math.round((Number(value) || 0) * 2) / 2; // arrondi à la demi-étoile
+    const full = Math.floor(v);
+    const half = v - full === 0.5;
+    return `<span class="stars" aria-hidden="true">${"★".repeat(full)}${half ? '<span class="half">★</span>' : ""}<span class="off">${"★".repeat(5 - full - (half ? 1 : 0))}</span></span>`;
+  };
+  const decimal = (n) => String(n).replace(".", ",");
+  function ratingLine(sku, long = false) {
+    const s = sku && reviewSummary[sku];
+    if (!s || !s.count) return "";
+    const label = `${decimal(s.average)} sur 5, ${s.count} avis`;
+    return `<span class="rating" aria-label="${label}">${starIcons(s.average)}<span>${decimal(s.average)}${long ? "/5" : ""} · ${s.count} avis</span></span>`;
+  }
+  async function loadReviewSummary() {
+    const { ok, data } = await api("/api/reviews");
+    if (!ok || !data.summary) return;
+    reviewSummary = data.summary;
+    renderGrid();
+  }
+  async function loadReviews(sku, force = false) {
+    if (!force && reviewCache.has(sku)) return;
+    const { ok, data } = await api(`/api/reviews?sku=${encodeURIComponent(sku)}`);
+    reviewCache.set(sku, ok && Array.isArray(data.reviews) ? data.reviews : []);
+    if (ok && data.summary) reviewSummary = data.summary;
+    if (sheet.product?.sku === sku) {
+      const box = $("#reviewsBox");
+      if (box) box.innerHTML = reviewsHtml(sheet.product);
+    }
+  }
+  function reviewsHtml(p) {
+    const list = reviewCache.get(p.sku);
+    const s = reviewSummary[p.sku];
+    const head = `<div class="reviews-head"><h3>Avis clients</h3>${
+      s && s.count ? `<p class="rating big">${starIcons(s.average)}<b>${decimal(s.average)}/5</b><span class="muted">· ${s.count} avis</span></p>` : ""
+    }<button type="button" class="btn out full" data-write-review="${esc(p.sku)}">Donner mon avis</button></div>`;
+    const policy = `<details class="review-policy"><summary>Comment fonctionnent les avis ?</summary><p>Seuls les clients ayant commandé ce t-shirt sur fork-clothe.com peuvent laisser un avis, une fois leur commande expédiée : l'achat est vérifié avec leur commande. Les avis ne sont pas rémunérés. Ils sont publiés sans délai, du plus récent au plus ancien, avec le prénom et l'initiale du nom de leur auteur. FORK peut masquer un avis injurieux, hors sujet ou contenant des données personnelles, mais jamais parce qu'il est négatif, et peut y répondre publiquement.</p></details>`;
+    if (!list) return `${head}<p class="muted">Chargement des avis…</p>${policy}`;
+    if (!list.length) return `${head}<p class="muted">Pas encore d'avis sur ce t-shirt. Tu l'as reçu ? Sois le premier à donner ton avis.</p>${policy}`;
+    const items = list
+      .map(
+        (r) => `<article class="review">
+          <div class="review-top">${starIcons(r.rating)}<span class="muted">${esc(formatDate(r.createdAt))}</span></div>
+          <p class="review-author"><b>${esc(r.authorName)}</b>${r.verified ? `<span class="verified">✓ Achat vérifié</span>` : ""}${r.size ? `<span class="muted">Taille ${esc(r.size)}</span>` : ""}</p>
+          ${r.title ? `<h4>${esc(r.title)}</h4>` : ""}
+          <p class="review-body">${esc(r.body)}</p>
+          ${
+            Array.isArray(r.photos) && r.photos.length
+              ? `<div class="review-photos">${r.photos
+                  .filter((u) => /^\/api\/review-photo\?id=\d+$/.test(u))
+                  .map((u) => `<a href="${esc(u)}" target="_blank" rel="noopener"><img src="${esc(u)}" alt="Photo jointe à l'avis de ${esc(r.authorName)}" loading="lazy"></a>`)
+                  .join("")}</div>`
+              : ""
+          }
+          ${r.shopReply ? `<div class="shop-reply"><b>Réponse de FORK</b><p>${esc(r.shopReply)}</p></div>` : ""}
+        </article>`,
+      )
+      .join("");
+    return `${head}<div class="review-list">${items}</div>${policy}`;
+  }
+
+  // Formulaire d'avis
+  const review = { sku: null, orderNumber: "", email: "", step: "identify", items: [], item: null, rating: 0, title: "", body: "", photos: [], error: "", busy: false };
+  const REVIEW_PENDING_KEY = "fork_review_pending";
+  function openReview(sku, orderNumber) {
+    Object.assign(review, { sku: sku || null, orderNumber: orderNumber || "", step: "identify", items: [], item: null, rating: 0, title: "", body: "", photos: [], error: "", busy: false });
+    openDrawer("reviewDrawer");
+    if (me) checkEligibility();
+    else renderReview();
+  }
+  async function checkEligibility() {
+    review.busy = true;
+    review.error = "";
+    renderReview();
+    const body = { action: "eligibility" };
+    if (!me) Object.assign(body, { orderNumber: review.orderNumber.trim().toUpperCase(), email: review.email.trim() });
+    else if (review.orderNumber) body.orderNumber = review.orderNumber.trim().toUpperCase();
+    const { ok, data } = await api("/api/reviews", { method: "POST", body });
+    review.busy = false;
+    if (!ok) {
+      review.error = data.error || "Vérification impossible.";
+      review.step = "identify";
+      return renderReview();
+    }
+    const open = (data.items || []).filter((i) => !i.reviewed && bySku.has(i.sku));
+    review.items = open;
+    const match = open.filter((i) => !review.sku || i.sku === review.sku);
+    if (match.length === 1) {
+      review.item = match[0];
+      review.step = "form";
+    } else if (open.length) {
+      review.step = "pick";
+    } else {
+      review.step = "none";
+      review.allDone = (data.items || []).length > 0;
+    }
+    renderReview();
+  }
+  function renderReview() {
+    const body = $("#reviewBody");
+    const err = review.error ? `<p class="notice err">${esc(review.error)}</p>` : "";
+    if (review.busy) {
+      body.innerHTML = `<p class="muted">Vérification de ta commande…</p>`;
+      return;
+    }
+    if (review.step === "identify") {
+      body.innerHTML = `
+        <p>Les avis sont réservés aux clients qui ont reçu leur t-shirt. Retrouve ta commande :</p>
+        <a class="google" href="/.netlify/functions/auth-google" data-review-google><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5a5.6 5.6 0 0 1-2.4 3.6v3h3.9c2.3-2.1 3.5-5.2 3.5-8.8Z"/><path fill="#34A853" d="M12 24c3.2 0 6-1.1 8-2.9l-3.9-3c-1.1.7-2.5 1.2-4.1 1.2-3.1 0-5.8-2.1-6.7-5H1.3v3.1A12 12 0 0 0 12 24Z"/><path fill="#FBBC05" d="M5.3 14.3a7.2 7.2 0 0 1 0-4.6V6.6h-4a12 12 0 0 0 0 10.8l4-3.1Z"/><path fill="#EA4335" d="M12 4.8c1.8 0 3.3.6 4.6 1.8l3.4-3.4A12 12 0 0 0 1.3 6.6l4 3.1c.9-2.9 3.6-4.9 6.7-4.9Z"/></svg>Continuer avec Google</a>
+        <p class="muted center">ou, sans compte</p>
+        <form id="reviewIdentify" class="stack">
+          <div class="field"><label for="r-order">Numéro de commande</label><input id="r-order" required maxlength="80" placeholder="FORK-20261010-ABC123" value="${esc(review.orderNumber)}" autocapitalize="characters"></div>
+          <div class="field"><label for="r-email">E-mail utilisé pour commander</label><input id="r-email" type="email" required maxlength="254" autocomplete="email" value="${esc(review.email)}"></div>
+          ${err}
+          <button class="btn full" type="submit">Retrouver ma commande</button>
+          <p class="hint">Le numéro de commande figure dans ton e-mail de confirmation.</p>
+        </form>`;
+      $("#reviewIdentify").addEventListener("submit", (e) => {
+        e.preventDefault();
+        review.orderNumber = $("#r-order").value;
+        review.email = $("#r-email").value;
+        checkEligibility();
+      });
+      $("[data-review-google]").addEventListener("click", () => {
+        try {
+          sessionStorage.setItem(REVIEW_PENDING_KEY, JSON.stringify({ sku: review.sku, orderNumber: review.orderNumber }));
+        } catch {}
+      });
+      return;
+    }
+    if (review.step === "none") {
+      body.innerHTML = `${err}<div class="empty"><h4>${review.allDone ? "Merci, tu as déjà donné ton avis 🙌" : "Aucun t-shirt à noter pour le moment"}</h4><p class="muted">${
+        review.allDone ? "Tu as déjà noté tous les t-shirts de tes commandes expédiées." : "Tu pourras donner ton avis dès que ta commande aura été expédiée."
+      }</p><button type="button" class="btn out" data-close>Fermer</button></div>`;
+      return;
+    }
+    if (review.step === "pick") {
+      body.innerHTML = `<p>Quel t-shirt veux-tu noter ?</p><div class="search-results">${review.items
+        .map((i, n) => {
+          const p = bySku.get(i.sku);
+          return `<button type="button" class="sresult" data-pick="${n}"><img src="${esc(p.images[0].src)}" alt=""><span><b>T-shirt ${esc(i.name)}</b><span class="pmeta">${esc(i.color)} · Taille ${esc(i.size)}</span><span class="muted">${esc(i.orderNumber)}</span></span></button>`;
+        })
+        .join("")}</div>`;
+      $$("[data-pick]").forEach((b) =>
+        b.addEventListener("click", () => {
+          review.item = review.items[Number(b.dataset.pick)];
+          review.step = "form";
+          renderReview();
+        }),
+      );
+      return;
+    }
+    if (review.step === "done") {
+      body.innerHTML = `<div class="empty"><h4>Merci pour ton avis !</h4><p class="muted">Il est publié sur la fiche du t-shirt.</p><button type="button" class="btn" data-show-product="${esc(bySku.get(review.item.sku)?.id || "")}">Voir mon avis</button></div>`;
+      return;
+    }
+    // Formulaire
+    const p = bySku.get(review.item.sku);
+    body.innerHTML = `
+      <div class="sresult static"><img src="${esc(p.images[0].src)}" alt=""><span><b>T-shirt ${esc(review.item.name)}</b><span class="pmeta">${esc(review.item.color)} · Taille ${esc(review.item.size)}</span></span></div>
+      <form id="reviewForm" class="stack">
+        <div class="field"><span class="up">Ta note</span>
+          <div class="star-pick" role="radiogroup" aria-label="Note sur 5">${[1, 2, 3, 4, 5]
+            .map((n) => `<button type="button" role="radio" aria-checked="${review.rating === n}" aria-label="${n} étoile${n > 1 ? "s" : ""}" data-rate="${n}" class="${review.rating >= n ? "on" : ""}">★</button>`)
+            .join("")}</div>
+        </div>
+        <div class="field"><label for="r-title">Titre (facultatif)</label><input id="r-title" maxlength="80" value="${esc(review.title)}" placeholder="Ex. : Super qualité d'impression"></div>
+        <div class="field"><label for="r-body">Ton avis</label><textarea id="r-body" rows="5" maxlength="2000" required placeholder="Qualité, taille, confort, impression… et si un souci, dis-le nous.">${esc(review.body)}</textarea><p class="hint" id="r-count">${review.body.length}/2000 · 10 caractères minimum</p></div>
+        <div class="field"><span class="up">Photos (facultatif, 3 maximum)</span>
+          <div class="photo-pick">${review.photos
+            .map((src, n) => `<div class="photo-thumb"><img src="${esc(src)}" alt="Photo ${n + 1}"><button type="button" aria-label="Retirer la photo ${n + 1}" data-remove-photo="${n}">✕</button></div>`)
+            .join("")}${review.photos.length < 3 ? `<label class="photo-add">+ Ajouter<input type="file" id="r-photos" accept="image/*" multiple hidden></label>` : ""}</div>
+        </div>
+        ${err}
+        <p class="hint">Ton avis sera publié avec ton prénom et l'initiale de ton nom, la taille commandée et la date. Évite d'y mettre des informations personnelles (adresse, téléphone…).</p>
+        <button class="btn full" type="submit" id="r-submit">Publier mon avis</button>
+      </form>`;
+    $$("[data-rate]").forEach((b) =>
+      b.addEventListener("click", () => {
+        review.rating = Number(b.dataset.rate);
+        saveReviewFields();
+        renderReview();
+      }),
+    );
+    $("#r-body").addEventListener("input", (e) => {
+      review.body = e.target.value;
+      $("#r-count").textContent = `${review.body.length}/2000 · 10 caractères minimum`;
+    });
+    $("#r-title").addEventListener("input", (e) => (review.title = e.target.value));
+    $("#r-photos")?.addEventListener("change", async (e) => {
+      saveReviewFields();
+      const files = [...e.target.files].slice(0, 3 - review.photos.length);
+      for (const file of files) {
+        try {
+          review.photos.push(await shrinkPhoto(file));
+        } catch {
+          review.error = "Une photo n'a pas pu être lue. Essaie avec une autre.";
+        }
+      }
+      renderReview();
+    });
+    $$("[data-remove-photo]").forEach((b) =>
+      b.addEventListener("click", () => {
+        saveReviewFields();
+        review.photos.splice(Number(b.dataset.removePhoto), 1);
+        renderReview();
+      }),
+    );
+    $("#reviewForm").addEventListener("submit", submitReview);
+  }
+  function saveReviewFields() {
+    const t = $("#r-title");
+    const b = $("#r-body");
+    if (t) review.title = t.value;
+    if (b) review.body = b.value;
+  }
+  // Réduit la photo (1400 px max, JPEG) avant l'envoi : plus rapide et plus léger.
+  function shrinkPhoto(file) {
+    return new Promise((resolve, reject) => {
+      const url = URL.createObjectURL(file);
+      const img = new Image();
+      img.onload = () => {
+        const scale = Math.min(1, 1400 / Math.max(img.naturalWidth, img.naturalHeight));
+        const canvas = document.createElement("canvas");
+        canvas.width = Math.round(img.naturalWidth * scale);
+        canvas.height = Math.round(img.naturalHeight * scale);
+        canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+        URL.revokeObjectURL(url);
+        resolve(canvas.toDataURL("image/jpeg", 0.8));
+      };
+      img.onerror = () => {
+        URL.revokeObjectURL(url);
+        reject(new Error("image"));
+      };
+      img.src = url;
+    });
+  }
+  async function submitReview(e) {
+    e.preventDefault();
+    saveReviewFields();
+    review.error = "";
+    if (!review.rating) review.error = "Choisis une note de 1 à 5 étoiles.";
+    else if (review.body.trim().length < 10) review.error = "Ton avis doit faire au moins 10 caractères.";
+    if (review.error) return renderReview();
+    const button = $("#r-submit");
+    button.disabled = true;
+    button.textContent = "Publication…";
+    const { ok, data } = await api("/api/reviews", {
+      method: "POST",
+      body: {
+        action: "submit",
+        orderNumber: review.item.orderNumber,
+        email: me ? undefined : review.email.trim(),
+        sku: review.item.sku,
+        rating: review.rating,
+        title: review.title.trim(),
+        body: review.body.trim(),
+        photos: review.photos,
+      },
+    });
+    if (!ok) {
+      review.error = data.error || "Impossible de publier ton avis. Réessaie.";
+      return renderReview();
+    }
+    review.step = "done";
+    reviewCache.delete(review.item.sku);
+    renderReview();
+    loadReviewSummary();
+  }
+  document.addEventListener("click", (e) => {
+    const write = e.target.closest("[data-write-review]");
+    if (write) openReview(write.dataset.writeReview);
+    const fromOrder = e.target.closest("[data-review-order]");
+    if (fromOrder) openReview(null, fromOrder.dataset.reviewOrder);
+    const show = e.target.closest("[data-show-product]");
+    if (show && show.dataset.showProduct) openProduct(show.dataset.showProduct);
+    if (e.target.closest("[data-scroll-reviews]")) {
+      e.preventDefault();
+      $("#reviewsBox")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  });
+
+  // ---------------------------------------------------------------------------
   // Fiche produit
   // ---------------------------------------------------------------------------
   const sheet = { product: null, size: null, qty: 1 };
@@ -305,6 +592,7 @@
     sheet.qty = 1;
     renderProduct();
     openDrawer("productDrawer");
+    if (product.sku) loadReviews(product.sku);
   }
   function renderProduct() {
     const p = sheet.product;
@@ -318,6 +606,7 @@
           ${p.available ? (p.isNew ? '<span class="pill info">Nouveau</span>' : "") : '<span class="pill err">Épuisé</span>'}
           <h2>T-shirt ${esc(p.name)}</h2>
           <p class="pmeta">${esc(p.color)} · ${p.category === "femme" ? "Femme" : "Homme"}</p>
+          ${p.sku && reviewSummary[p.sku]?.count ? `<a href="#reviewsBox" class="rating-link" data-scroll-reviews>${ratingLine(p.sku, true)}</a>` : ""}
         </div>
         <p class="price">${euros(p.priceCents)}</p>
         <p class="muted">${esc(p.description)}</p>
@@ -342,6 +631,7 @@
             <ul><li>Lavage à l'envers, à 30 °C.</li><li>Avec des couleurs similaires.</li><li>Éviter le sèche-linge.</li><li>Ne pas repasser directement sur l'impression.</li><li>Pas de produits blanchissants.</li></ul>
           </details>
         </div>
+        ${p.sku ? `<section class="reviews" id="reviewsBox" aria-label="Avis clients">${reviewsHtml(p)}</section>` : ""}
       </div>`;
 
     const gallery = $("#gallery");
@@ -865,6 +1155,7 @@
           <div class="row"><span>Livraison</span><span>${o.shippingCents ? euros(o.shippingCents) : "Offerte"}</span></div>
           <div class="row total"><span>Total</span><span>${euros(o.totalCents)}</span></div>
           ${tracking}
+          ${["shipped", "delivered"].includes(o.status) ? `<button type="button" class="btn out full" data-review-order="${esc(o.orderNumber)}">Donner mon avis</button>` : ""}
         </article>`;
       })
       .join("");
@@ -1046,25 +1337,37 @@
     const payment = params.get("payment");
     const order = params.get("order");
     const reason = params.get("reason");
-    if (login || payment) {
+    const avis = params.get("avis");
+    if (login || payment || avis) {
       const clean = new URL(window.location.href);
-      ["login", "payment", "order", "reason"].forEach((k) => clean.searchParams.delete(k));
+      ["login", "payment", "order", "reason", "avis"].forEach((k) => clean.searchParams.delete(k));
       history.replaceState(null, "", clean.pathname + clean.search + clean.hash);
     }
-    return { login, payment, order, reason };
+    return { login, payment, order, reason, avis };
   }
 
   async function start() {
     $("#year").textContent = String(new Date().getFullYear());
     saveCart();
     renderGrid();
-    const { login, payment, order, reason } = consumeUrlParams();
+    const { login, payment, order, reason, avis } = consumeUrlParams();
+    loadReviewSummary();
     await loadMe();
     if (me) fetchAddresses();
+    let pendingReview = null;
+    try {
+      pendingReview = JSON.parse(sessionStorage.getItem(REVIEW_PENDING_KEY) || "null");
+      sessionStorage.removeItem(REVIEW_PENDING_KEY);
+    } catch {}
 
     if (payment === "sumup" && order) {
       openDrawer("cartDrawer");
       checkPaymentStatus(order.slice(0, 80));
+    } else if (avis) {
+      openReview(null, avis.slice(0, 80));
+    } else if (login === "success" && pendingReview) {
+      toast(me ? `Bienvenue ${(me.name || "").split(" ")[0]}` : "Connexion réussie");
+      openReview(pendingReview.sku, pendingReview.orderNumber);
     } else if (login === "success") {
       toast(me ? `Bienvenue ${(me.name || "").split(" ")[0]}` : "Connexion réussie");
       openAccount("orders");
