@@ -374,3 +374,16 @@ h1, h2, h3, h4 { margin: 0; text-transform: uppercase; font-weight: 900; letter-
 /* Stock */
 .size.out { color: var(--muted); text-decoration: line-through; background: var(--soft); cursor: not-allowed; opacity: .7; }
 .low-stock { margin: 8px 0 0; font-size: .82rem; font-weight: 700; color: var(--red); }
+
+/* Calendrier des matchs à domicile */
+.venue { display: grid; gap: 2px; font-size: .9rem; border-left: 3px solid var(--red); padding-left: 12px; }
+.split.dark .venue span { color: #cfcfcf; }
+.venue .link { justify-self: start; margin-top: 4px; }
+.m-title { font-size: .85rem; text-transform: uppercase; letter-spacing: .08em; margin: 6px 0 0; }
+.matches { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; border-top: 1px solid rgba(255, 255, 255, .18); max-height: 360px; overflow-y: auto; }
+.matches li { display: grid; gap: 2px; padding: 10px 0; border-bottom: 1px solid rgba(255, 255, 255, .18); }
+.matches li:first-child .m-date::after { content: "Prochain match"; margin-left: 8px; background: var(--red); color: var(--white); font-size: .62rem; padding: 2px 6px; letter-spacing: .06em; vertical-align: 2px; }
+.m-date { font-weight: 800; text-transform: uppercase; font-size: .78rem; letter-spacing: .05em; }
+.m-opp { font-size: 1rem; font-weight: 700; }
+.split.dark .m-meta { color: #cfcfcf; font-size: .8rem; }
+.m-hint { color: #9a9a9a !important; }
