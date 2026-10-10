@@ -18,6 +18,7 @@
   const PRODUCTS = [
     {
       id: "les-minots",
+      type: "T-shirt",
       sku: "fork-les-minots",
       name: "Les Minots",
       color: "Noir",
@@ -40,6 +41,7 @@
     },
     {
       id: "authentique",
+      type: "T-shirt",
       keywords: ["rugby", "rct", "ballon", "ovale", "degun", "match", "blanc", "rouge", "noir", "vibe"],
       sku: "fork-authentique",
       name: "L'Authentique",
@@ -62,6 +64,7 @@
     },
     {
       id: "lou-faron",
+      type: "T-shirt",
       keywords: ["leopard", "faron", "telepherique", "montagne", "584", "blanc", "femme"],
       sku: "fork-lou-faron",
       name: "Lou Faron",
@@ -86,6 +89,7 @@
     },
     {
       id: "les-boutades",
+      type: "T-shirt",
       keywords: ["calanque", "fada", "mistral", "cigale", "jaune", "rade", "petanque", "provence", "noir", "mots"],
       sku: "fork-les-boutades",
       name: "Les Boutades",

@@ -247,4 +247,28 @@ ${items.join("\n")}
 `,
 );
 
+// --- Catalogue côté serveur (annonces automatiques des nouveautés) ---------
+writeFileSync(
+  join(ROOT, "lib", "catalogue.generated.ts"),
+  `// Fichier généré par scripts/build-pages.mjs à partir de public/assets/js/app.js. Ne pas modifier à la main.
+export type CatalogueItem = { sku: string; id: string; type: string; name: string; color: string; priceCents: number; available: boolean; image: string; url: string };
+
+export const CATALOGUE: CatalogueItem[] = ${JSON.stringify(
+    forSale.map((p) => ({
+      sku: p.sku,
+      id: p.id,
+      type: p.type || "T-shirt",
+      name: p.name,
+      color: p.color,
+      priceCents: p.priceCents,
+      available: Boolean(p.available),
+      image: abs(p.images[0].src),
+      url: pageUrl(p),
+    })),
+    null,
+    2,
+  )};
+`,
+);
+
 console.log(`${forSale.length} pages t-shirt, 404, sitemap (${urls.length} adresses), flux Merchant (${items.length} articles)`);

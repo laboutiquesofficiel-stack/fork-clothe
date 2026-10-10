@@ -66,6 +66,61 @@ export async function sendEmail(message: EmailMessage): Promise<boolean> {
   }
 }
 
+export type BatchEmail = {
+  to: string;
+  subject: string;
+  html: string;
+  text: string;
+  /** En-têtes supplémentaires (ex. List-Unsubscribe). */
+  headers?: Record<string, string>;
+};
+
+/**
+ * Envoi groupé (100 e-mails maximum par appel, un e-mail individuel par
+ * destinataire). Renvoie true si Resend a accepté le lot.
+ */
+export async function sendEmailBatch(messages: BatchEmail[], idempotencyKey: string): Promise<boolean> {
+  const apiKey = process.env.RESEND_API_KEY?.trim();
+  const from = process.env.MAIL_FROM?.trim();
+  if (!apiKey || !from) {
+    console.warn("Batch email skipped: RESEND_API_KEY or MAIL_FROM is not configured");
+    return false;
+  }
+  if (!messages.length) return true;
+  if (messages.length > 100) throw new Error("BATCH_TOO_LARGE");
+
+  const redirectTo = process.env.EMAIL_REDIRECT_TO?.trim();
+  try {
+    const response = await fetch(`${RESEND_ENDPOINT}/batch`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+        "Idempotency-Key": `${redirectTo ? "test-" : ""}${idempotencyKey}`,
+      },
+      body: JSON.stringify(
+        messages.map((m) => ({
+          from,
+          to: [redirectTo || m.to],
+          subject: redirectTo ? `[TEST pour ${m.to}] ${m.subject}` : m.subject,
+          html: m.html,
+          text: m.text,
+          ...(m.headers ? { headers: m.headers } : {}),
+        })),
+      ),
+      signal: AbortSignal.timeout(15000),
+    });
+    if (!response.ok) {
+      console.error("Batch email failed", response.status);
+      return false;
+    }
+    return true;
+  } catch (error) {
+    console.error("Batch email failed", error instanceof Error ? error.message : "Unknown error");
+    return false;
+  }
+}
+
 export function escapeHtml(value: string): string {
   return value
     .replaceAll("&", "&amp;")

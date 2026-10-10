@@ -14,6 +14,8 @@ import { notifyNewsletterWelcome } from "../../lib/notifications.js";
  *     l'adresse soit nouvelle ou déjà inscrite (aucune fuite d'information).
  * GET /api/newsletter?unsubscribe=<jeton>
  *   → désinscription en un clic, puis retour sur le site.
+ * POST /api/newsletter?unsubscribe=<jeton>
+ *   → désinscription « un clic » déclenchée par la messagerie (List-Unsubscribe-Post).
  */
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -49,6 +51,18 @@ export default async (request: Request) => {
 
     if (request.method !== "POST") {
       return Response.json({ error: "Méthode non autorisée." }, { status: 405 });
+    }
+
+    // Désinscription « en un clic » depuis la messagerie (en-tête List-Unsubscribe-Post).
+    const oneClickToken = (url.searchParams.get("unsubscribe") ?? "").trim();
+    if (oneClickToken) {
+      if (/^[a-f0-9]{48}$/.test(oneClickToken)) {
+        await db
+          .update(newsletterSubscribers)
+          .set({ status: "unsubscribed", unsubscribedAt: new Date() })
+          .where(and(eq(newsletterSubscribers.unsubscribeToken, oneClickToken), eq(newsletterSubscribers.status, "subscribed")));
+      }
+      return new Response("OK", { status: 200 });
     }
 
     const body = (await request.json().catch(() => null)) as Record<string, unknown> | null;
