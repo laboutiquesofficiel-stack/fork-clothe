@@ -14,6 +14,7 @@
   <script src="assets/js/admin.js" defer></script>
   <script src="assets/js/admin-reviews.js" defer></script>
   <script src="assets/js/admin-news.js" defer></script>
+  <script src="assets/js/admin-stock.js" defer></script>
 </head>
 <body>
   <header class="site-header">
@@ -42,6 +43,7 @@
       <div class="view-switch" role="tablist" aria-label="Rubrique">
         <button type="button" class="switch" data-view="orders" aria-selected="true">Commandes</button>
         <button type="button" class="switch" data-view="reviews" aria-selected="false">Avis</button>
+        <button type="button" class="switch" data-view="stock" aria-selected="false">Stock</button>
         <button type="button" class="switch" data-view="news" aria-selected="false">Inscrits</button>
       </div>
       <div id="ordersPane">
@@ -58,6 +60,15 @@
         </div>
       </div>
       <div class="admin-list" id="orderList" aria-live="polite"></div>
+      </div>
+      <div id="stockPane" hidden>
+        <div class="sec-head"><h1>Stock</h1></div>
+        <div class="stock-modes" role="tablist" aria-label="Mode">
+          <button type="button" class="tab" data-stock-mode="view" aria-selected="true">En direct</button>
+          <button type="button" class="tab" data-stock-mode="market" aria-selected="false">Vente sur place</button>
+          <button type="button" class="tab" data-stock-mode="count" aria-selected="false">Inventaire</button>
+        </div>
+        <div id="stockBody" aria-live="polite"></div>
       </div>
       <div id="newsPane" hidden>
         <div class="sec-head"><h1>Inscrits « prochaine collection »</h1></div>

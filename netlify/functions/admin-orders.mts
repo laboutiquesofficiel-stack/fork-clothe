@@ -4,6 +4,7 @@ import { and, desc, eq, inArray } from "drizzle-orm";
 import { db } from "../../db/index.js";
 import { orders } from "../../db/schema.js";
 import { notifyOrderDelivered, notifyOrderShipped } from "../../lib/notifications.js";
+import { restockForOrder } from "../../lib/stock.js";
 
 /**
  * Gestion des commandes par la boutique.
@@ -163,6 +164,8 @@ export default async (request: Request) => {
         .set({ status: "cancelled" })
         .where(where(["pending_payment", "paid", "preparing"]))
         .returning({ id: orders.id });
+      // Pièces remises en stock si elles avaient été déduites au paiement.
+      if (updated[0]) await restockForOrder(updated[0].id);
     } else {
       return Response.json({ error: "Action inconnue." }, { status: 400 });
     }

@@ -370,3 +370,7 @@ h1, h2, h3, h4 { margin: 0; text-transform: uppercase; font-weight: 900; letter-
 @media (hover: hover) and (pointer: fine) { .ticker:hover .tick-track { animation-play-state: paused; } }
 @keyframes tick { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 @media (prefers-reduced-motion: reduce) { .tick-track { animation: none; } }
+
+/* Stock */
+.size.out { color: var(--muted); text-decoration: line-through; background: var(--soft); cursor: not-allowed; opacity: .7; }
+.low-stock { margin: 8px 0 0; font-size: .82rem; font-weight: 700; color: var(--red); }
