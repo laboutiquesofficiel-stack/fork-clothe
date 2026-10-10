@@ -264,3 +264,23 @@ export const reviewPhotos = pgTable("review_photos", {
     .notNull()
     .defaultNow(),
 });
+
+/**
+ * Inscrits « Préviens-moi de la prochaine collection ».
+ *
+ * Consentement explicite (case cochée), date et provenance conservées comme
+ * preuve. Chaque e-mail contient un lien de désinscription en un clic
+ * (unsubscribeToken). status : subscribed | unsubscribed
+ */
+export const newsletterSubscribers = pgTable("newsletter_subscribers", {
+  id: serial().primaryKey(),
+  email: text().notNull().unique(),
+  status: text().notNull().default("subscribed"),
+  source: text(),
+  consentAt: timestamp("consent_at", { withTimezone: true }).notNull().defaultNow(),
+  unsubscribeToken: text("unsubscribe_token").notNull().unique(),
+  unsubscribedAt: timestamp("unsubscribed_at", { withTimezone: true }),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});

@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <base href="/">
+  <link rel="icon" href="logo.png" type="image/png">
+  <link rel="apple-touch-icon" href="logo.png">
+  <meta name="theme-color" content="#0e2a3f">
+  <link rel="stylesheet" href="assets/css/fork.css">
+  <script src="assets/js/app.js" defer></script>
+  <title>Page introuvable · FORK</title>
+  <meta name="robots" content="noindex">
+</head>
+<body>
+  <div class="annonce">
+    <div class="wrap">Livraison offerte à moins de 10 km de Toulon · Colissimo suivi en France métropolitaine</div>
+  </div>
+
+  <header class="site-header" id="top">
+    <div class="wrap hrow">
+      <div class="hside">
+        <button class="ico burger" id="menuOpen" aria-label="Ouvrir le menu" aria-controls="menuDrawer">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        </button>
+        <button class="ico" id="searchOpen" aria-label="Rechercher un article" aria-controls="searchDrawer">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <span class="txt">Rechercher</span>
+        </button>
+        <a class="ico ig" href="https://www.instagram.com/fork__off/" target="_blank" rel="noopener" aria-label="Instagram FORK">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>
+          <span class="txt">Instagram</span>
+        </a>
+      </div>
+      <a href="#top" class="brand" aria-label="FORK, accueil">
+        <img src="logo.png" alt="" width="46" height="46">
+        <span>FORK</span>
+      </a>
+      <div class="hside right">
+        <button class="ico" id="accountOpen" aria-controls="accountDrawer">
+          <span id="accountIcon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg></span>
+          <span class="txt" id="accountLabel">Compte</span>
+        </button>
+        <button class="ico" id="cartOpen" aria-controls="cartDrawer">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 8h14l-1 12H6L5 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+          <span class="txt">Panier</span>
+          <span class="count" id="cartCount">0</span>
+        </button>
+      </div>
+    </div>
+    <nav class="mainnav" aria-label="Navigation principale">
+      <a href="#produits" data-filter="all">La collection</a>
+      <a href="#produits" data-filter="homme">Homme</a>
+      <a href="#produits" data-filter="femme">Femme</a>
+      <a href="#match">Jour de match</a>
+      <a href="#histoire">À propos</a>
+      <a href="#faq">Aide</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="wrap notfound">
+      <span class="big">404</span>
+      <h1>Cette page s'est perdue dans la rade</h1>
+      <p class="muted">L'adresse est peut-être mal tapée, ou la page n'existe plus. Pas de panique, la collection est toujours là.</p>
+      <div class="actions"><a class="btn" href="./#produits">Voir la collection</a><a class="btn out" href="./">Retour à l'accueil</a></div>
+    </section>
+    <section class="sec wrap" aria-label="T-shirts">
+      <div class="others">
+        <a class="pcard" href="t-shirt/les-minots/" data-product="les-minots">
+          <div class="pimg"><span class="pbadge">Nouveau</span><img src="assets/products/les-minots/les-minots-face-port.jpg" alt="Les Minots noir porté de face sur le port" loading="lazy"></div>
+          <span class="pname">T-shirt Les Minots</span>
+          <span class="pmeta">Noir · Homme</span>
+          <span class="price">30,00 €</span>
+        </a>
+        <a class="pcard" href="t-shirt/authentique/" data-product="authentique">
+          <div class="pimg"><img src="assets/products/authentique/authentique-face-porte.jpg" alt="L&#39;Authentique rouge et noir porté de face devant la mer" loading="lazy"></div>
+          <span class="pname">T-shirt L&#39;Authentique</span>
+          <span class="pmeta">Rouge &amp; noir · Homme</span>
+          <span class="price">30,00 €</span>
+        </a>
+        <a class="pcard" href="t-shirt/lou-faron/" data-product="lou-faron">
+          <div class="pimg"><img src="assets/products/lou-faron/lou-faron-face-maison-bleue.jpg" alt="Lou Faron porté de face devant une maison aux volets bleus" loading="lazy"></div>
+          <span class="pname">T-shirt Lou Faron</span>
+          <span class="pmeta">Léopard · Femme</span>
+          <span class="price">30,00 €</span>
+        </a>
+        <a class="pcard" href="t-shirt/les-boutades/" data-product="les-boutades">
+          <div class="pimg"><img src="assets/products/les-boutades/les-boutades-face-calanque.jpg" alt="Les Boutades noir porté de face au-dessus de la calanque" loading="lazy"></div>
+          <span class="pname">T-shirt Les Boutades</span>
+          <span class="pmeta">Noir · Homme</span>
+          <span class="price">30,00 €</span>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="fcols">
+        <div>
+          <div class="flogo"><img src="logo.png" alt="" width="56" height="56">FORK</div>
+          <p class="muted">La vibe de Toulon dans ton dressing.</p>
+        </div>
+        <div><h4>Boutique</h4><ul><li><a href="#produits" data-filter="all">La collection</a></li><li><a href="#produits" data-filter="homme">Homme</a></li><li><a href="#produits" data-filter="femme">Femme</a></li></ul></div>
+        <div><h4>FORK</h4><ul><li><a href="#histoire">Notre histoire</a></li><li><a href="#match">Jour de match</a></li><li><button type="button" data-open-account>Mon compte</button></li></ul></div>
+        <div><h4>Aide</h4><ul><li><a href="#faq">FAQ</a></li><li><a href="https://wa.me/33766751840" target="_blank" rel="noopener">WhatsApp · 07 66 75 18 40</a></li><li><a href="https://www.instagram.com/fork__off/" target="_blank" rel="noopener">Instagram · @fork__off</a></li></ul></div>
+      </div>
+      <div class="fbottom"><span>© <span id="year">2026</span> FORK · fork-clothe.com</span><span class="flegal"><a href="mentions-legales.html">Mentions légales</a> · <a href="cgv.html">CGV</a> · <a href="confidentialite.html">Confidentialité</a></span></div>
+    </div>
+  </footer>
+
+  <div class="overlay" id="overlay" hidden></div>
+
+  <aside class="drawer left" id="menuDrawer" hidden aria-label="Menu">
+    <div class="dhead"><h3>Menu</h3><button class="x" data-close aria-label="Fermer le menu">✕</button></div>
+    <div class="dbody">
+      <nav class="mnav-links">
+        <a href="#produits" data-filter="all">La collection</a>
+        <a href="#produits" data-filter="homme">Homme</a>
+        <a href="#produits" data-filter="femme">Femme</a>
+        <a href="#match">Jour de match</a>
+        <a href="#histoire">À propos</a>
+        <a href="#faq">Aide</a>
+        <button type="button" data-open-account>Mon compte</button>
+        <a href="https://www.instagram.com/fork__off/" target="_blank" rel="noopener">Instagram · @fork__off</a>
+      </nav>
+    </div>
+  </aside>
+
+  <aside class="drawer wide" id="productDrawer" hidden aria-label="Fiche produit">
+    <div class="dhead"><h3 id="productTitle">Produit</h3><button class="x" data-close aria-label="Fermer la fiche produit">✕</button></div>
+    <div class="sheet" id="productSheet"></div>
+  </aside>
+
+  <aside class="drawer" id="reviewDrawer" hidden aria-label="Donner mon avis">
+    <div class="dhead"><h3>Donner mon avis</h3><button class="x" data-close aria-label="Fermer">✕</button></div>
+    <div class="dbody" id="reviewBody"></div>
+  </aside>
+
+  <aside class="drawer" id="searchDrawer" hidden aria-label="Rechercher un article">
+    <div class="dhead"><h3>Rechercher</h3><button class="x" data-close aria-label="Fermer la recherche">✕</button></div>
+    <div class="dbody">
+      <div class="search-field">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input type="search" id="searchInput" placeholder="Un t-shirt, une couleur, un mot…" autocomplete="off" enterkeyhint="search" aria-label="Rechercher un article" aria-controls="searchResults">
+      </div>
+      <p class="hint" id="searchHint" aria-live="polite"></p>
+      <div class="search-results" id="searchResults"></div>
+    </div>
+  </aside>
+
+  <aside class="drawer" id="cartDrawer" hidden aria-label="Panier">
+    <div class="dhead"><h3 id="cartTitle">Panier</h3><button class="x" data-close aria-label="Fermer le panier">✕</button></div>
+    <div class="steps" id="cartSteps"><span data-step="cart">Panier</span><span data-step="delivery">Livraison</span><span data-step="payment">Paiement</span></div>
+    <div class="dbody" id="cartBody"></div>
+    <div class="dfoot" id="cartFoot"></div>
+  </aside>
+
+  <aside class="drawer" id="accountDrawer" hidden aria-label="Mon compte">
+    <div class="dhead"><h3>Mon compte</h3><button class="x" data-close aria-label="Fermer mon compte">✕</button></div>
+    <div class="acct-tabs" id="accountTabs" role="tablist" hidden>
+      <button role="tab" data-acct="orders" aria-selected="true">Mes commandes</button>
+      <button role="tab" data-acct="addresses" aria-selected="false">Mes adresses</button>
+      <button role="tab" data-acct="info" aria-selected="false">Mes informations</button>
+    </div>
+    <div class="dbody" id="accountBody"></div>
+  </aside>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+</body>
+</html>
