@@ -41,6 +41,11 @@ function isAuthorized(request: Request): boolean {
   return timingSafeEqual(a, b);
 }
 
+/** Le suivi La Poste automatique est actif si la clé API est configurée sur Netlify. */
+function autoTrackingEnabled(): boolean {
+  return Boolean(process.env.LAPOSTE_API_KEY?.trim());
+}
+
 function cleanText(value: unknown, maxLength: number): string {
   return typeof value === "string" ? value.trim().slice(0, maxLength) : "";
 }
@@ -74,6 +79,7 @@ const listColumns = {
   carrier: orders.carrier,
   trackingNumber: orders.trackingNumber,
   trackingUrl: orders.trackingUrl,
+  shipmentStatus: orders.shipmentStatus,
   shippedAt: orders.shippedAt,
   deliveredAt: orders.deliveredAt,
 };
@@ -98,7 +104,7 @@ export default async (request: Request) => {
         .where(statusFilter ? eq(orders.status, statusFilter) : undefined)
         .orderBy(desc(orders.createdAt))
         .limit(100);
-      return Response.json({ orders: rows }, { headers: noStore });
+      return Response.json({ orders: rows, autoTracking: autoTrackingEnabled() }, { headers: noStore });
     }
 
     if (request.method !== "POST") {
@@ -125,7 +131,7 @@ export default async (request: Request) => {
         .returning({ id: orders.id });
     } else if (action === "ship") {
       const carrier = cleanText(body?.carrier, 40) || "Colissimo";
-      const trackingNumber = cleanText(body?.trackingNumber, 60).replace(/\s+/g, "");
+      const trackingNumber = cleanText(body?.trackingNumber, 60).replace(/\s+/g, "").toUpperCase();
       let trackingUrl = cleanText(body?.trackingUrl, 500);
 
       if (!/^[A-Za-z0-9-]{6,40}$/.test(trackingNumber)) {
@@ -138,19 +144,35 @@ export default async (request: Request) => {
         return Response.json({ error: "Le lien de suivi doit commencer par https://." }, { status: 400 });
       }
 
-      updated = await db
-        .update(orders)
-        .set({
-          status: "shipped",
-          shipmentStatus: "shipped",
-          carrier,
-          trackingNumber,
-          trackingUrl: trackingUrl || null,
-          shippedAt: new Date(),
-        })
-        .where(where(["paid", "preparing"]))
-        .returning({ id: orders.id });
-      if (updated[0]) await notifyOrderShipped(updated[0].id);
+      if (autoTrackingEnabled() && carrier.toLowerCase() === "colissimo" && body?.sendNow !== true) {
+        // Suivi automatique : on enregistre le numéro, l'e-mail « expédiée » partira
+        // tout seul au premier scan du colis par La Poste (tâche track-shipments).
+        updated = await db
+          .update(orders)
+          .set({
+            status: "preparing",
+            shipmentStatus: "awaiting_pickup",
+            carrier,
+            trackingNumber,
+            trackingUrl: trackingUrl || null,
+          })
+          .where(where(["paid", "preparing"]))
+          .returning({ id: orders.id });
+      } else {
+        updated = await db
+          .update(orders)
+          .set({
+            status: "shipped",
+            shipmentStatus: "shipped",
+            carrier,
+            trackingNumber,
+            trackingUrl: trackingUrl || null,
+            shippedAt: new Date(),
+          })
+          .where(where(["paid", "preparing"]))
+          .returning({ id: orders.id });
+        if (updated[0]) await notifyOrderShipped(updated[0].id);
+      }
     } else if (action === "deliver") {
       updated = await db
         .update(orders)
