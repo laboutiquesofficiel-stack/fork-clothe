@@ -119,6 +119,29 @@
   const byId = new Map(PRODUCTS.map((p) => [p.id, p]));
   const MAX_QTY = 20;
 
+  // Stock public : par t-shirt et par taille, "in" | "out" | nombre restant (≤ 3).
+  // Une taille absente n'est pas suivie et reste en vente.
+  let stock = {};
+  const stockOf = (sku, size) => stock[sku]?.[size];
+  const isOut = (sku, size) => stockOf(sku, size) === "out";
+  const maxFor = (sku, size) => {
+    const v = stockOf(sku, size);
+    return typeof v === "number" ? Math.min(v, MAX_QTY) : v === "out" ? 0 : MAX_QTY;
+  };
+  async function loadStockInfo() {
+    try {
+      const r = await fetch("/api/stock", { credentials: "same-origin" });
+      const data = await r.json();
+      stock = data && typeof data.stock === "object" ? data.stock : {};
+    } catch {
+      stock = {};
+    }
+    if (sheet.product) {
+      if (sheet.size && isOut(sheet.product.sku, sheet.size)) sheet.size = null;
+      renderProduct();
+    }
+  }
+
   const STATUS = {
     pending_payment: ["En attente de paiement", "warn"],
     paid: ["Payée", "ok"],
@@ -720,8 +743,18 @@
         ${
           p.available
             ? `<div class="field"><span class="up">Taille</span><div class="sizes">${p.sizes
-                .map((s) => `<button type="button" class="size" data-size="${esc(s)}" aria-pressed="${sheet.size === s}">${esc(s)}</button>`)
-                .join("")}</div></div>
+                .map((s) =>
+                  isOut(p.sku, s)
+                    ? `<button type="button" class="size out" disabled aria-label="${esc(s)}, épuisée">${esc(s)}</button>`
+                    : `<button type="button" class="size" data-size="${esc(s)}" aria-pressed="${sheet.size === s}">${esc(s)}</button>`,
+                )
+                .join("")}</div>${
+                sheet.size && typeof stockOf(p.sku, sheet.size) === "number"
+                  ? `<p class="low-stock">Plus que ${stockOf(p.sku, sheet.size)} en taille ${esc(sheet.size)} !</p>`
+                  : p.sizes.some((s) => isOut(p.sku, s))
+                    ? `<p class="hint">Les tailles barrées sont épuisées.</p>`
+                    : ""
+              }</div>
               <div class="field"><span class="up">Quantité</span><div class="qty"><button type="button" data-qty="-1" aria-label="Diminuer">−</button><span>${sheet.qty}</span><button type="button" data-qty="1" aria-label="Augmenter">+</button></div></div>
               <button type="button" class="btn full" id="addToCart" ${canBuy ? "" : "disabled"}>${sheet.size ? `Ajouter au panier · ${euros(p.priceCents * sheet.qty)}` : "Choisis ta taille"}</button>`
             : `<p class="notice">Ce modèle est épuisé pour le moment. Suis-nous sur Instagram pour être au courant de son retour.</p>`
@@ -752,12 +785,14 @@
     $$("[data-size]").forEach((b) =>
       b.addEventListener("click", () => {
         sheet.size = b.dataset.size;
+        sheet.qty = Math.min(sheet.qty, Math.max(1, maxFor(sheet.product.sku, sheet.size)));
         renderProduct();
       }),
     );
     $$("[data-qty]").forEach((b) =>
       b.addEventListener("click", () => {
-        sheet.qty = Math.min(MAX_QTY, Math.max(1, sheet.qty + Number(b.dataset.qty)));
+        const cap = sheet.size ? Math.max(1, maxFor(sheet.product.sku, sheet.size)) : MAX_QTY;
+        sheet.qty = Math.min(cap, Math.max(1, sheet.qty + Number(b.dataset.qty)));
         renderProduct();
       }),
     );
@@ -790,7 +825,7 @@
   }
   function addToCart(sku, size, qty) {
     const line = cart.find((l) => l.sku === sku && l.size === size);
-    if (line) line.qty = Math.min(MAX_QTY, line.qty + qty);
+    if (line) line.qty = Math.min(maxFor(sku, size) || MAX_QTY, line.qty + qty);
     else cart.push({ sku, size, qty });
     cartChanged();
   }
@@ -1466,6 +1501,7 @@
       renderProduct();
     }
     loadReviewSummary();
+    loadStockInfo();
     await loadMe();
     if (me) fetchAddresses();
     let pendingReview = null;

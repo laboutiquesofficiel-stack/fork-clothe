@@ -307,3 +307,38 @@ export const announcementCampaigns = pgTable("announcement_campaigns", {
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   completedAt: timestamp("completed_at", { withTimezone: true }),
 });
+
+/**
+ * Stock par t-shirt et par taille.
+ *
+ * Une taille sans ligne ici n'est pas suivie (vente sans limite) : le suivi
+ * commence dès le premier comptage dans l'admin.
+ */
+export const stockLevels = pgTable("stock_levels", {
+  id: serial().primaryKey(),
+  sku: text().notNull(),
+  size: text().notNull(),
+  quantity: integer().notNull().default(0),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+}, (table) => [
+  unique("stock_levels_sku_size_key").on(table.sku, table.size),
+]);
+
+/**
+ * Historique des mouvements de stock.
+ *
+ * reason : order (vente en ligne payée) | order_cancel (commande annulée,
+ * pièces remises en stock) | market (vente sur place) | count (inventaire)
+ * | adjust (correction manuelle).
+ */
+export const stockMovements = pgTable("stock_movements", {
+  id: serial().primaryKey(),
+  sku: text().notNull(),
+  size: text().notNull(),
+  delta: integer().notNull(),
+  quantityAfter: integer("quantity_after"),
+  reason: text().notNull(),
+  reference: text(),
+  note: text(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});

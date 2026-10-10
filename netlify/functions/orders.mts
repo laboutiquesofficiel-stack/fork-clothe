@@ -3,6 +3,7 @@ import type { Config } from "@netlify/functions";
 import { eq } from "drizzle-orm";
 import { db } from "../../db/index.js";
 import { orders, sessions, type OrderItem } from "../../db/schema.js";
+import { available, loadStock } from "../../lib/stock.js";
 import { quoteDelivery, type DeliveryQuote } from "../../lib/delivery.js";
 
 type Product = {
@@ -304,6 +305,24 @@ export default async (request: Request) => {
         lineTotalCents: product.priceCents * quantity,
       };
     });
+
+    // Stock : on refuse une taille épuisée ou une quantité supérieure au stock suivi.
+    const stock = await loadStock(items.map((i) => i.sku));
+    const wanted = new Map<string, number>();
+    for (const item of items) wanted.set(`${item.sku}|${item.size}`, (wanted.get(`${item.sku}|${item.size}`) ?? 0) + item.quantity);
+    for (const item of items) {
+      const left = available(stock, item.sku, item.size);
+      if (left !== null && (wanted.get(`${item.sku}|${item.size}`) ?? 0) > left) {
+        return Response.json(
+          {
+            error: left <= 0
+              ? `Le t-shirt ${item.name} en taille ${item.size} vient d'être épuisé. Retire-le du panier pour continuer.`
+              : `Il ne reste que ${left} t-shirt${left > 1 ? "s" : ""} ${item.name} en taille ${item.size}. Ajuste la quantité dans ton panier.`,
+          },
+          { status: 409 },
+        );
+      }
+    }
 
     const itemCount = items.reduce(
       (total, item) => total + item.quantity,
