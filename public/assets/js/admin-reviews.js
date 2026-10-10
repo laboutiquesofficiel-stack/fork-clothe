@@ -20,7 +20,7 @@
       return "";
     }
   };
-  const NAMES = { "fork-authentique": "L'Authentique", "fork-lou-faron": "Lou Faron", "fork-les-boutades": "Les Boutades" };
+  const NAMES = { "fork-authentique": "L'Authentique", "fork-lou-faron": "Lou Faron", "fork-les-boutades": "Les Boutades", "fork-les-minots": "Les Minots" };
   let reviews = [];
 
   async function call(method, body) {

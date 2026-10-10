@@ -17,6 +17,28 @@
   // ---------------------------------------------------------------------------
   const PRODUCTS = [
     {
+      id: "les-minots",
+      sku: "fork-les-minots",
+      name: "Les Minots",
+      color: "Noir",
+      category: "homme",
+      priceCents: 3000,
+      sizes: ["S", "M", "L", "XL", "XXL", "3XL"],
+      available: true,
+      isNew: true,
+      aiVisuals: true,
+      keywords: ["minots", "rugby", "ballon", "pecheur", "marche", "telepherique", "faron", "port", "bateau", "plage", "petanque", "provence", "noir"],
+      description: "Un concentré de Toulon et de Provence, signé FORK. Au dos, neuf vignettes racontent le Sud : le rugby, le pêcheur du port, les marchés, le téléphérique du Faron, la mer et les bateaux, la plage et la pétanque, réunis autour du logo FORK dans un visuel unique aux couleurs de chez nous. ☀",
+      images: [
+        { src: "assets/products/les-minots/les-minots-face-port.jpg", alt: "Les Minots noir porté de face sur le port" },
+        { src: "assets/products/les-minots/les-minots-dos-faron.jpg", alt: "Dos des Minots : rugby, pêcheur, marché, téléphérique, port, plage, cargo et pétanque autour du logo FORK" },
+        { src: "assets/products/les-minots/les-minots-dos-cintre.jpg", alt: "Dos des Minots sur cintre face au port de Toulon" },
+        { src: "assets/products/les-minots/les-minots-face-marche.jpg", alt: "Les Minots porté au marché" },
+        { src: "assets/products/les-minots/les-minots-face-rue.jpg", alt: "Les Minots porté de face dans une rue de Toulon" },
+        { src: "assets/products/les-minots/les-minots-dos-rue.jpg", alt: "Les Minots porté de dos dans une rue de Toulon" },
+      ],
+    },
+    {
       id: "authentique",
       keywords: ["rugby", "rct", "ballon", "ovale", "degun", "match", "blanc", "rouge", "noir", "vibe"],
       sku: "fork-authentique",
@@ -602,6 +624,7 @@
       <div class="gallery" id="gallery">${p.images.map((img, i) => `<img src="${esc(img.src)}" alt="${esc(img.alt)}" ${i ? 'loading="lazy"' : ""} data-index="${i}">`).join("")}</div>
       <div class="sheet-info">
         <div class="thumbs">${p.images.map((img, i) => `<button type="button" data-thumb="${i}" aria-label="Photo ${i + 1}" aria-current="${i === 0}"><img src="${esc(img.src)}" alt="" loading="lazy"></button>`).join("")}</div>
+        ${p.aiVisuals ? `<p class="hint ai-note">Visuels générés par IA en attendant notre shooting photo. L'impression est fidèle au t-shirt réel.</p>` : ""}
         <div>
           ${p.available ? (p.isNew ? '<span class="pill info">Nouveau</span>' : "") : '<span class="pill err">Épuisé</span>'}
           <h2>T-shirt ${esc(p.name)}</h2>
