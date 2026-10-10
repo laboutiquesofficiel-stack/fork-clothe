@@ -70,7 +70,7 @@
       priceCents: 3000,
       sizes: ["S", "M", "L"],
       available: true,
-      isNew: true,
+      isNew: false,
       description: "Le Faron revisité en léopard, avec son téléphérique rouge et son altitude : 584 m. Devant, le logo FORK en motif léopard. Une pièce forte, imprimée sur un t-shirt blanc.",
       images: [
         { src: "assets/products/lou-faron/lou-faron-face-maison-bleue.jpg", alt: "Lou Faron porté de face devant une maison aux volets bleus" },
@@ -94,7 +94,7 @@
       priceCents: 3000,
       sizes: ["S", "M", "L", "XL", "XXL", "3XL"],
       available: true,
-      isNew: true,
+      isNew: false,
       description: "Calanque, fada, mistral, cigale, jaune, rade, pétanque : les mots du Sud, imprimés en blanc dans le dos d'un t-shirt noir. Devant, le logo FORK.",
       images: [
         { src: "assets/products/les-boutades/les-boutades-face-calanque.jpg", alt: "Les Boutades noir porté de face au-dessus de la calanque" },
