@@ -105,10 +105,12 @@
     const sw = e.target.closest(".switch");
     if (sw) {
       $$(".switch").forEach((x) => x.setAttribute("aria-selected", String(x === sw)));
-      const reviewsView = sw.dataset.view === "reviews";
-      $("#ordersPane").hidden = reviewsView;
-      $("#reviewsPane").hidden = !reviewsView;
-      if (reviewsView) load();
+      const view = sw.dataset.view;
+      $("#ordersPane").hidden = view !== "orders";
+      $("#reviewsPane").hidden = view !== "reviews";
+      $("#newsPane").hidden = view !== "news";
+      if (view === "reviews") load();
+      if (view === "news") document.dispatchEvent(new CustomEvent("fork:news"));
       return;
     }
     const button = e.target.closest("[data-review-act]");

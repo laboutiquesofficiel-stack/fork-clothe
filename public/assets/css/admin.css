@@ -17,3 +17,6 @@
 .view-switch { display: flex; gap: 8px; margin-bottom: 18px; }
 .switch { padding: 10px 18px; border: 1px solid var(--ink); font-weight: 700; text-transform: uppercase; font-size: .75rem; letter-spacing: .06em; }
 .switch[aria-selected="true"] { background: var(--ink); color: var(--white); }
+.news-table { width: 100%; border-collapse: collapse; font-size: .85rem; margin-top: 14px; }
+.news-table th, .news-table td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--line); }
+.table-scroll { overflow-x: auto; }

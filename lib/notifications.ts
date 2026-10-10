@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto";
 import { eq } from "drizzle-orm";
 import { db } from "../db/index.js";
-import { orders, productReviews, type OrderItem } from "../db/schema.js";
+import { newsletterSubscribers, orders, productReviews, type OrderItem } from "../db/schema.js";
 import { escapeHtml, formatEuros, sendEmail } from "./email.js";
 
 /**
@@ -62,7 +62,7 @@ function firstName(name: string): string {
   return name.trim().split(/\s+/)[0] || name;
 }
 
-function layout(title: string, bodyHtml: string): string {
+export function layout(title: string, bodyHtml: string): string {
   return `<!doctype html><html lang="fr"><body style="margin:0;background:#f3f3f1;font-family:Arial,Helvetica,sans-serif;color:#111">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f3f3f1;padding:24px 12px"><tr><td align="center">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#ffffff">
@@ -263,5 +263,32 @@ export async function notifyReviewReply(reviewId: number): Promise<void> {
     });
   } catch (error) {
     console.error("Review reply notification failed", error instanceof Error ? error.message : "Unknown error");
+  }
+}
+
+/** Confirmation d'inscription « Préviens-moi de la prochaine collection », avec lien de désinscription. */
+export async function notifyNewsletterWelcome(subscriberId: number): Promise<void> {
+  try {
+    const [sub] = await db
+      .select({ email: newsletterSubscribers.email, token: newsletterSubscribers.unsubscribeToken })
+      .from(newsletterSubscribers)
+      .where(eq(newsletterSubscribers.id, subscriberId))
+      .limit(1);
+    if (!sub) return;
+    const unsubscribe = `https://fork-clothe.com/api/newsletter?unsubscribe=${sub.token}`;
+    await sendEmail({
+      to: sub.email,
+      subject: "FORK · Tu seras prévenu de la prochaine collection",
+      html: layout(
+        "C'est noté !",
+        `<p style="font-size:14px;line-height:1.6">Merci ! Tu seras parmi les premiers prévenus de la sortie de la prochaine collection FORK.</p>
+<p style="font-size:14px;line-height:1.6">En attendant, la collection actuelle t'attend sur <a href="https://fork-clothe.com" style="color:#111">fork-clothe.com</a>.</p>
+<p style="font-size:12px;line-height:1.6;color:#6b6b6b">Tu ne veux plus recevoir ces e-mails ? <a href="${unsubscribe}" style="color:#6b6b6b">Se désinscrire en un clic</a>.</p>`,
+      ),
+      text: `Merci ! Tu seras prévenu de la sortie de la prochaine collection FORK.\n\nSe désinscrire : ${unsubscribe}\n\nFORK · Toulon`,
+      idempotencyKey: `newsletter-welcome-${subscriberId}-${sub.token.slice(0, 8)}-${new Date().toISOString().slice(0, 10)}`,
+    });
+  } catch (error) {
+    console.error("Newsletter welcome failed", error instanceof Error ? error.message : "Unknown error");
   }
 }

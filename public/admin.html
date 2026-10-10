@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="assets/css/admin.css">
   <script src="assets/js/admin.js" defer></script>
   <script src="assets/js/admin-reviews.js" defer></script>
+  <script src="assets/js/admin-news.js" defer></script>
 </head>
 <body>
   <header class="site-header">
@@ -38,6 +39,7 @@
       <div class="view-switch" role="tablist" aria-label="Rubrique">
         <button type="button" class="switch" data-view="orders" aria-selected="true">Commandes</button>
         <button type="button" class="switch" data-view="reviews" aria-selected="false">Avis</button>
+        <button type="button" class="switch" data-view="news" aria-selected="false">Inscrits</button>
       </div>
       <div id="ordersPane">
       <div class="sec-head">
@@ -53,6 +55,11 @@
         </div>
       </div>
       <div class="admin-list" id="orderList" aria-live="polite"></div>
+      </div>
+      <div id="newsPane" hidden>
+        <div class="sec-head"><h1>Inscrits « prochaine collection »</h1></div>
+        <p class="hint">Personnes qui ont accepté de recevoir l'annonce de tes nouvelles collections. Chaque e-mail que tu leur enverras doit contenir un moyen de se désinscrire.</p>
+        <div id="newsList" aria-live="polite"></div>
       </div>
       <div id="reviewsPane" hidden>
         <div class="sec-head"><h1>Avis clients</h1></div>

@@ -18,6 +18,7 @@
   const PRODUCTS = [
     {
       id: "les-minots",
+      type: "T-shirt",
       sku: "fork-les-minots",
       name: "Les Minots",
       color: "Noir",
@@ -40,6 +41,7 @@
     },
     {
       id: "authentique",
+      type: "T-shirt",
       keywords: ["rugby", "rct", "ballon", "ovale", "degun", "match", "blanc", "rouge", "noir", "vibe"],
       sku: "fork-authentique",
       name: "L'Authentique",
@@ -62,6 +64,7 @@
     },
     {
       id: "lou-faron",
+      type: "T-shirt",
       keywords: ["leopard", "faron", "telepherique", "montagne", "584", "blanc", "femme"],
       sku: "fork-lou-faron",
       name: "Lou Faron",
@@ -86,6 +89,7 @@
     },
     {
       id: "les-boutades",
+      type: "T-shirt",
       keywords: ["calanque", "fada", "mistral", "cigale", "jaune", "rade", "petanque", "provence", "noir", "mots"],
       sku: "fork-les-boutades",
       name: "Les Boutades",
@@ -109,6 +113,9 @@
     },
   ];
   const bySku = new Map(PRODUCTS.filter((p) => p.sku).map((p) => [p.sku, p]));
+  // Page dédiée d'un t-shirt (/t-shirt/<id>/) : la fiche s'affiche dans la page au lieu du tiroir.
+  const PAGE_PRODUCT = document.body.dataset.productPage || null;
+  const productPath = (id) => `/t-shirt/${encodeURIComponent(id)}/`;
   const byId = new Map(PRODUCTS.map((p) => [p.id, p]));
   const MAX_QTY = 20;
 
@@ -237,6 +244,7 @@
     renderGrid();
   }
   function renderGrid() {
+    if (!$("#productGrid")) return;
     const list = PRODUCTS.filter((p) => {
       if (filter === "out") return !p.available;
       if (filter === "homme" || filter === "femme") return p.category === filter;
@@ -247,13 +255,13 @@
       .map((p) => {
         const badge = !p.available ? `<span class="pbadge out">Épuisé</span>` : p.isNew ? `<span class="pbadge">Nouveau</span>` : "";
         const back = p.images[1] ? `<img class="back" src="${esc(p.images[1].src)}" alt="" loading="lazy">` : "";
-        return `<button type="button" class="pcard" data-product="${esc(p.id)}" aria-label="${esc(`${p.name} ${p.color}, ${euros(p.priceCents)}${p.available ? "" : ", épuisé"}`)}">
+        return `<a class="pcard" href="${esc(productPath(p.id))}" data-product="${esc(p.id)}" aria-label="${esc(`${p.name} ${p.color}, ${euros(p.priceCents)}${p.available ? "" : ", épuisé"}`)}">
           <div class="pimg">${badge}<img src="${esc(p.images[0].src)}" alt="${esc(p.images[0].alt)}" loading="lazy">${back}</div>
           <span class="pname">T-shirt ${esc(p.name)}</span>
           <span class="pmeta">${esc(p.color)} · ${p.category === "femme" ? "Femme" : "Homme"}</span>
           ${ratingLine(p.sku)}
           <span class="price">${p.available ? euros(p.priceCents) : `<s>${euros(p.priceCents)}</s> · Épuisé`}</span>
-        </button>`;
+        </a>`;
       })
       .join("");
   }
@@ -265,7 +273,10 @@
       closeDrawers(false);
     }
     const card = e.target.closest("[data-product]");
-    if (card) openProduct(card.dataset.product);
+    if (card && !e.metaKey && !e.ctrlKey && !e.shiftKey) {
+      e.preventDefault();
+      openProduct(card.dataset.product);
+    }
     if (e.target.closest("[data-open-account]")) openAccount();
   });
 
@@ -339,6 +350,10 @@
     if (!ok || !data.summary) return;
     reviewSummary = data.summary;
     renderGrid();
+    if (PAGE_PRODUCT && sheet.product?.sku) {
+      renderProduct();
+      loadReviews(sheet.product.sku, true);
+    }
   }
   async function loadReviews(sku, force = false) {
     if (!force && reviewCache.has(sku)) return;
@@ -602,6 +617,63 @@
     }
   });
 
+  // Partage d'un t-shirt : menu de partage du téléphone, sinon lien copié.
+  async function shareProduct(id) {
+    const p = byId.get(id);
+    if (!p) return;
+    const url = `${window.location.origin}${productPath(p.id)}`;
+    const data = { title: `T-shirt ${p.name} · FORK`, text: `Le t-shirt ${p.name} de FORK, la vibe de Toulon 🔥`, url };
+    if (navigator.share) {
+      try {
+        await navigator.share(data);
+        return;
+      } catch (err) {
+        if (err && err.name === "AbortError") return;
+      }
+    }
+    try {
+      await navigator.clipboard.writeText(url);
+      toast("Lien copié, tu peux le coller où tu veux");
+    } catch {
+      window.prompt("Copie ce lien :", url);
+    }
+  }
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-share]");
+    if (b) shareProduct(b.dataset.share);
+  });
+
+  // Inscription « Préviens-moi de la prochaine collection »
+  document.addEventListener("submit", async (e) => {
+    const form = e.target.closest("[data-news]");
+    if (!form) return;
+    e.preventDefault();
+    const msg = $(".news-msg", form);
+    const email = form.elements.email.value.trim();
+    msg.textContent = "";
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      msg.textContent = "Indique une adresse e-mail valide.";
+      return form.elements.email.focus();
+    }
+    if (!form.elements.consent.checked) {
+      msg.textContent = "Coche la case pour accepter de recevoir nos e-mails.";
+      return;
+    }
+    const button = $("button[type=submit]", form);
+    button.disabled = true;
+    const { ok, data } = await api("/api/newsletter", {
+      method: "POST",
+      body: { email, consent: true, website: form.elements.website.value, source: PAGE_PRODUCT ? `page:${PAGE_PRODUCT}` : "accueil" },
+    });
+    button.disabled = false;
+    if (!ok) {
+      msg.textContent = data.error || "Inscription impossible pour le moment. Réessaie.";
+      return;
+    }
+    form.reset();
+    msg.textContent = "C'est noté ! Tu recevras un e-mail de confirmation, puis on te prévient dès la prochaine sortie. 🔥";
+  });
+
   // ---------------------------------------------------------------------------
   // Fiche produit
   // ---------------------------------------------------------------------------
@@ -609,6 +681,16 @@
   function openProduct(id) {
     const product = byId.get(id);
     if (!product) return;
+    if (PAGE_PRODUCT) {
+      // Sur une page t-shirt : même t-shirt → on remonte à la fiche, sinon on ouvre sa page.
+      if (id === PAGE_PRODUCT) {
+        closeDrawers(false);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else {
+        window.location.href = productPath(id);
+      }
+      return;
+    }
     sheet.product = product;
     sheet.size = null;
     sheet.qty = 1;
@@ -618,20 +700,22 @@
   }
   function renderProduct() {
     const p = sheet.product;
-    $("#productTitle").textContent = `${p.name} · ${p.color}`;
+    const target = PAGE_PRODUCT ? $("#pageSheet") : $("#productSheet");
+    if (!PAGE_PRODUCT) $("#productTitle").textContent = `${p.name} · ${p.color}`;
+    const H = PAGE_PRODUCT ? "h1" : "h2";
     const canBuy = p.available && sheet.size;
-    $("#productSheet").innerHTML = `
+    target.innerHTML = `
       <div class="gallery" id="gallery">${p.images.map((img, i) => `<img src="${esc(img.src)}" alt="${esc(img.alt)}" ${i ? 'loading="lazy"' : ""} data-index="${i}">`).join("")}</div>
       <div class="sheet-info">
         <div class="thumbs">${p.images.map((img, i) => `<button type="button" data-thumb="${i}" aria-label="Photo ${i + 1}" aria-current="${i === 0}"><img src="${esc(img.src)}" alt="" loading="lazy"></button>`).join("")}</div>
         ${p.aiVisuals ? `<p class="hint ai-note">Visuels générés par IA en attendant notre shooting photo. L'impression est fidèle au t-shirt réel.</p>` : ""}
         <div>
           ${p.available ? (p.isNew ? '<span class="pill info">Nouveau</span>' : "") : '<span class="pill err">Épuisé</span>'}
-          <h2>T-shirt ${esc(p.name)}</h2>
+          <${H}>T-shirt ${esc(p.name)}</${H}>
           <p class="pmeta">${esc(p.color)} · ${p.category === "femme" ? "Femme" : "Homme"}</p>
           ${p.sku && reviewSummary[p.sku]?.count ? `<a href="#reviewsBox" class="rating-link" data-scroll-reviews>${ratingLine(p.sku, true)}</a>` : ""}
         </div>
-        <p class="price">${euros(p.priceCents)}</p>
+        <div class="price-row"><p class="price">${euros(p.priceCents)}</p><button type="button" class="share" data-share="${esc(p.id)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3v13M7 8l5-5 5 5"/><path d="M5 12v8h14v-8"/></svg>Partager</button></div>
         <p class="muted">${esc(p.description)}</p>
         ${
           p.available
@@ -1361,19 +1445,26 @@
     const order = params.get("order");
     const reason = params.get("reason");
     const avis = params.get("avis");
-    if (login || payment || avis) {
+    const newsletter = params.get("newsletter");
+    if (login || payment || avis || newsletter) {
       const clean = new URL(window.location.href);
-      ["login", "payment", "order", "reason", "avis"].forEach((k) => clean.searchParams.delete(k));
+      ["login", "payment", "order", "reason", "avis", "newsletter"].forEach((k) => clean.searchParams.delete(k));
       history.replaceState(null, "", clean.pathname + clean.search + clean.hash);
     }
-    return { login, payment, order, reason, avis };
+    return { login, payment, order, reason, avis, newsletter };
   }
 
   async function start() {
     $("#year").textContent = String(new Date().getFullYear());
     saveCart();
     renderGrid();
-    const { login, payment, order, reason, avis } = consumeUrlParams();
+    const { login, payment, order, reason, avis, newsletter } = consumeUrlParams();
+    if (newsletter === "unsubscribed") toast("Tu es bien désinscrit. Tu ne recevras plus nos e-mails de nouvelles collections.");
+    else if (newsletter === "invalid") toast("Lien de désinscription invalide ou déjà utilisé.", true);
+    if (PAGE_PRODUCT && byId.has(PAGE_PRODUCT)) {
+      sheet.product = byId.get(PAGE_PRODUCT);
+      renderProduct();
+    }
     loadReviewSummary();
     await loadMe();
     if (me) fetchAddresses();

@@ -264,3 +264,46 @@ export const reviewPhotos = pgTable("review_photos", {
     .notNull()
     .defaultNow(),
 });
+
+/**
+ * Inscrits « Préviens-moi de la prochaine collection ».
+ *
+ * Consentement explicite (case cochée), date et provenance conservées comme
+ * preuve. Chaque e-mail contient un lien de désinscription en un clic
+ * (unsubscribeToken). status : subscribed | unsubscribed
+ */
+export const newsletterSubscribers = pgTable("newsletter_subscribers", {
+  id: serial().primaryKey(),
+  email: text().notNull().unique(),
+  status: text().notNull().default("subscribed"),
+  source: text(),
+  consentAt: timestamp("consent_at", { withTimezone: true }).notNull().defaultNow(),
+  unsubscribeToken: text("unsubscribe_token").notNull().unique(),
+  unsubscribedAt: timestamp("unsubscribed_at", { withTimezone: true }),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
+
+/**
+ * Annonces automatiques des nouveautés aux inscrits.
+ *
+ * announced_products : articles déjà annoncés (ou présents avant la mise en
+ * place des annonces) ; un nouvel article absent de cette table déclenche
+ * une campagne. announcement_campaigns : un envoi groupé, repris là où il
+ * s'est arrêté grâce à lastSubscriberId, jusqu'à completedAt.
+ */
+export const announcedProducts = pgTable("announced_products", {
+  sku: text().primaryKey(),
+  campaignId: integer("campaign_id"),
+  announcedAt: timestamp("announced_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+export const announcementCampaigns = pgTable("announcement_campaigns", {
+  id: serial().primaryKey(),
+  items: jsonb().$type<{ sku: string; type: string; name: string; color: string; priceCents: number; image: string; url: string }[]>().notNull(),
+  lastSubscriberId: integer("last_subscriber_id").notNull().default(0),
+  sentCount: integer("sent_count").notNull().default(0),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  completedAt: timestamp("completed_at", { withTimezone: true }),
+});

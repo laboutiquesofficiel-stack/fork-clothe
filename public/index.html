@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>FORK · La vibe de Toulon dans ton dressing</title>
-  <meta name="description" content="FORK, marque de vêtements de Toulon. T-shirts en séries limitées, livraison offerte à moins de 10 km de Toulon.">
+  <title>FORK · T-shirts de Toulon en séries limitées</title>
+  <meta name="description" content="FORK, marque de vêtements toulonnaise : t-shirts imprimés en séries limitées, inspirés de Toulon, du rugby et de la Provence. Livraison Colissimo suivie, offerte à moins de 10 km de Toulon.">
   <link rel="icon" href="logo.png" type="image/png">
   <link rel="canonical" href="https://fork-clothe.com/">
   <meta name="theme-color" content="#0e2a3f">
@@ -12,7 +12,7 @@
   <meta property="og:site_name" content="FORK">
   <meta property="og:locale" content="fr_FR">
   <meta property="og:url" content="https://fork-clothe.com/">
-  <meta property="og:title" content="FORK · La vibe de Toulon dans ton dressing">
+  <meta property="og:title" content="FORK · T-shirts de Toulon en séries limitées">
   <meta property="og:description" content="T-shirts pensés à Toulon, en séries limitées. Livraison offerte à moins de 10 km de Toulon.">
   <meta property="og:image" content="https://fork-clothe.com/og-image.jpg">
   <meta property="og:image:width" content="1200">
@@ -22,6 +22,8 @@
   <link rel="apple-touch-icon" href="logo.png">
   <link rel="stylesheet" href="assets/css/fork.css">
   <script src="assets/js/app.js" defer></script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Organization", "name": "FORK", "url": "https://fork-clothe.com/", "logo": "https://fork-clothe.com/logo.png", "description": "Marque de vêtements de Toulon : t-shirts imprimés en séries limitées.", "email": "forkofficiel@gmail.com", "telephone": "+33766751840", "address": {"@type": "PostalAddress", "addressLocality": "Toulon", "postalCode": "83200", "addressCountry": "FR"}, "sameAs": ["https://www.instagram.com/fork__off/"]}</script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebSite", "name": "FORK", "alternateName": "FORK Toulon", "url": "https://fork-clothe.com/"}</script>
 </head>
 <body>
   <div class="annonce">
@@ -133,6 +135,25 @@
         <a class="btn out" href="#produits">Voir la collection</a>
       </div>
       <div class="split-img"><img src="assets/ambiance/groupe-escalier.jpg" alt="Trois amis assis sur des marches, en t-shirts FORK" loading="lazy" width="1369" height="2048"></div>
+    </section>
+
+    <section class="news" id="newsletter" aria-labelledby="newsTitle">
+      <div class="wrap">
+        <div>
+          <span class="up">Prochaine collection</span>
+          <h2 id="newsTitle">Préviens-moi de la prochaine collection</h2>
+          <p>Laisse ton e-mail : tu seras prévenu dès la sortie des nouveaux t-shirts FORK. Pas de spam, désinscription en un clic.</p>
+        </div>
+        <form data-news novalidate>
+          <div class="news-row">
+            <label class="hp" aria-hidden="true">Ne pas remplir<input type="text" name="website" tabindex="-1" autocomplete="off"></label>
+            <input type="email" name="email" required maxlength="254" autocomplete="email" placeholder="Ton adresse e-mail" aria-label="Ton adresse e-mail">
+            <button type="submit" class="btn light">Me prévenir</button>
+          </div>
+          <label class="check"><input type="checkbox" name="consent" required> <span>J'accepte de recevoir par e-mail les annonces des nouvelles collections FORK. Je peux me désinscrire à tout moment. <a href="confidentialite.html">Confidentialité</a></span></label>
+          <p class="news-msg" aria-live="polite"></p>
+        </form>
+      </div>
     </section>
 
     <div class="wrap">
