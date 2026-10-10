@@ -1544,5 +1544,18 @@
     track.style.animation = "";
   });
 
+  // Calendrier des matchs : on masque les matchs passés (le lendemain du dernier jour).
+  (() => {
+    const list = $("#matches");
+    if (!list) return;
+    const today = new Date().toISOString().slice(0, 10);
+    $$("li[data-until]", list).forEach((li) => {
+      if (li.dataset.until < today) li.remove();
+    });
+    if (!list.children.length) {
+      list.innerHTML = `<li><span class="m-opp">Le calendrier de la prochaine saison arrive bientôt.</span></li>`;
+    }
+  })();
+
   start();
 })();
