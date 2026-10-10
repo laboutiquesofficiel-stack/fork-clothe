@@ -367,6 +367,6 @@ h1, h2, h3, h4 { margin: 0; text-transform: uppercase; font-weight: 900; letter-
 .tick-item { display: inline-flex; align-items: center; gap: 18px; padding: 9px 28px 9px 0; }
 .tick-item > span::before { content: "·"; margin-right: 18px; opacity: .7; }
 .tick-cta { text-decoration: underline; text-underline-offset: 3px; }
-.ticker:hover .tick-track, .ticker:focus-visible .tick-track { animation-play-state: paused; }
+@media (hover: hover) and (pointer: fine) { .ticker:hover .tick-track { animation-play-state: paused; } }
 @keyframes tick { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 @media (prefers-reduced-motion: reduce) { .tick-track { animation: none; } }
