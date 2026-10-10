@@ -210,3 +210,57 @@ export const payments = pgTable("payments", {
   // Un même checkout SumUp n'est enregistré qu'une fois, même si le webhook est rejoué.
   unique("payments_provider_payment_key").on(table.provider, table.providerPaymentId),
 ]);
+/**
+ * Avis clients.
+ *
+ * Seul un acheteur vérifié peut déposer un avis : la commande doit contenir
+ * le t-shirt et avoir été expédiée ou livrée. Un seul avis par t-shirt et
+ * par commande. L'avis est publié immédiatement ; la boutique peut le
+ * masquer (contenu injurieux, hors sujet, données personnelles) et y
+ * répondre publiquement.
+ *
+ * status : published | hidden
+ */
+export const productReviews = pgTable("product_reviews", {
+  id: serial().primaryKey(),
+  productSku: text("product_sku").notNull(),
+  orderId: integer("order_id")
+    .notNull()
+    .references(() => orders.id, { onDelete: "cascade" }),
+  userId: integer("user_id").references(() => users.id, {
+    onDelete: "set null",
+  }),
+  authorName: text("author_name").notNull(),
+  size: text(),
+  rating: integer().notNull(),
+  title: text(),
+  body: text().notNull(),
+  status: text().notNull().default("published"),
+  shopReply: text("shop_reply"),
+  shopRepliedAt: timestamp("shop_replied_at", { withTimezone: true }),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+}, (table) => [
+  unique("product_reviews_order_sku_key").on(table.orderId, table.productSku),
+]);
+
+/**
+ * Photos jointes à un avis (3 maximum), redimensionnées dans le navigateur
+ * avant l'envoi et stockées en base64.
+ */
+export const reviewPhotos = pgTable("review_photos", {
+  id: serial().primaryKey(),
+  reviewId: integer("review_id")
+    .notNull()
+    .references(() => productReviews.id, { onDelete: "cascade" }),
+  position: integer().notNull().default(0),
+  contentType: text("content_type").notNull(),
+  dataBase64: text("data_base64").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});

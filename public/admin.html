@@ -4,17 +4,18 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="robots" content="noindex, nofollow">
-  <title>FORK · Gestion des commandes</title>
+  <title>FORK · Gestion de la boutique</title>
   <link rel="icon" href="logo.png" type="image/png">
   <link rel="stylesheet" href="assets/css/fork.css">
   <link rel="stylesheet" href="assets/css/admin.css">
   <script src="assets/js/admin.js" defer></script>
+  <script src="assets/js/admin-reviews.js" defer></script>
 </head>
 <body>
   <header class="site-header">
     <div class="wrap admin-head">
       <a href="/" class="brand"><img src="logo.png" alt="" width="40" height="40"><span>FORK</span></a>
-      <span class="up">Gestion des commandes</span>
+      <span class="up">Gestion de la boutique</span>
       <button type="button" class="link" id="lock" hidden>Verrouiller</button>
     </div>
   </header>
@@ -34,6 +35,11 @@
     </section>
 
     <section id="ordersView" hidden>
+      <div class="view-switch" role="tablist" aria-label="Rubrique">
+        <button type="button" class="switch" data-view="orders" aria-selected="true">Commandes</button>
+        <button type="button" class="switch" data-view="reviews" aria-selected="false">Avis</button>
+      </div>
+      <div id="ordersPane">
       <div class="sec-head">
         <h1>Commandes</h1>
         <div class="tabs" role="tablist" aria-label="Filtrer par statut">
@@ -47,6 +53,12 @@
         </div>
       </div>
       <div class="admin-list" id="orderList" aria-live="polite"></div>
+      </div>
+      <div id="reviewsPane" hidden>
+        <div class="sec-head"><h1>Avis clients</h1></div>
+        <p class="hint">Masque un avis seulement s'il est injurieux, hors sujet ou contient des données personnelles, jamais parce qu'il est négatif. Ta réponse est publiée sous l'avis et envoyée au client par e-mail.</p>
+        <div class="admin-list" id="reviewList" aria-live="polite"></div>
+      </div>
     </section>
   </main>
 

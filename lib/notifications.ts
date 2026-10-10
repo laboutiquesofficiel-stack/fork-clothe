@@ -1,6 +1,7 @@
+import { createHash } from "node:crypto";
 import { eq } from "drizzle-orm";
 import { db } from "../db/index.js";
-import { orders, type OrderItem } from "../db/schema.js";
+import { orders, productReviews, type OrderItem } from "../db/schema.js";
 import { escapeHtml, formatEuros, sendEmail } from "./email.js";
 
 /**
@@ -176,12 +177,91 @@ export async function notifyOrderDelivered(orderId: number): Promise<void> {
       subject: `FORK · Commande ${order.orderNumber} livrée`,
       html: layout(
         "Commande livrée",
-        `<p style="font-size:14px;line-height:1.6">Ta commande <b>${escapeHtml(order.orderNumber)}</b> est indiquée comme livrée. Merci de porter FORK ! Si quelque chose ne va pas, écris-nous sur WhatsApp.</p>`,
+        `<p style="font-size:14px;line-height:1.6">Ta commande <b>${escapeHtml(order.orderNumber)}</b> est indiquée comme livrée. Merci de porter FORK ! Si quelque chose ne va pas, écris-nous sur WhatsApp.</p>
+<p style="font-size:14px;line-height:1.6">Ton avis compte : dis-nous ce que tu penses de ton t-shirt, avec une photo si tu veux.</p>
+<p style="margin:20px 0"><a href="${reviewLink(order.orderNumber)}" style="display:inline-block;background:#111;color:#fff;text-decoration:none;padding:12px 22px;font-weight:700;font-size:13px;letter-spacing:1px;text-transform:uppercase">Donner mon avis</a></p>`,
       ),
-      text: `Ta commande ${order.orderNumber} est indiquée comme livrée. Merci de porter FORK !\n\nFORK · Toulon`,
+      text: `Ta commande ${order.orderNumber} est indiquée comme livrée. Merci de porter FORK !\n\nDonne ton avis : ${reviewLink(order.orderNumber)}\n\nFORK · Toulon`,
       idempotencyKey: `order-delivered-${order.orderNumber}`,
     });
   } catch (error) {
     console.error("Delivered notification failed", error instanceof Error ? error.message : "Unknown error");
+  }
+}
+
+/** Lien qui ouvre directement le formulaire d'avis, numéro de commande prérempli. */
+function reviewLink(orderNumber: string): string {
+  return `https://fork-clothe.com/?avis=${encodeURIComponent(orderNumber)}`;
+}
+
+async function loadReview(reviewId: number) {
+  const [review] = await db
+    .select({
+      sku: productReviews.productSku,
+      authorName: productReviews.authorName,
+      rating: productReviews.rating,
+      title: productReviews.title,
+      body: productReviews.body,
+      shopReply: productReviews.shopReply,
+      orderNumber: orders.orderNumber,
+      customerName: orders.customerName,
+      customerEmail: orders.customerEmail,
+      items: orders.items,
+    })
+    .from(productReviews)
+    .innerJoin(orders, eq(orders.id, productReviews.orderId))
+    .where(eq(productReviews.id, reviewId))
+    .limit(1);
+  if (!review) return null;
+  const productName = review.items.find((i) => i.sku === review.sku)?.name ?? review.sku;
+  return { ...review, productName };
+}
+
+const stars = (n: number) => "★".repeat(n) + "☆".repeat(5 - n);
+
+/** Prévient la boutique (SHOP_EMAIL) d'un nouvel avis, pour pouvoir réagir vite à un défaut. */
+export async function notifyNewReview(reviewId: number): Promise<void> {
+  try {
+    const shopEmail = process.env.SHOP_EMAIL?.trim();
+    if (!shopEmail) return;
+    const review = await loadReview(reviewId);
+    if (!review) return;
+    await sendEmail({
+      to: shopEmail,
+      subject: `FORK · Nouvel avis ${review.rating}/5 sur ${review.productName}`,
+      html: layout(
+        "Nouvel avis client",
+        `<p style="font-size:14px;line-height:1.6"><b>${escapeHtml(review.authorName)}</b> · commande ${escapeHtml(review.orderNumber)}<br><span style="font-size:18px;color:#c8102e">${stars(review.rating)}</span></p>
+${review.title ? `<p style="font-size:15px;font-weight:700;margin:0 0 6px">${escapeHtml(review.title)}</p>` : ""}
+<p style="font-size:14px;line-height:1.6;white-space:pre-line">${escapeHtml(review.body)}</p>
+<p style="font-size:13px;color:#6b6b6b">Tu peux y répondre ou le masquer depuis ton admin, onglet « Avis ».</p>`,
+      ),
+      text: `Nouvel avis ${review.rating}/5 sur ${review.productName}\n${review.authorName} · ${review.orderNumber}\n\n${review.title ?? ""}\n${review.body}`,
+      idempotencyKey: `review-new-${reviewId}`,
+    });
+  } catch (error) {
+    console.error("New review notification failed", error instanceof Error ? error.message : "Unknown error");
+  }
+}
+
+/** Envoie au client la réponse publique de FORK à son avis. */
+export async function notifyReviewReply(reviewId: number): Promise<void> {
+  try {
+    const review = await loadReview(reviewId);
+    if (!review?.shopReply) return;
+    await sendEmail({
+      to: review.customerEmail,
+      subject: `FORK a répondu à ton avis sur ${review.productName}`,
+      html: layout(
+        "Réponse à ton avis",
+        `<p style="font-size:14px;line-height:1.6">Salut ${escapeHtml(firstName(review.customerName))}, merci pour ton avis sur <b>${escapeHtml(review.productName)}</b>. Voici notre réponse :</p>
+<p style="font-size:14px;line-height:1.6;white-space:pre-line;border-left:3px solid #111;padding-left:12px">${escapeHtml(review.shopReply)}</p>
+<p style="font-size:13px;color:#6b6b6b">Ta réponse et ton avis sont visibles sur la fiche du t-shirt.</p>`,
+      ),
+      text: `Merci pour ton avis sur ${review.productName}. Notre réponse :\n\n${review.shopReply}\n\nFORK · Toulon`,
+      idempotencyKey: `review-reply-${reviewId}-${createHash("sha256").update(review.shopReply).digest("hex").slice(0, 16)}`,
+    });
+  } catch (error) {
+    console.error("Review reply notification failed", error instanceof Error ? error.message : "Unknown error");
   }
 }
