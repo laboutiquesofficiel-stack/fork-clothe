@@ -20,6 +20,12 @@ type Customer = {
 };
 
 const catalogue: Record<string, Product> = {
+  "fork-les-minots": {
+    name: "Les Minots",
+    color: "Noir",
+    sizes: ["S", "M", "L", "XL", "XXL", "3XL"],
+    priceCents: 3000,
+  },
   "fork-authentique": {
     name: "L'Authentique",
     color: "Rouge & noir",
