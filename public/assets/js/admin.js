@@ -48,7 +48,9 @@
 
   let statusFilter = "";
   let orders = [];
+  let autoTracking = false;
   const confirmCancel = new Set();
+  const editTracking = new Set();
 
   function toast(message, isError = false) {
     const el = $("#toast");
@@ -99,18 +101,25 @@
       return;
     }
     orders = Array.isArray(data.orders) ? data.orders : [];
+    autoTracking = Boolean(data.autoTracking);
     render();
   }
 
   function actionsFor(o) {
     const parts = [];
     if (o.status === "paid") parts.push(`<button type="button" class="btn out" data-act="prepare">Passer en préparation</button>`);
-    if (o.status === "paid" || o.status === "preparing") {
+    const awaiting = o.shipmentStatus === "awaiting_pickup" && o.trackingNumber;
+    if (awaiting) {
+      parts.push(`<div class="notice"><b>En attente du dépôt à La Poste</b><span>Colissimo n° ${esc(o.trackingNumber)}. Dès que La Poste scanne le colis, la commande passe « Expédiée » et le client reçoit l'e-mail de suivi, automatiquement.</span></div>
+        <div class="actions"><button type="button" class="btn out" data-act="send-now" data-tracking="${esc(o.trackingNumber)}">Envoyer l'e-mail maintenant</button><button type="button" class="link" data-act="edit-tracking">Corriger le numéro</button></div>`);
+    }
+    if ((o.status === "paid" || o.status === "preparing") && (!awaiting || editTracking.has(o.orderNumber))) {
       parts.push(`<form class="ship-form" data-ship novalidate>
         <div class="field"><label for="carrier-${o.id}">Transporteur</label><select id="carrier-${o.id}" name="carrier"><option>Colissimo</option><option>Remise en main propre</option><option>Autre</option></select></div>
-        <div class="field"><label for="tracking-${o.id}">Numéro de suivi</label><input id="tracking-${o.id}" name="trackingNumber" autocomplete="off" required></div>
+        <div class="field"><label for="tracking-${o.id}">Numéro de suivi</label><div class="scan-row"><input id="tracking-${o.id}" name="trackingNumber" autocomplete="off" autocapitalize="characters" required value="${esc(o.trackingNumber || "")}">${"BarcodeDetector" in window ? `<button type="button" class="btn out" data-scan>Scanner</button>` : ""}</div>
+          <p class="hint">Sur iPhone : touche la case, puis l'icône « Scanner du texte » du clavier et vise le numéro imprimé sous le code-barres.</p></div>
         <div class="field"><label for="url-${o.id}">Lien de suivi (facultatif pour Colissimo)</label><input id="url-${o.id}" name="trackingUrl" type="url" placeholder="https://…" autocomplete="off"></div>
-        <button type="submit" class="btn">Marquer expédiée et prévenir le client</button>
+        <button type="submit" class="btn">${autoTracking ? "Enregistrer le numéro (e-mail envoyé au dépôt)" : "Marquer expédiée et prévenir le client"}</button>
       </form>`);
     }
     if (o.status === "shipped") {
@@ -177,7 +186,8 @@
       toast(data.error || "Action impossible.", true);
       return load();
     }
-    toast("Commande mise à jour");
+    editTracking.delete(orderNumber);
+    toast(body.sendNow ? "E-mail d'expédition envoyé" : body.action === "ship" && autoTracking ? "Numéro enregistré : l'e-mail partira au dépôt du colis" : "Commande mise à jour");
     load();
   }
 
@@ -194,6 +204,13 @@
     if (action === "cancel-no") {
       confirmCancel.delete(orderNumber);
       return render();
+    }
+    if (action === "edit-tracking") {
+      editTracking.add(orderNumber);
+      return render();
+    }
+    if (action === "send-now") {
+      return act(orderNumber, { action: "ship", carrier: "Colissimo", trackingNumber: button.dataset.tracking, sendNow: true }, card);
     }
     if (action === "cancel") confirmCancel.delete(orderNumber);
     const extra = action === "deliver" ? { notifyCustomer: $("[data-notify]", card)?.checked !== false } : {};
@@ -218,6 +235,46 @@
       },
       card,
     );
+  });
+
+  // Scan du code-barres (navigateurs compatibles BarcodeDetector).
+  document.addEventListener("click", async (e) => {
+    const b = e.target.closest("[data-scan]");
+    if (!b) return;
+    const input = b.parentElement.querySelector("input");
+    let stream;
+    const box = document.createElement("div");
+    box.className = "scan-box";
+    box.innerHTML = `<video playsinline muted></video><button type="button" class="btn">Fermer</button>`;
+    document.body.appendChild(box);
+    const stop = () => {
+      stream?.getTracks().forEach((t) => t.stop());
+      box.remove();
+    };
+    box.querySelector("button").addEventListener("click", stop);
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+      const video = box.querySelector("video");
+      video.srcObject = stream;
+      await video.play();
+      const detector = new window.BarcodeDetector();
+      const loop = async () => {
+        if (!document.body.contains(box)) return;
+        const codes = await detector.detect(video).catch(() => []);
+        const code = codes.map((c) => c.rawValue.replace(/\s+/g, "")).find((v) => /^[A-Za-z0-9]{8,40}$/.test(v));
+        if (code) {
+          input.value = code.toUpperCase();
+          stop();
+          toast("Numéro scanné");
+          return;
+        }
+        requestAnimationFrame(loop);
+      };
+      loop();
+    } catch {
+      stop();
+      toast("Caméra indisponible : saisis le numéro.", true);
+    }
   });
 
   $$(".tab").forEach((t) =>

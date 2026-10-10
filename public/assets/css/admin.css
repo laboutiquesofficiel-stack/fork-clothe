@@ -41,3 +41,7 @@
 .stock-h { font-size: 1rem; margin: 22px 0 6px; text-transform: uppercase; letter-spacing: .06em; }
 .market-sum { position: sticky; bottom: 8px; background: var(--white); box-shadow: 0 6px 24px rgba(0, 0, 0, .12); }
 .notice.warn { border-color: #e08a00; }
+.scan-row { display: flex; gap: 8px; }
+.scan-row input { flex: 1; min-width: 0; }
+.scan-box { position: fixed; inset: 0; background: rgba(0, 0, 0, .9); z-index: 100; display: grid; place-items: center; gap: 16px; padding: 20px; }
+.scan-box video { width: min(100%, 480px); border: 2px solid #fff; }

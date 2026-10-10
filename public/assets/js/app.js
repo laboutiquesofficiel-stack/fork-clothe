@@ -1284,7 +1284,7 @@
         const items = (Array.isArray(o.items) ? o.items : [])
           .map((it) => `<li>${Number(it.quantity)} × ${esc(it.name)} · ${esc(it.color)} · ${esc(it.size)} <span class="muted">· ${euros(Number(it.lineTotalCents) || 0)}</span></li>`)
           .join("");
-        const tracking = o.trackingNumber
+        const tracking = o.trackingNumber && ["shipped", "delivered"].includes(o.status)
           ? `<div class="notice"><b>Commande expédiée</b><span>Transporteur : ${esc(o.carrier || "—")}</span><span>Numéro de suivi : ${esc(o.trackingNumber)}</span>${
               isHttps(o.trackingUrl) ? `<a class="btn" href="${esc(o.trackingUrl)}" target="_blank" rel="noopener">Suivre mon colis</a>` : ""
             }</div>`
