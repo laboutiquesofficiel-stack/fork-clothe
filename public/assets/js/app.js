@@ -728,7 +728,7 @@
         }
         <p class="hint">Livraison offerte à moins de 10 km de Toulon, 7,64 € au-delà. Le montant exact est calculé avant le paiement.</p>
         <div class="pinfo">
-          <details><summary>Matière</summary><p>100 % coton, 120 g/m².</p></details>
+          <details><summary>Matière</summary><p>100 % coton, 220 g/m².</p></details>
           <details><summary>Guide des tailles</summary>
             <p>Tailles proposées pour ce modèle : <b>${p.sizes.map(esc).join(", ")}</b>.</p>
             <p>Les mesures exactes de chaque taille, en centimètres, sont en cours de confirmation auprès de notre fournisseur et seront ajoutées ici. Un doute sur ta taille ? Écris-nous sur WhatsApp au 07 66 75 18 40.</p>

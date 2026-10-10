@@ -42,8 +42,10 @@ const newsBlock = index.slice(newsStart, newsEnd);
 const SHARED_HEAD = `  <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <base href="/">
-  <link rel="icon" href="logo.png" type="image/png">
-  <link rel="apple-touch-icon" href="logo.png">
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" href="/favicon-96.png" type="image/png" sizes="96x96">
+  <link rel="icon" href="/favicon-192.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <meta name="theme-color" content="#0e2a3f">
   <link rel="stylesheet" href="assets/css/fork.css">
   <script src="assets/js/app.js" defer></script>`;
@@ -143,7 +145,7 @@ ${SHARED_HEAD}
           <p class="pmeta">${esc(p.color)} · ${p.category === "femme" ? "Femme" : "Homme"}</p>
           <p class="price">${euros(p.priceCents)}</p>
           <p class="muted">${esc(p.description)}</p>
-          <p>Tailles : ${p.sizes.map(esc).join(", ")}. 100 % coton, 120 g/m².</p>
+          <p>Tailles : ${p.sizes.map(esc).join(", ")}. 100 % coton, 220 g/m².</p>
         </div>
       </div>
     </div>
@@ -213,7 +215,7 @@ const items = forSale.filter((p) => !p.aiVisuals).flatMap((p) =>
       <g:id>${x(`${p.sku}-${size}`)}</g:id>
       <g:item_group_id>${x(p.sku)}</g:item_group_id>
       <g:title>${x(`T-shirt ${p.name} ${p.color} – FORK Toulon – Taille ${size}`)}</g:title>
-      <g:description>${x(`${plain(p.description)} 100 % coton, 120 g/m².`)}</g:description>
+      <g:description>${x(`${plain(p.description)} 100 % coton, 220 g/m².`)}</g:description>
       <g:link>${pageUrl(p)}</g:link>
       <g:image_link>${abs(p.images[0].src)}</g:image_link>
 ${p.images.slice(1, 10).map((i) => `      <g:additional_image_link>${abs(i.src)}</g:additional_image_link>`).join("\n")}
