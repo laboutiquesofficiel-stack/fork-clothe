@@ -1497,5 +1497,16 @@
     }
   }
 
+  // Retour arrière (Safari/iPhone remet la page en cache) : on relance le bandeau défilant,
+  // que le toucher sur le lien avait pu laisser figé.
+  window.addEventListener("pageshow", () => {
+    const track = $(".tick-track");
+    if (!track) return;
+    if (document.activeElement?.closest?.(".ticker")) document.activeElement.blur();
+    track.style.animation = "none";
+    void track.offsetWidth;
+    track.style.animation = "";
+  });
+
   start();
 })();
