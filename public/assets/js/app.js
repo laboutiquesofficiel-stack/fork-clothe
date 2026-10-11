@@ -1557,6 +1557,179 @@
     }
   })();
 
+  // ---------------------------------------------------------------------------
+  // Vos moments : photos des clients avec leur t-shirt FORK
+  // ---------------------------------------------------------------------------
+  // Chaque photo est vérifiée par le serveur (IA) avant publication : t-shirt FORK
+  // reconnu et photo correcte → en ligne ; doute → validée à la main par FORK ;
+  // sinon refusée avec une explication.
+  const moment = { photo: null, firstName: "", place: "", sku: "", email: "", consent: false, error: "", sending: false, done: null };
+  let momentsNext = null;
+
+  const momentCaption = (m) =>
+    `<span><b>${esc(m.firstName)}</b>${m.place ? ` · ${esc(m.place)}` : ""}</span>${m.product ? `<a href="${esc(m.product.url)}">${esc(m.product.name)}</a>` : ""}`;
+
+  function momentCard(m) {
+    return `<figure class="moment">
+      <button type="button" class="moment-open" data-moment-photo="${esc(m.photo)}" data-moment-cap="${esc(m.firstName)}${m.place ? ` · ${esc(m.place)}` : ""}${m.product ? ` · ${esc(m.product.name)}` : ""}" aria-label="Agrandir la photo de ${esc(m.firstName)}">
+        <img src="${esc(m.photo)}" alt="${esc(m.firstName)} avec son ${esc(m.product ? m.product.name : "t-shirt FORK")}${m.place ? `, ${esc(m.place)}` : ""}" loading="lazy">
+      </button>
+      <figcaption>${momentCaption(m)}</figcaption>
+    </figure>`;
+  }
+
+  async function loadMoments(more = false) {
+    const grid = $("#momentsGrid");
+    if (!grid) return;
+    const { ok, data } = await api(`/api/moments${more && momentsNext ? `?before=${momentsNext}` : ""}`);
+    if (!ok) {
+      if (!more) grid.innerHTML = "";
+      return;
+    }
+    const items = Array.isArray(data.items) ? data.items : [];
+    if (!more) {
+      grid.innerHTML = items.length
+        ? items.map(momentCard).join("")
+        : `<div class="moments-empty"><p><b>Aucun moment pour l'instant.</b></p><p class="muted">Sois le premier à partager une photo avec ton t-shirt FORK !</p></div>`;
+    } else {
+      grid.insertAdjacentHTML("beforeend", items.map(momentCard).join(""));
+    }
+    momentsNext = data.next || null;
+    $("#momentsMore").hidden = !momentsNext;
+  }
+
+  function saveMomentFields() {
+    const v = (id) => $(`#${id}`)?.value ?? "";
+    if (!$("#momentForm")) return;
+    moment.firstName = v("m-first");
+    moment.place = v("m-place");
+    moment.sku = v("m-sku");
+    moment.email = v("m-email");
+    moment.consent = Boolean($("#m-consent")?.checked);
+  }
+
+  function renderMoment() {
+    const body = $("#momentBody");
+    if (moment.done) {
+      body.innerHTML =
+        moment.done === "published"
+          ? `<div class="empty"><h4>Ta photo est en ligne ! 🎉</h4><p class="muted">Merci ${esc(moment.firstName)} ! On a bien reconnu ton t-shirt FORK : ta photo est maintenant dans « Vos moments ». Tu as aussi reçu un e-mail de confirmation.</p><button type="button" class="btn full" data-close>Voir les moments</button></div>`
+          : `<div class="empty"><h4>Merci ${esc(moment.firstName)} !</h4><p class="muted">Ta photo est bien reçue. On la vérifie et elle sera en ligne très vite : tu recevras un e-mail dès qu'elle sera publiée.</p><button type="button" class="btn full" data-close>Fermer</button></div>`;
+      return;
+    }
+    const options = PRODUCTS.filter((p) => p.type === "T-shirt")
+      .map((p) => `<option value="${esc(p.sku)}" ${moment.sku === p.sku ? "selected" : ""}>${esc(p.type)} ${esc(p.name)}</option>`)
+      .join("");
+    body.innerHTML = `
+      <p class="muted">Une photo de toi avec ton t-shirt FORK, où tu veux. On vérifie que le t-shirt se voit bien avant de la publier.</p>
+      <form id="momentForm" class="stack" novalidate>
+        <div class="field"><span class="up">Ta photo</span>
+          ${
+            moment.photo
+              ? `<div class="moment-preview"><img src="${esc(moment.photo)}" alt="Ta photo"><button type="button" class="link" data-moment-repick>Changer de photo</button></div>`
+              : `<label class="photo-add wide">+ Choisir une photo<input type="file" id="m-photo" accept="image/*" hidden></label>`
+          }
+          <p class="hint">Le t-shirt (devant ou dos) doit bien se voir.</p>
+        </div>
+        <div class="field"><label for="m-first">Ton prénom</label><input id="m-first" maxlength="30" autocomplete="given-name" required value="${esc(moment.firstName)}"></div>
+        <div class="field"><label for="m-place">Lieu (facultatif)</label><input id="m-place" maxlength="60" placeholder="Ex. : Plage du Mourillon" value="${esc(moment.place)}"></div>
+        <div class="field"><label for="m-sku">Ton t-shirt</label><select id="m-sku"><option value="">Je ne sais plus</option>${options}</select></div>
+        <div class="field"><label for="m-email">Ton e-mail (jamais affiché)</label><input id="m-email" type="email" maxlength="200" autocomplete="email" required value="${esc(moment.email)}"><p class="hint">Pour te prévenir quand ta photo est en ligne.</p></div>
+        <div class="hp" aria-hidden="true"><label for="m-website">Ne pas remplir</label><input id="m-website" tabindex="-1" autocomplete="off"></div>
+        <label class="check"><input type="checkbox" id="m-consent" ${moment.consent ? "checked" : ""}><span>J'accepte que cette photo, mon prénom et le lieu soient publiés sur fork-clothe.com. Je suis sur la photo ou j'ai l'accord des personnes visibles (et de leurs parents pour un mineur). Je peux demander le retrait à tout moment à forkofficiel@gmail.com. <a href="confidentialite.html">Confidentialité</a></span></label>
+        ${moment.error ? `<p class="notice err">${esc(moment.error)}</p>` : ""}
+        <button class="btn full" type="submit" id="m-submit" ${moment.sending ? "disabled" : ""}>${moment.sending ? "Vérification de ta photo…" : "Publier ma photo"}</button>
+      </form>`;
+    $("#m-photo")?.addEventListener("change", async (e) => {
+      saveMomentFields();
+      const file = e.target.files[0];
+      if (!file) return;
+      try {
+        moment.photo = await shrinkPhoto(file);
+        moment.error = "";
+      } catch {
+        moment.error = "Cette photo n'a pas pu être lue. Essaie avec une autre.";
+      }
+      renderMoment();
+    });
+    $("[data-moment-repick]")?.addEventListener("click", () => {
+      saveMomentFields();
+      moment.photo = null;
+      renderMoment();
+      $("#m-photo")?.click();
+    });
+    $("#momentForm").addEventListener("submit", submitMoment);
+  }
+
+  async function submitMoment(e) {
+    e.preventDefault();
+    if (moment.sending) return;
+    saveMomentFields();
+    moment.error = "";
+    if (!moment.photo) moment.error = "Choisis une photo.";
+    else if (moment.firstName.trim().length < 2) moment.error = "Indique ton prénom.";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(moment.email.trim())) moment.error = "Indique une adresse e-mail valide.";
+    else if (!moment.consent) moment.error = "Coche la case d'accord pour publier ta photo.";
+    if (moment.error) return renderMoment();
+    moment.sending = true;
+    renderMoment();
+    const { ok, data } = await api("/api/moments", {
+      method: "POST",
+      body: {
+        photo: moment.photo,
+        firstName: moment.firstName,
+        place: moment.place,
+        sku: moment.sku,
+        email: moment.email,
+        consent: true,
+        website: $("#m-website")?.value || "",
+      },
+    });
+    moment.sending = false;
+    if (!ok) {
+      moment.error = data.error || "L'envoi n'a pas abouti. Réessaie.";
+      return renderMoment();
+    }
+    moment.done = data.status === "published" ? "published" : "pending";
+    renderMoment();
+    if (moment.done === "published") loadMoments();
+  }
+
+  function openMomentShare() {
+    if (moment.done) Object.assign(moment, { photo: null, place: "", sku: "", consent: false, error: "", done: null });
+    renderMoment();
+    openDrawer("momentDrawer");
+  }
+
+  function openLightbox(src, caption) {
+    $("#lightboxImg").src = src;
+    $("#lightboxImg").alt = caption;
+    $("#lightboxCap").textContent = caption;
+    $("#momentLightbox").hidden = false;
+    document.body.classList.add("locked");
+    $("[data-lightbox-close]").focus();
+  }
+  function closeLightbox() {
+    if ($("#momentLightbox")?.hidden !== false) return;
+    $("#momentLightbox").hidden = true;
+    document.body.classList.remove("locked");
+  }
+
+  if ($("#momentsGrid")) {
+    loadMoments();
+    $("#momentsMore").addEventListener("click", () => loadMoments(true));
+  }
+  document.addEventListener("click", (e) => {
+    if (e.target.closest("[data-moment-share]")) return openMomentShare();
+    const open = e.target.closest("[data-moment-photo]");
+    if (open) return openLightbox(open.dataset.momentPhoto, open.dataset.momentCap);
+    if (e.target.closest("[data-lightbox-close]") || e.target.id === "momentLightbox") closeLightbox();
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeLightbox();
+  });
+  if (new URLSearchParams(location.search).get("moment") === "1") openMomentShare();
+
   // Mesure d'audience maison, sans cookie (voir la politique de confidentialité).
   // Les visites du propriétaire (appareil où l'admin a été ouvert) ne sont pas comptées.
   (() => {

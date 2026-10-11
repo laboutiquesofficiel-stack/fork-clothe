@@ -111,6 +111,8 @@
       $("#newsPane").hidden = view !== "news";
       $("#stockPane").hidden = view !== "stock";
       $("#visitsPane").hidden = view !== "visits";
+      $("#momentsPane").hidden = view !== "moments";
+      if (view === "moments") document.dispatchEvent(new CustomEvent("fork:moments"));
       if (view === "visits") document.dispatchEvent(new CustomEvent("fork:visits"));
       if (view === "stock") document.dispatchEvent(new CustomEvent("fork:stock"));
       if (view === "reviews") load();

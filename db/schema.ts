@@ -369,3 +369,28 @@ export const visitVisitors = pgTable("visit_visitors", {
 }, (table) => [
   unique("visit_visitors_day_visitor_key").on(table.day, table.visitor),
 ]);
+
+/**
+ * « Vos moments » : photos partagées par les clients avec leur t-shirt FORK.
+ *
+ * status : published (en ligne) | pending (à valider dans l'admin) | hidden (masquée).
+ * Chaque photo est vérifiée par l'IA avant publication (t-shirt FORK visible,
+ * photo correcte) ; aiVerdict garde le détail de cette vérification.
+ * L'e-mail n'est jamais affiché : il sert à prévenir la personne et à traiter
+ * une demande de retrait.
+ */
+export const moments = pgTable("moments", {
+  id: serial().primaryKey(),
+  status: text().notNull().default("pending"),
+  firstName: text("first_name").notNull(),
+  place: text(),
+  productSku: text("product_sku"),
+  email: text().notNull(),
+  contentType: text("content_type").notNull(),
+  dataBase64: text("data_base64").notNull(),
+  aiVerdict: jsonb("ai_verdict").$type<Record<string, unknown>>(),
+  aiNote: text("ai_note"),
+  visitorHash: text("visitor_hash"),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  publishedAt: timestamp("published_at", { withTimezone: true }),
+});

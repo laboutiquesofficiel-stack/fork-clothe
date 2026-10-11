@@ -58,6 +58,7 @@
       <a href="#produits" data-filter="all">La collection</a>
       <a href="#produits" data-filter="homme">Homme</a>
       <a href="#produits" data-filter="femme">Femme</a>
+      <a href="#moments">Vos moments</a>
       <a href="#match">Jour de match</a>
       <a href="#histoire">À propos</a>
       <a href="#faq">Aide</a>
@@ -125,6 +126,7 @@
         <a href="#produits" data-filter="all">La collection</a>
         <a href="#produits" data-filter="homme">Homme</a>
         <a href="#produits" data-filter="femme">Femme</a>
+        <a href="#moments">Vos moments</a>
         <a href="#match">Jour de match</a>
         <a href="#histoire">À propos</a>
         <a href="#faq">Aide</a>
@@ -143,6 +145,16 @@
     <div class="dhead"><h3>Donner mon avis</h3><button class="x" data-close aria-label="Fermer">✕</button></div>
     <div class="dbody" id="reviewBody"></div>
   </aside>
+
+  <aside class="drawer" id="momentDrawer" hidden aria-label="Partager mon moment">
+    <div class="dhead"><h3>Partager mon moment</h3><button class="x" data-close aria-label="Fermer">✕</button></div>
+    <div class="dbody" id="momentBody"></div>
+  </aside>
+
+  <div class="lightbox" id="momentLightbox" hidden role="dialog" aria-modal="true" aria-label="Photo">
+    <button class="x" type="button" data-lightbox-close aria-label="Fermer la photo">✕</button>
+    <figure><img id="lightboxImg" alt=""><figcaption id="lightboxCap"></figcaption></figure>
+  </div>
 
   <aside class="drawer" id="searchDrawer" hidden aria-label="Rechercher un article">
     <div class="dhead"><h3>Rechercher</h3><button class="x" data-close aria-label="Fermer la recherche">✕</button></div>

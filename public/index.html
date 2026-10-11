@@ -71,6 +71,7 @@
       <a href="#produits" data-filter="all">La collection</a>
       <a href="#produits" data-filter="homme">Homme</a>
       <a href="#produits" data-filter="femme">Femme</a>
+      <a href="#moments">Vos moments</a>
       <a href="#match">Jour de match</a>
       <a href="#histoire">À propos</a>
       <a href="#faq">Aide</a>
@@ -119,6 +120,19 @@
       <img src="assets/ambiance/statue.jpg" alt="Statue blanche sur le ciel bleu" loading="lazy" width="1000" height="1496">
       <img src="assets/ambiance/boutades-noir-blanc.jpg" alt="Les Boutades porté de dos, en noir et blanc" loading="lazy" width="992" height="1500">
       <img src="assets/ambiance/nageuse.jpg" alt="Nageuse dans la rade" loading="lazy" width="1000" height="1496">
+    </section>
+
+    <section class="sec wrap" id="moments" aria-labelledby="momentsTitle">
+      <div class="sec-head">
+        <div>
+          <p class="up">Partout avec FORK</p>
+          <h2 id="momentsTitle">Vos moments</h2>
+          <p class="muted moments-intro">À la plage, au stade, au sommet du Faron ou à l'autre bout du monde : montre-nous où tu portes ton t-shirt FORK.</p>
+        </div>
+        <button type="button" class="btn" data-moment-share>Partager mon moment</button>
+      </div>
+      <div class="moments-grid" id="momentsGrid" aria-live="polite"></div>
+      <div class="moments-more"><button type="button" class="btn out" id="momentsMore" hidden>Voir plus de moments</button></div>
     </section>
 
     <section class="split dark" id="match">
@@ -227,6 +241,7 @@
         <a href="#produits" data-filter="all">La collection</a>
         <a href="#produits" data-filter="homme">Homme</a>
         <a href="#produits" data-filter="femme">Femme</a>
+        <a href="#moments">Vos moments</a>
         <a href="#match">Jour de match</a>
         <a href="#histoire">À propos</a>
         <a href="#faq">Aide</a>
@@ -245,6 +260,16 @@
     <div class="dhead"><h3>Donner mon avis</h3><button class="x" data-close aria-label="Fermer">✕</button></div>
     <div class="dbody" id="reviewBody"></div>
   </aside>
+
+  <aside class="drawer" id="momentDrawer" hidden aria-label="Partager mon moment">
+    <div class="dhead"><h3>Partager mon moment</h3><button class="x" data-close aria-label="Fermer">✕</button></div>
+    <div class="dbody" id="momentBody"></div>
+  </aside>
+
+  <div class="lightbox" id="momentLightbox" hidden role="dialog" aria-modal="true" aria-label="Photo">
+    <button class="x" type="button" data-lightbox-close aria-label="Fermer la photo">✕</button>
+    <figure><img id="lightboxImg" alt=""><figcaption id="lightboxCap"></figcaption></figure>
+  </div>
 
   <aside class="drawer" id="searchDrawer" hidden aria-label="Rechercher un article">
     <div class="dhead"><h3>Rechercher</h3><button class="x" data-close aria-label="Fermer la recherche">✕</button></div>

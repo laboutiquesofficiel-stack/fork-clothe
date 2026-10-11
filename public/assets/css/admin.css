@@ -58,3 +58,9 @@
 .vaxis { display: flex; justify-content: space-between; font-size: .72rem; color: var(--muted); margin-top: 4px; }
 .news-table td.num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
 @media (max-width: 420px) { .vstat b { font-size: 1.35rem; } }
+
+/* Moments */
+.moment-admin { grid-template-columns: 140px 1fr; align-items: start; }
+.moment-admin img { width: 140px; aspect-ratio: 4 / 5; object-fit: cover; border: 1px solid var(--line); }
+.moment-admin .col { display: grid; gap: 6px; min-width: 0; overflow-wrap: anywhere; }
+@media (max-width: 480px) { .moment-admin { grid-template-columns: 100px 1fr; } .moment-admin img { width: 100px; } }
