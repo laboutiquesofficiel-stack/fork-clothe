@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto";
 import { eq } from "drizzle-orm";
 import { db } from "../db/index.js";
-import { newsletterSubscribers, orders, productReviews, type OrderItem } from "../db/schema.js";
+import { moments, newsletterSubscribers, orders, productReviews, type OrderItem } from "../db/schema.js";
 import { escapeHtml, formatEuros, sendEmail } from "./email.js";
 
 /**
@@ -290,5 +290,52 @@ export async function notifyNewsletterWelcome(subscriberId: number): Promise<voi
     });
   } catch (error) {
     console.error("Newsletter welcome failed", error instanceof Error ? error.message : "Unknown error");
+  }
+}
+
+/** Prévient la boutique (SHOP_EMAIL) qu'une photo « Vos moments » attend sa validation. */
+export async function notifyMomentToReview(momentId: number, reason: string): Promise<void> {
+  try {
+    const shopEmail = process.env.SHOP_EMAIL?.trim();
+    if (!shopEmail) return;
+    const [m] = await db.select({ firstName: moments.firstName, place: moments.place }).from(moments).where(eq(moments.id, momentId)).limit(1);
+    if (!m) return;
+    await sendEmail({
+      to: shopEmail,
+      subject: `FORK · Une photo « Vos moments » attend ta validation`,
+      html: layout(
+        "Photo à valider",
+        `<p style="font-size:14px;line-height:1.6"><b>${escapeHtml(m.firstName)}</b>${m.place ? ` · ${escapeHtml(m.place)}` : ""} a partagé une photo.</p>
+<p style="font-size:14px;line-height:1.6">${escapeHtml(reason)}</p>
+<p style="font-size:13px;color:#6b6b6b">Publie-la ou masque-la depuis ton admin, onglet « Moments ».</p>`,
+      ),
+      text: `${m.firstName} a partagé une photo « Vos moments ».\n${reason}\nÀ valider dans l'admin, onglet « Moments ».`,
+      idempotencyKey: `moment-review-${momentId}`,
+    });
+  } catch (error) {
+    console.error("Moment review notification failed", error instanceof Error ? error.message : "Unknown error");
+  }
+}
+
+/** Prévient la personne que sa photo est en ligne. */
+export async function notifyMomentPublished(momentId: number): Promise<void> {
+  try {
+    const [m] = await db.select({ firstName: moments.firstName, email: moments.email }).from(moments).where(eq(moments.id, momentId)).limit(1);
+    if (!m) return;
+    const url = "https://fork-clothe.com/#moments";
+    await sendEmail({
+      to: m.email,
+      subject: "Ta photo est en ligne sur FORK",
+      html: layout(
+        "Ta photo est en ligne",
+        `<p style="font-size:14px;line-height:1.6">Salut ${escapeHtml(m.firstName)}, merci d'avoir partagé ton moment avec ton t-shirt FORK ! Ta photo est maintenant visible dans « Vos moments » sur le site.</p>
+<p style="margin:20px 0"><a href="${url}" style="display:inline-block;background:#111;color:#fff;padding:12px 20px;text-decoration:none;font-weight:700">Voir ma photo</a></p>
+<p style="font-size:13px;color:#6b6b6b">Tu veux la retirer ? Écris à forkofficiel@gmail.com, on la supprime.</p>`,
+      ),
+      text: `Salut ${m.firstName}, ta photo est en ligne dans « Vos moments » : ${url}\nPour la retirer, écris à forkofficiel@gmail.com.`,
+      idempotencyKey: `moment-published-${momentId}`,
+    });
+  } catch (error) {
+    console.error("Moment published notification failed", error instanceof Error ? error.message : "Unknown error");
   }
 }

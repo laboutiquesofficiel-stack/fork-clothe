@@ -14,7 +14,7 @@
   <title>Page introuvable · FORK</title>
   <meta name="robots" content="noindex">
 </head>
-<body>
+<body data-page="404">
   <div class="annonce">
     <div class="wrap">Livraison offerte à moins de 10 km de Toulon · Colissimo suivi en France métropolitaine</div>
   </div>
@@ -58,6 +58,7 @@
       <a href="#produits" data-filter="all">La collection</a>
       <a href="#produits" data-filter="homme">Homme</a>
       <a href="#produits" data-filter="femme">Femme</a>
+      <a href="#moments">Vos moments</a>
       <a href="#match">Jour de match</a>
       <a href="#histoire">À propos</a>
       <a href="#faq">Aide</a>
@@ -110,7 +111,7 @@
         </div>
         <div><h4>Boutique</h4><ul><li><a href="#produits" data-filter="all">La collection</a></li><li><a href="#produits" data-filter="homme">Homme</a></li><li><a href="#produits" data-filter="femme">Femme</a></li></ul></div>
         <div><h4>FORK</h4><ul><li><a href="#histoire">Notre histoire</a></li><li><a href="#match">Jour de match</a></li><li><button type="button" data-open-account>Mon compte</button></li></ul></div>
-        <div><h4>Aide</h4><ul><li><a href="#faq">FAQ</a></li><li><a href="https://wa.me/33766751840" target="_blank" rel="noopener">WhatsApp · 07 66 75 18 40</a></li><li><a href="https://www.instagram.com/fork__off/" target="_blank" rel="noopener">Instagram · @fork__off</a></li></ul></div>
+        <div><h4>Aide</h4><ul><li><a href="#faq">FAQ</a></li><li><a href="https://wa.me/33766751840" target="_blank" rel="noopener">WhatsApp · 07 66 75 18 40</a></li><li><a href="mailto:forkofficiel@gmail.com">E-mail · forkofficiel@gmail.com</a></li><li><a href="https://www.instagram.com/fork__off/" target="_blank" rel="noopener">Instagram · @fork__off</a></li></ul></div>
       </div>
       <div class="fbottom"><span>© <span id="year">2026</span> FORK · fork-clothe.com</span><span class="flegal"><a href="mentions-legales.html">Mentions légales</a> · <a href="cgv.html">CGV</a> · <a href="confidentialite.html">Confidentialité</a></span></div>
     </div>
@@ -125,6 +126,7 @@
         <a href="#produits" data-filter="all">La collection</a>
         <a href="#produits" data-filter="homme">Homme</a>
         <a href="#produits" data-filter="femme">Femme</a>
+        <a href="#moments">Vos moments</a>
         <a href="#match">Jour de match</a>
         <a href="#histoire">À propos</a>
         <a href="#faq">Aide</a>
@@ -143,6 +145,16 @@
     <div class="dhead"><h3>Donner mon avis</h3><button class="x" data-close aria-label="Fermer">✕</button></div>
     <div class="dbody" id="reviewBody"></div>
   </aside>
+
+  <aside class="drawer" id="momentDrawer" hidden aria-label="Partager mon moment">
+    <div class="dhead"><h3>Partager mon moment</h3><button class="x" data-close aria-label="Fermer">✕</button></div>
+    <div class="dbody" id="momentBody"></div>
+  </aside>
+
+  <div class="lightbox" id="momentLightbox" hidden role="dialog" aria-modal="true" aria-label="Photo">
+    <button class="x" type="button" data-lightbox-close aria-label="Fermer la photo">✕</button>
+    <figure><img id="lightboxImg" alt=""><figcaption id="lightboxCap"></figcaption></figure>
+  </div>
 
   <aside class="drawer" id="searchDrawer" hidden aria-label="Rechercher un article">
     <div class="dhead"><h3>Rechercher</h3><button class="x" data-close aria-label="Fermer la recherche">✕</button></div>

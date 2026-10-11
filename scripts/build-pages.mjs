@@ -173,7 +173,7 @@ ${SHARED_HEAD}
   <title>Page introuvable · FORK</title>
   <meta name="robots" content="noindex">
 </head>
-<body>${header}  <main>
+<body data-page="404">${header}  <main>
     <section class="wrap notfound">
       <span class="big">404</span>
       <h1>Cette page s'est perdue dans la rade</h1>

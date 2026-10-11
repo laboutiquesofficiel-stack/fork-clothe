@@ -71,6 +71,7 @@
       <a href="#produits" data-filter="all">La collection</a>
       <a href="#produits" data-filter="homme">Homme</a>
       <a href="#produits" data-filter="femme">Femme</a>
+      <a href="#moments">Vos moments</a>
       <a href="#match">Jour de match</a>
       <a href="#histoire">À propos</a>
       <a href="#faq">Aide</a>
@@ -119,6 +120,19 @@
       <img src="assets/ambiance/statue.jpg" alt="Statue blanche sur le ciel bleu" loading="lazy" width="1000" height="1496">
       <img src="assets/ambiance/boutades-noir-blanc.jpg" alt="Les Boutades porté de dos, en noir et blanc" loading="lazy" width="992" height="1500">
       <img src="assets/ambiance/nageuse.jpg" alt="Nageuse dans la rade" loading="lazy" width="1000" height="1496">
+    </section>
+
+    <section class="sec wrap" id="moments" aria-labelledby="momentsTitle">
+      <div class="sec-head">
+        <div>
+          <p class="up">Partout avec FORK</p>
+          <h2 id="momentsTitle">Vos moments</h2>
+          <p class="muted moments-intro">À la plage, au stade, au sommet du Faron ou à l'autre bout du monde : montre-nous où tu portes ton t-shirt FORK.</p>
+        </div>
+        <button type="button" class="btn" data-moment-share>Partager mon moment</button>
+      </div>
+      <div class="moments-grid" id="momentsGrid" aria-live="polite"></div>
+      <div class="moments-more"><button type="button" class="btn out" id="momentsMore" hidden>Voir plus de moments</button></div>
     </section>
 
     <section class="split dark" id="match">
@@ -197,6 +211,7 @@
         <details><summary>Quelle taille choisir ?</summary><p>Nos t-shirts existent en S, M, L, XL, XXL et 3XL selon les modèles (les tailles disponibles sont indiquées sur chaque fiche). Les mesures exactes de chaque taille sont en cours de confirmation auprès de notre fournisseur. En attendant, écris-nous sur WhatsApp au 07 66 75 18 40, on te conseille.</p></details>
         <details><summary>Dois-je créer un compte pour commander ?</summary><p>Non. Tu peux commander sans compte. Si tu te connectes plus tard avec Google en utilisant la même adresse e-mail, ta commande apparaît automatiquement dans « Mes commandes ».</p></details>
         <details><summary>Comment suivre mon colis ?</summary><p>Dès l'expédition, tu reçois un e-mail avec le numéro de suivi et le bouton « Suivre mon colis ». Le suivi est aussi visible dans ton compte, rubrique « Mes commandes ».</p></details>
+        <details><summary>Puis-je retourner un article ?</summary><p>Oui. Tu as 14 jours à compter de la réception de ta commande pour changer d'avis, sans avoir à te justifier. Préviens-nous par e-mail à <a href="mailto:forkofficiel@gmail.com">forkofficiel@gmail.com</a>, puis renvoie les articles non portés et dans leur état d'origine dans les 14 jours, à : Pialat Matisse – FORK, 147 avenue Guichon de Grandpont, 83200 Toulon. Les frais de renvoi sont à ta charge. On te rembourse la totalité des sommes versées, y compris la livraison initiale au tarif standard, au plus tard 14 jours après ta demande (le remboursement peut attendre la réception du colis ou la preuve de son envoi). Si l'article est défectueux ou si l'erreur vient de nous, les frais sont pour nous. Tous les détails sont dans nos <a href="cgv.html">CGV</a>.</p></details>
         <details><summary>Puis-je modifier ou annuler ma commande ?</summary><p>Oui, tant que le colis n'a pas été expédié. Écris-nous sur WhatsApp au 07 66 75 18 40 avec ton numéro de commande.</p></details>
       </div>
     </section>
@@ -211,7 +226,7 @@
         </div>
         <div><h4>Boutique</h4><ul><li><a href="#produits" data-filter="all">La collection</a></li><li><a href="#produits" data-filter="homme">Homme</a></li><li><a href="#produits" data-filter="femme">Femme</a></li></ul></div>
         <div><h4>FORK</h4><ul><li><a href="#histoire">Notre histoire</a></li><li><a href="#match">Jour de match</a></li><li><button type="button" data-open-account>Mon compte</button></li></ul></div>
-        <div><h4>Aide</h4><ul><li><a href="#faq">FAQ</a></li><li><a href="https://wa.me/33766751840" target="_blank" rel="noopener">WhatsApp · 07 66 75 18 40</a></li><li><a href="https://www.instagram.com/fork__off/" target="_blank" rel="noopener">Instagram · @fork__off</a></li></ul></div>
+        <div><h4>Aide</h4><ul><li><a href="#faq">FAQ</a></li><li><a href="https://wa.me/33766751840" target="_blank" rel="noopener">WhatsApp · 07 66 75 18 40</a></li><li><a href="mailto:forkofficiel@gmail.com">E-mail · forkofficiel@gmail.com</a></li><li><a href="https://www.instagram.com/fork__off/" target="_blank" rel="noopener">Instagram · @fork__off</a></li></ul></div>
       </div>
       <div class="fbottom"><span>© <span id="year">2026</span> FORK · fork-clothe.com</span><span class="flegal"><a href="mentions-legales.html">Mentions légales</a> · <a href="cgv.html">CGV</a> · <a href="confidentialite.html">Confidentialité</a></span></div>
     </div>
@@ -226,6 +241,7 @@
         <a href="#produits" data-filter="all">La collection</a>
         <a href="#produits" data-filter="homme">Homme</a>
         <a href="#produits" data-filter="femme">Femme</a>
+        <a href="#moments">Vos moments</a>
         <a href="#match">Jour de match</a>
         <a href="#histoire">À propos</a>
         <a href="#faq">Aide</a>
@@ -244,6 +260,16 @@
     <div class="dhead"><h3>Donner mon avis</h3><button class="x" data-close aria-label="Fermer">✕</button></div>
     <div class="dbody" id="reviewBody"></div>
   </aside>
+
+  <aside class="drawer" id="momentDrawer" hidden aria-label="Partager mon moment">
+    <div class="dhead"><h3>Partager mon moment</h3><button class="x" data-close aria-label="Fermer">✕</button></div>
+    <div class="dbody" id="momentBody"></div>
+  </aside>
+
+  <div class="lightbox" id="momentLightbox" hidden role="dialog" aria-modal="true" aria-label="Photo">
+    <button class="x" type="button" data-lightbox-close aria-label="Fermer la photo">✕</button>
+    <figure><img id="lightboxImg" alt=""><figcaption id="lightboxCap"></figcaption></figure>
+  </div>
 
   <aside class="drawer" id="searchDrawer" hidden aria-label="Rechercher un article">
     <div class="dhead"><h3>Rechercher</h3><button class="x" data-close aria-label="Fermer la recherche">✕</button></div>

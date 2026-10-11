@@ -342,3 +342,55 @@ export const stockMovements = pgTable("stock_movements", {
   note: text(),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
+
+/**
+ * Mesure d'audience maison, sans cookie.
+ *
+ * visit_pages : pages vues par jour (jour au format AAAA-MM-JJ, heure de Paris).
+ * visit_visitors : un visiteur par jour, identifié par une empreinte anonyme
+ * recalculée chaque jour (impossible de suivre quelqu'un d'un jour à l'autre),
+ * avec la provenance de sa première visite du jour (Google, Instagram, direct…).
+ */
+export const visitPages = pgTable("visit_pages", {
+  id: serial().primaryKey(),
+  day: text().notNull(),
+  path: text().notNull(),
+  views: integer().notNull().default(0),
+}, (table) => [
+  unique("visit_pages_day_path_key").on(table.day, table.path),
+]);
+
+export const visitVisitors = pgTable("visit_visitors", {
+  id: serial().primaryKey(),
+  day: text().notNull(),
+  visitor: text().notNull(),
+  source: text().notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+}, (table) => [
+  unique("visit_visitors_day_visitor_key").on(table.day, table.visitor),
+]);
+
+/**
+ * « Vos moments » : photos partagées par les clients avec leur t-shirt FORK.
+ *
+ * status : published (en ligne) | pending (à valider dans l'admin) | hidden (masquée).
+ * Chaque photo est vérifiée par l'IA avant publication (t-shirt FORK visible,
+ * photo correcte) ; aiVerdict garde le détail de cette vérification.
+ * L'e-mail n'est jamais affiché : il sert à prévenir la personne et à traiter
+ * une demande de retrait.
+ */
+export const moments = pgTable("moments", {
+  id: serial().primaryKey(),
+  status: text().notNull().default("pending"),
+  firstName: text("first_name").notNull(),
+  place: text(),
+  productSku: text("product_sku"),
+  email: text().notNull(),
+  contentType: text("content_type").notNull(),
+  dataBase64: text("data_base64").notNull(),
+  aiVerdict: jsonb("ai_verdict").$type<Record<string, unknown>>(),
+  aiNote: text("ai_note"),
+  visitorHash: text("visitor_hash"),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  publishedAt: timestamp("published_at", { withTimezone: true }),
+});

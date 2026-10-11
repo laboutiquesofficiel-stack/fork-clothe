@@ -15,6 +15,8 @@
   <script src="assets/js/admin-reviews.js" defer></script>
   <script src="assets/js/admin-news.js" defer></script>
   <script src="assets/js/admin-stock.js" defer></script>
+  <script src="assets/js/admin-visits.js" defer></script>
+  <script src="assets/js/admin-moments.js" defer></script>
 </head>
 <body>
   <header class="site-header">
@@ -43,8 +45,10 @@
       <div class="view-switch" role="tablist" aria-label="Rubrique">
         <button type="button" class="switch" data-view="orders" aria-selected="true">Commandes</button>
         <button type="button" class="switch" data-view="reviews" aria-selected="false">Avis</button>
+        <button type="button" class="switch" data-view="moments" aria-selected="false">Moments</button>
         <button type="button" class="switch" data-view="stock" aria-selected="false">Stock</button>
         <button type="button" class="switch" data-view="news" aria-selected="false">Inscrits</button>
+        <button type="button" class="switch" data-view="visits" aria-selected="false">Visites</button>
       </div>
       <div id="ordersPane">
       <div class="sec-head">
@@ -74,6 +78,21 @@
         <div class="sec-head"><h1>Inscrits « prochaine collection »</h1></div>
         <p class="hint">Personnes qui ont accepté de recevoir l'annonce de tes nouvelles collections. Chaque e-mail que tu leur enverras doit contenir un moyen de se désinscrire.</p>
         <div id="newsList" aria-live="polite"></div>
+      </div>
+      <div id="momentsPane" hidden>
+        <div class="sec-head"><h1>Vos moments</h1></div>
+        <p class="hint">Les photos où l'IA a reconnu un t-shirt FORK sont publiées toutes seules. Ici arrivent celles où elle a un doute (t-shirt mal visible, mineur sur la photo, vérification indisponible) : à toi de les publier ou de les masquer. Supprime définitivement une photo si la personne demande son retrait.</p>
+        <div class="admin-list" id="momentsList" aria-live="polite"></div>
+      </div>
+      <div id="visitsPane" hidden>
+        <div class="sec-head"><h1>Visites du site</h1></div>
+        <div class="stock-modes" role="tablist" aria-label="Période">
+          <button type="button" class="tab" data-visits-days="7" aria-selected="false">7 jours</button>
+          <button type="button" class="tab" data-visits-days="30" aria-selected="true">30 jours</button>
+          <button type="button" class="tab" data-visits-days="90" aria-selected="false">3 mois</button>
+          <button type="button" class="tab" data-visits-days="365" aria-selected="false">1 an</button>
+        </div>
+        <div id="visitsBody" aria-live="polite"></div>
       </div>
       <div id="reviewsPane" hidden>
         <div class="sec-head"><h1>Avis clients</h1></div>
