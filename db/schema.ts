@@ -342,3 +342,30 @@ export const stockMovements = pgTable("stock_movements", {
   note: text(),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
+
+/**
+ * Mesure d'audience maison, sans cookie.
+ *
+ * visit_pages : pages vues par jour (jour au format AAAA-MM-JJ, heure de Paris).
+ * visit_visitors : un visiteur par jour, identifié par une empreinte anonyme
+ * recalculée chaque jour (impossible de suivre quelqu'un d'un jour à l'autre),
+ * avec la provenance de sa première visite du jour (Google, Instagram, direct…).
+ */
+export const visitPages = pgTable("visit_pages", {
+  id: serial().primaryKey(),
+  day: text().notNull(),
+  path: text().notNull(),
+  views: integer().notNull().default(0),
+}, (table) => [
+  unique("visit_pages_day_path_key").on(table.day, table.path),
+]);
+
+export const visitVisitors = pgTable("visit_visitors", {
+  id: serial().primaryKey(),
+  day: text().notNull(),
+  visitor: text().notNull(),
+  source: text().notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+}, (table) => [
+  unique("visit_visitors_day_visitor_key").on(table.day, table.visitor),
+]);

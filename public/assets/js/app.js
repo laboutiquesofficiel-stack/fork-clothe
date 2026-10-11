@@ -1557,5 +1557,23 @@
     }
   })();
 
+  // Mesure d'audience maison, sans cookie (voir la politique de confidentialité).
+  // Les visites du propriétaire (appareil où l'admin a été ouvert) ne sont pas comptées.
+  (() => {
+    try {
+      if (localStorage.getItem("fork-no-count") === "1") return;
+    } catch {
+      /* stockage indisponible : on compte quand même */
+    }
+    const path = document.body.dataset.page === "404" ? "/404" : location.pathname;
+    const payload = JSON.stringify({ path, ref: document.referrer || "" });
+    try {
+      if (navigator.sendBeacon && navigator.sendBeacon("/api/visit", new Blob([payload], { type: "application/json" }))) return;
+    } catch {
+      /* repli ci-dessous */
+    }
+    fetch("/api/visit", { method: "POST", headers: { "Content-Type": "application/json" }, body: payload, keepalive: true }).catch(() => {});
+  })();
+
   start();
 })();
