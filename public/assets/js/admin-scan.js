@@ -19,7 +19,9 @@
     }
   };
 
-  let products = []; // { sku, name, sizes }
+  let products = []; // { sku, name, sizes, priceCents }
+  let toCollect = 0; // ventes scannées pas encore encaissées (centimes)
+  const euros = (c) => `${(c / 100).toFixed(2).replace(".", ",")} €`;
   let box = null;
   let stream = null;
   let mode = "in";
@@ -47,7 +49,7 @@
     try {
       const res = await fetch("/api/admin/stock", { headers: { Authorization: `Bearer ${token()}` }, cache: "no-store" });
       const d = await res.json();
-      products = (d.products || []).map((p) => ({ sku: p.sku, name: p.name, sizes: p.sizes.map((s) => s.size) }));
+      products = (d.products || []).map((p) => ({ sku: p.sku, name: p.name, sizes: p.sizes.map((s) => s.size), priceCents: p.priceCents || 0 }));
     } catch {
       products = [];
     }
@@ -82,6 +84,9 @@
     } else {
       html = `<p class="scan-status">Cadre le t-shirt plié : l'étiquette du col et le logo doivent se voir. Rapproche-toi si l'étiquette est petite.</p>`;
     }
+    if (mode === "out" || toCollect) {
+      html += `<a class="btn full scan-sumup" href="sumupmerchant://" data-sumup>${toCollect ? `Encaisser ${esc(euros(toCollect))} · ` : ""}Ouvrir SumUp</a>`;
+    }
     html += `<p class="scan-tally">Cette session : ${tally.in ? `+${tally.in} reçu${tally.in > 1 ? "s" : ""}` : "0 reçu"} · ${tally.out ? `−${tally.out} vendu${tally.out > 1 ? "s" : ""}` : "0 vendu"}</p>`;
     panel.innerHTML = html;
     $(".scan-shot", box).disabled = busy || Boolean(pending);
@@ -91,6 +96,7 @@
     last = a;
     pending = null;
     tally[a.delta > 0 ? "in" : "out"] += 1;
+    if (a.delta < 0) toCollect += products.find((p) => p.sku === a.sku)?.priceCents || 0;
     if (navigator.vibrate) navigator.vibrate(60);
   }
 
@@ -212,9 +218,17 @@
     if (m) {
       mode = m.dataset.scanMode;
       box.querySelectorAll("[data-scan-mode]").forEach((b) => b.setAttribute("aria-selected", String(b === m)));
-      return;
+      return renderPanel();
     }
     if (e.target.closest(".scan-shot")) return scan(capture());
+    if (e.target.closest("[data-sumup]")) {
+      // On laisse le lien ouvrir l'appli SumUp ; le montant à encaisser repart de zéro.
+      setTimeout(() => {
+        toCollect = 0;
+        renderPanel();
+      }, 800);
+      return;
+    }
     const ps = e.target.closest("[data-pick-sku]");
     if (ps) {
       pending.sku = ps.dataset.pickSku;
@@ -232,7 +246,10 @@
       last = null;
       renderPanel();
       const { ok } = await post({ undo: { sku: l.sku, size: l.size, delta: l.delta } });
-      if (ok) tally[l.delta > 0 ? "in" : "out"] -= 1;
+      if (ok) {
+        tally[l.delta > 0 ? "in" : "out"] -= 1;
+        if (l.delta < 0) toCollect = Math.max(0, toCollect - (products.find((p) => p.sku === l.sku)?.priceCents || 0));
+      }
       else last = l;
       renderPanel();
     }

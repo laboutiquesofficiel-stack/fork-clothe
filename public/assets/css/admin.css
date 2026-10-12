@@ -91,3 +91,4 @@
 .scan-card .small { font-size: .8rem; font-weight: 700; }
 .scan-picks { display: flex; flex-wrap: wrap; gap: 6px; }
 .scan-picks .btn { min-height: 44px; padding: 10px 14px; }
+.scan-sumup { background: #fff; color: var(--ink); border-color: #fff; text-decoration: none; }
