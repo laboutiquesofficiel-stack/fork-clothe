@@ -410,3 +410,6 @@ h1, h2, h3, h4 { margin: 0; text-transform: uppercase; font-weight: 900; letter-
 .lightbox img { max-width: 100%; max-height: calc(100vh - 120px); max-height: calc(100dvh - 120px); object-fit: contain; }
 .lightbox figcaption { color: #fff; font-size: .9rem; text-align: center; }
 .lightbox .x { position: absolute; top: max(12px, env(safe-area-inset-top)); right: 12px; color: #fff; font-size: 1.4rem; width: 44px; height: 44px; }
+.size-table { width: 100%; border-collapse: collapse; font-size: .9rem; margin: 6px 0; }
+.size-table th, .size-table td { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+.size-table thead th { font-size: .7rem; text-transform: uppercase; letter-spacing: .05em; }

@@ -115,6 +115,8 @@
   const bySku = new Map(PRODUCTS.filter((p) => p.sku).map((p) => [p.sku, p]));
   // Page dédiée d'un t-shirt (/t-shirt/<id>/) : la fiche s'affiche dans la page au lieu du tiroir.
   const PAGE_PRODUCT = document.body.dataset.productPage || null;
+  // Mesures des t-shirts (à plat, en cm) : [largeur aisselle à aisselle, longueur].
+  const SIZE_CHART = { S: [46, 71], M: [50, 73], L: [55, 76], XL: [59, 76], XXL: [63, 79], "3XL": [65, 82] };
   const productPath = (id) => `/t-shirt/${encodeURIComponent(id)}/`;
   const byId = new Map(PRODUCTS.map((p) => [p.id, p]));
   const MAX_QTY = 20;
@@ -763,8 +765,12 @@
         <div class="pinfo">
           <details><summary>Matière</summary><p>100 % coton, 220 g/m².</p></details>
           <details><summary>Guide des tailles</summary>
-            <p>Tailles proposées pour ce modèle : <b>${p.sizes.map(esc).join(", ")}</b>.</p>
-            <p>Les mesures exactes de chaque taille, en centimètres, sont en cours de confirmation auprès de notre fournisseur et seront ajoutées ici. Un doute sur ta taille ? Écris-nous sur WhatsApp au 07 66 75 18 40.</p>
+            <p>Mesures du t-shirt posé à plat, en centimètres :</p>
+            <div class="table-scroll"><table class="size-table"><thead><tr><th>Taille</th><th>Largeur</th><th>Longueur</th></tr></thead><tbody>${p.sizes
+              .filter((sz) => SIZE_CHART[sz])
+              .map((sz) => `<tr><th>${esc(sz)}</th><td>${SIZE_CHART[sz][0]} cm</td><td>${SIZE_CHART[sz][1]} cm</td></tr>`)
+              .join("")}</tbody></table></div>
+            <p class="hint">Largeur : d'une aisselle à l'autre, juste sous les manches. Longueur : du haut de l'épaule, à côté du col, jusqu'en bas du t-shirt. Pour choisir, compare avec un t-shirt que tu aimes porter. Un doute ? Écris-nous sur WhatsApp au 07 66 75 18 40.</p>
           </details>
           <details><summary>Entretien</summary>
             <p class="hint">Conseils généraux pour garder ton t-shirt et son impression plus longtemps :</p>
