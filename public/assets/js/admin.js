@@ -277,10 +277,10 @@
     }
   });
 
-  $$(".tab").forEach((t) =>
+  $$(".tab[data-status]").forEach((t) =>
     t.addEventListener("click", () => {
       statusFilter = t.dataset.status;
-      $$(".tab").forEach((x) => x.setAttribute("aria-selected", String(x === t)));
+      $$(".tab[data-status]").forEach((x) => x.setAttribute("aria-selected", String(x === t)));
       load();
     }),
   );

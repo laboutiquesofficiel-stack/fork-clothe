@@ -64,3 +64,30 @@
 .moment-admin img { width: 140px; aspect-ratio: 4 / 5; object-fit: cover; border: 1px solid var(--line); }
 .moment-admin .col { display: grid; gap: 6px; min-width: 0; overflow-wrap: anywhere; }
 @media (max-width: 480px) { .moment-admin { grid-template-columns: 100px 1fr; } .moment-admin img { width: 100px; } }
+
+/* Scanner de stock */
+.scan-launch { margin-bottom: 14px; }
+.scan-box.scan-stock { background: #111; display: flex; flex-direction: column; align-items: stretch; justify-content: flex-start; gap: 10px; padding: max(12px, env(safe-area-inset-top)) 14px max(14px, env(safe-area-inset-bottom)); overflow-y: auto; color: #fff; }
+.scan-top { display: flex; gap: 10px; align-items: center; }
+.scan-mode { flex: 1; display: grid; grid-template-columns: 1fr 1fr; border: 1px solid #fff; }
+.scan-mode button { padding: 12px 6px; color: #fff; font-weight: 800; font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; }
+.scan-mode button[aria-selected="true"] { background: #fff; color: var(--ink); }
+.scan-close { color: #fff; font-size: 1.4rem; width: 44px; height: 44px; }
+.scan-lock { display: grid; gap: 4px; font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; }
+.scan-lock select { padding: 10px; min-height: 42px; color: var(--ink); background: #fff; border: 0; font-size: 1rem; }
+.scan-view { position: relative; display: grid; place-items: center; }
+.scan-stock video { width: 100%; max-height: 52vh; max-height: 52dvh; object-fit: cover; border: 2px solid #fff; }
+.scan-file { display: grid; place-items: center; width: 100%; min-height: 160px; border: 2px dashed #fff; font-weight: 800; text-transform: uppercase; cursor: pointer; }
+.scan-file[hidden] { display: none; }
+.scan-shot { align-self: center; width: 74px; height: 74px; border-radius: 50%; background: #fff; border: 6px solid rgba(255, 255, 255, .35); background-clip: padding-box; flex: none; }
+.scan-shot:disabled { opacity: .4; }
+.scan-shot[hidden] { display: none; }
+.scan-panel { display: grid; gap: 8px; }
+.scan-status { text-align: center; font-size: .9rem; opacity: .9; }
+.scan-tally { text-align: center; font-size: .75rem; opacity: .7; }
+.scan-card { background: #fff; color: var(--ink); padding: 12px; display: grid; gap: 8px; }
+.scan-card.ok { border-left: 6px solid var(--ok); }
+.scan-card.warn { border-left: 6px solid #e08a00; }
+.scan-card .small { font-size: .8rem; font-weight: 700; }
+.scan-picks { display: flex; flex-wrap: wrap; gap: 6px; }
+.scan-picks .btn { min-height: 44px; padding: 10px 14px; }
