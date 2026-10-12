@@ -277,6 +277,37 @@
     }
   });
 
+  // Commande spéciale (hors site)
+  $("#manualOrderBox")?.addEventListener("toggle", async (e) => {
+    const select = $("#mo-sku");
+    if (!e.target.open || select.options.length > 1) return;
+    try {
+      const res = await fetch("/api/admin/stock", { headers: { Authorization: `Bearer ${session.get()}` }, cache: "no-store" });
+      const d = await res.json();
+      (d.products || []).forEach((p) => select.insertAdjacentHTML("beforeend", `<option value="${esc(p.sku)}" data-price="${p.priceCents || ""}">${esc(p.type)} ${esc(p.name)}</option>`));
+    } catch {
+      toast("Impossible de charger les modèles.", true);
+    }
+  });
+  $("#mo-sku")?.addEventListener("change", (e) => {
+    const cents = Number(e.target.selectedOptions[0]?.dataset.price || 0);
+    if (cents && !$("#mo-price").value) $("#mo-price").value = String(cents / 100).replace(".", ",");
+  });
+  $("#manualOrder")?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const data = Object.fromEntries(new FormData(form).entries());
+    const button = form.querySelector("button[type=submit]");
+    button.disabled = true;
+    const { ok, data: res } = await call("POST", { action: "create", ...data, quantity: Number(data.quantity || 1) });
+    button.disabled = false;
+    if (!ok) return toast(res.error || "Création impossible.", true);
+    form.reset();
+    $("#manualOrderBox").open = false;
+    toast(`Commande ${res.order.orderNumber} créée`);
+    load();
+  });
+
   $$(".tab[data-status]").forEach((t) =>
     t.addEventListener("click", () => {
       statusFilter = t.dataset.status;
