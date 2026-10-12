@@ -39,6 +39,7 @@ async function snapshot() {
     name: p.name,
     type: p.type,
     color: p.color,
+    priceCents: p.priceCents,
     image: p.image,
     sizes: p.sizes.map((size) => {
       const q = stock.get(`${p.sku}|${size}`);

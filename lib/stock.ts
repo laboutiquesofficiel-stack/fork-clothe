@@ -107,3 +107,20 @@ export async function restockForOrder(orderId: number): Promise<void> {
     console.error("Restock failed", orderId, error instanceof Error ? error.message : "Unknown error");
   }
 }
+
+/**
+ * Entrée en stock (réception scannée) : +delta, et commence le suivi de la
+ * taille si elle ne l'était pas encore.
+ */
+export async function receiveStock(sku: string, size: string, delta: number, note: string | null = null): Promise<number> {
+  const [row] = await db
+    .insert(stockLevels)
+    .values({ sku, size, quantity: delta })
+    .onConflictDoUpdate({
+      target: [stockLevels.sku, stockLevels.size],
+      set: { quantity: sql`${stockLevels.quantity} + ${delta}`, updatedAt: new Date() },
+    })
+    .returning({ quantity: stockLevels.quantity });
+  await db.insert(stockMovements).values({ sku, size, delta, quantityAfter: row.quantity, reason: "adjust", reference: "réception", note });
+  return row.quantity;
+}
