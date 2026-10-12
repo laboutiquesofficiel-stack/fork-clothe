@@ -64,6 +64,26 @@
           <button class="tab" role="tab" data-status="cancelled" aria-selected="false">Annulées</button>
         </div>
       </div>
+      <details class="card manual-order" id="manualOrderBox">
+        <summary><b>+ Commande spéciale (hors site)</b></summary>
+        <p class="hint">Pour une commande réglée en dehors du site (taille spéciale, commande par message…). Elle apparaît ensuite comme les autres : tu ajoutes le numéro Colissimo et le suivi et les e-mails au client partent automatiquement. Le stock n'est pas modifié.</p>
+        <form id="manualOrder" class="stack" novalidate>
+          <div class="field"><label for="mo-name">Nom du client</label><input id="mo-name" name="customerName" required autocomplete="off"></div>
+          <div class="field"><label for="mo-email">E-mail du client (pour le suivi)</label><input id="mo-email" name="customerEmail" type="email" required autocomplete="off"></div>
+          <div class="field"><label for="mo-phone">Téléphone (facultatif)</label><input id="mo-phone" name="customerPhone" type="tel" autocomplete="off"></div>
+          <div class="field"><label for="mo-address">Adresse de livraison</label><textarea id="mo-address" name="shippingAddress" rows="3" required placeholder="Nom, numéro et rue, code postal, ville"></textarea></div>
+          <div class="mo-row">
+            <div class="field"><label for="mo-sku">Modèle</label><select id="mo-sku" name="sku" required><option value="">Choisir…</option></select></div>
+            <div class="field"><label for="mo-size">Taille</label><input id="mo-size" name="size" required maxlength="6" placeholder="XS" autocapitalize="characters"></div>
+          </div>
+          <div class="mo-row">
+            <div class="field"><label for="mo-qty">Quantité</label><input id="mo-qty" name="quantity" type="number" min="1" max="20" value="1" inputmode="numeric"></div>
+            <div class="field"><label for="mo-price">Prix unitaire (€)</label><input id="mo-price" name="unitPrice" inputmode="decimal" required placeholder="30"></div>
+            <div class="field"><label for="mo-ship">Livraison (€)</label><input id="mo-ship" name="shipping" inputmode="decimal" value="0"></div>
+          </div>
+          <button type="submit" class="btn full">Créer la commande (déjà payée)</button>
+        </form>
+      </details>
       <div class="admin-list" id="orderList" aria-live="polite"></div>
       </div>
       <div id="stockPane" hidden>

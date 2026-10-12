@@ -92,3 +92,7 @@
 .scan-picks { display: flex; flex-wrap: wrap; gap: 6px; }
 .scan-picks .btn { min-height: 44px; padding: 10px 14px; }
 .scan-sumup { background: #fff; color: var(--ink); border-color: #fff; text-decoration: none; }
+.manual-order { margin-bottom: 14px; }
+.manual-order summary { cursor: pointer; }
+.mo-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); gap: 10px; }
+.manual-order textarea { border: 1px solid var(--line); background: var(--white); padding: 12px; width: 100%; font: inherit; }

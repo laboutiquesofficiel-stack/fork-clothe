@@ -1,10 +1,11 @@
-import { createHash, timingSafeEqual } from "node:crypto";
+import { createHash, randomBytes, timingSafeEqual } from "node:crypto";
 import type { Config } from "@netlify/functions";
 import { and, desc, eq, inArray } from "drizzle-orm";
 import { db } from "../../db/index.js";
 import { orders } from "../../db/schema.js";
 import { notifyOrderDelivered, notifyOrderShipped } from "../../lib/notifications.js";
 import { restockForOrder } from "../../lib/stock.js";
+import { CATALOGUE } from "../../lib/catalogue.generated.js";
 
 /**
  * Gestion des commandes par la boutique.
@@ -112,8 +113,56 @@ export default async (request: Request) => {
     }
 
     const body = (await request.json().catch(() => null)) as Record<string, unknown> | null;
-    const orderNumber = cleanText(body?.orderNumber, 80);
     const action = cleanText(body?.action, 20);
+
+    // Commande spéciale (hors site, déjà réglée) : saisie à la main pour profiter
+    // du suivi Colissimo automatique et des e-mails au client. Le stock n'est pas touché.
+    if (action === "create") {
+      const product = CATALOGUE.find((p) => p.sku === cleanText(body?.sku, 60));
+      const name = cleanText(body?.customerName, 120);
+      const email = cleanText(body?.customerEmail, 200).toLowerCase();
+      const phone = cleanText(body?.customerPhone, 40);
+      const address = cleanText(body?.shippingAddress, 400);
+      const size = cleanText(body?.size, 10).toUpperCase();
+      const quantity = Number(body?.quantity ?? 1);
+      const unit = Math.round(Number(String(body?.unitPrice ?? "").replace(",", ".")) * 100);
+      const ship = Math.round(Number(String(body?.shipping ?? "0").replace(",", ".") || 0) * 100);
+      if (!product) return Response.json({ error: "Choisis le modèle." }, { status: 400 });
+      if (name.length < 2) return Response.json({ error: "Indique le nom du client." }, { status: 400 });
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return Response.json({ error: "E-mail du client invalide." }, { status: 400 });
+      if (address.length < 10) return Response.json({ error: "Indique l'adresse de livraison complète." }, { status: 400 });
+      if (!/^[A-Z0-9]{1,6}$/.test(size)) return Response.json({ error: "Indique la taille (ex. : XS)." }, { status: 400 });
+      if (!Number.isInteger(quantity) || quantity < 1 || quantity > 20) return Response.json({ error: "Quantité invalide." }, { status: 400 });
+      if (!Number.isInteger(unit) || unit < 0 || unit > 100000) return Response.json({ error: "Prix invalide." }, { status: 400 });
+      if (!Number.isInteger(ship) || ship < 0 || ship > 10000) return Response.json({ error: "Frais de livraison invalides." }, { status: 400 });
+
+      const date = new Date().toISOString().slice(0, 10).replaceAll("-", "");
+      const subtotal = unit * quantity;
+      const [created] = await db
+        .insert(orders)
+        .values({
+          orderNumber: `FORK-${date}-${randomBytes(3).toString("hex").toUpperCase()}`,
+          customerName: name,
+          customerEmail: email,
+          customerPhone: phone,
+          shippingAddress: address,
+          items: [{ sku: product.sku, name: product.name, color: product.color, size, quantity, unitPriceCents: unit, lineTotalCents: subtotal }],
+          itemCount: quantity,
+          subtotalCents: subtotal,
+          shippingCents: ship,
+          deliveryZone: "manual",
+          totalCents: subtotal + ship,
+          status: "paid",
+          paymentStatus: "paid",
+          paymentProvider: "hors_site",
+          paymentReference: "Commande spéciale",
+        })
+        .returning({ id: orders.id });
+      const [order] = await db.select(listColumns).from(orders).where(eq(orders.id, created.id)).limit(1);
+      return Response.json({ order }, { headers: noStore });
+    }
+
+    const orderNumber = cleanText(body?.orderNumber, 80);
     if (!orderNumber) {
       return Response.json({ error: "Numéro de commande manquant." }, { status: 400 });
     }
