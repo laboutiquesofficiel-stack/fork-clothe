@@ -3,6 +3,7 @@ import type { Config } from "@netlify/functions";
 import { and, desc, eq, inArray } from "drizzle-orm";
 import { db } from "../../db/index.js";
 import { orders } from "../../db/schema.js";
+import { delivered, fetchTracking, pickedUp, summarize } from "../../lib/laposte.js";
 import { notifyOrderDelivered, notifyOrderShipped } from "../../lib/notifications.js";
 import { restockForOrder } from "../../lib/stock.js";
 import { CATALOGUE } from "../../lib/catalogue.generated.js";
@@ -171,6 +172,47 @@ export default async (request: Request) => {
       and(eq(orders.orderNumber, orderNumber), inArray(orders.status, allowed));
 
     let updated: { id: number }[] = [];
+
+    // Vérification immédiate du suivi La Poste (même logique que la tâche planifiée).
+    if (action === "track-now") {
+      const key = process.env.LAPOSTE_API_KEY?.trim();
+      if (!key) return Response.json({ error: "Clé La Poste absente (LAPOSTE_API_KEY)." }, { status: 503 });
+      const [current] = await db
+        .select({ id: orders.id, status: orders.status, shipmentStatus: orders.shipmentStatus, trackingNumber: orders.trackingNumber })
+        .from(orders)
+        .where(eq(orders.orderNumber, orderNumber))
+        .limit(1);
+      if (!current?.trackingNumber) return Response.json({ error: "Aucun numéro de suivi sur cette commande." }, { status: 400 });
+      const result = await fetchTracking(key, current.trackingNumber);
+      if (!result.ok) {
+        return Response.json({ error: `La Poste ne répond pas pour ce numéro : ${result.error}`, laposte: { error: result.error } }, { status: 502 });
+      }
+      const t = result.data;
+      let changed: string | null = null;
+      if (current.shipmentStatus === "awaiting_pickup" && ["paid", "preparing"].includes(current.status) && pickedUp(t)) {
+        const done = await db
+          .update(orders)
+          .set({ status: "shipped", shipmentStatus: "shipped", shippedAt: new Date() })
+          .where(and(eq(orders.id, current.id), eq(orders.shipmentStatus, "awaiting_pickup"), inArray(orders.status, ["paid", "preparing"])))
+          .returning({ id: orders.id });
+        if (done[0]) {
+          await notifyOrderShipped(current.id);
+          changed = "shipped";
+        }
+      } else if (current.status === "shipped" && delivered(t)) {
+        const done = await db
+          .update(orders)
+          .set({ status: "delivered", shipmentStatus: "delivered", deliveredAt: new Date() })
+          .where(and(eq(orders.id, current.id), eq(orders.status, "shipped")))
+          .returning({ id: orders.id });
+        if (done[0]) {
+          await notifyOrderDelivered(current.id);
+          changed = "delivered";
+        }
+      }
+      const [order] = await db.select(listColumns).from(orders).where(eq(orders.id, current.id)).limit(1);
+      return Response.json({ order, changed, laposte: summarize(t) }, { headers: noStore });
+    }
 
     if (action === "prepare") {
       updated = await db

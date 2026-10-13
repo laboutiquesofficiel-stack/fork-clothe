@@ -105,13 +105,27 @@
     render();
   }
 
+  const trackInfo = new Map(); // n° de commande → dernière réponse de La Poste (bouton « Vérifier le suivi »)
+  function trackInfoHtml(o) {
+    const info = trackInfo.get(o.orderNumber);
+    if (!info) return "";
+    if (info.error) return `<p class="notice err">Réponse de La Poste : ${esc(info.error)}</p>`;
+    const steps = (info.steps || []).map((st) => `${st.done ? "✓" : "·"} ${esc(st.label || "Étape " + st.id)}`).join("<br>");
+    const events = (info.events || []).map((ev) => `${esc(ev.date ? new Date(ev.date).toLocaleString("fr-FR", { dateStyle: "short", timeStyle: "short" }) : "")} · ${esc(ev.label)} (${esc(ev.code)})`).join("<br>");
+    return `<div class="notice"><b>Réponse de La Poste</b><span>${info.pickedUp ? "Colis pris en charge." : "Colis pas encore pris en charge."}${info.delivered ? " Colis livré." : ""}</span>${steps ? `<span class="small">${steps}</span>` : ""}${events ? `<span class="small">${events}</span>` : ""}</div>`;
+  }
+  const trackBtn = (o) =>
+    o.trackingNumber && /colissimo/i.test(o.carrier || "") && (o.shipmentStatus === "awaiting_pickup" || o.status === "shipped")
+      ? `<button type="button" class="btn out" data-act="track-now">Vérifier le suivi maintenant</button>`
+      : "";
+
   function actionsFor(o) {
     const parts = [];
     if (o.status === "paid") parts.push(`<button type="button" class="btn out" data-act="prepare">Passer en préparation</button>`);
     const awaiting = o.shipmentStatus === "awaiting_pickup" && o.trackingNumber;
     if (awaiting) {
       parts.push(`<div class="notice"><b>En attente du dépôt à La Poste</b><span>Colissimo n° ${esc(o.trackingNumber)}. Dès que La Poste scanne le colis, la commande passe « Expédiée » et le client reçoit l'e-mail de suivi, automatiquement.</span></div>
-        <div class="actions"><button type="button" class="btn out" data-act="send-now" data-tracking="${esc(o.trackingNumber)}">Envoyer l'e-mail maintenant</button><button type="button" class="link" data-act="edit-tracking">Corriger le numéro</button></div>`);
+        <div class="actions">${trackBtn(o)}<button type="button" class="btn out" data-act="send-now" data-tracking="${esc(o.trackingNumber)}">Envoyer l'e-mail maintenant</button><button type="button" class="link" data-act="edit-tracking">Corriger le numéro</button></div>`);
     }
     if ((o.status === "paid" || o.status === "preparing") && (!awaiting || editTracking.has(o.orderNumber))) {
       parts.push(`<form class="ship-form" data-ship novalidate>
@@ -123,6 +137,7 @@
       </form>`);
     }
     if (o.status === "shipped") {
+      if (trackBtn(o)) parts.push(`<div class="actions">${trackBtn(o)}</div>`);
       parts.push(`<label class="check"><input type="checkbox" data-notify checked> Envoyer l'e-mail « commande livrée »</label>
         <button type="button" class="btn" data-act="deliver">Marquer livrée</button>`);
     }
@@ -169,10 +184,23 @@
               ${tracking}
             </div>
           </div>
-          ${actionsFor(o)}
+          ${trackInfoHtml(o)}${actionsFor(o)}
         </article>`;
       })
       .join("");
+  }
+
+  async function trackNow(orderNumber, card) {
+    $$("button", card).forEach((b) => (b.disabled = true));
+    const { ok, status, data } = await call("POST", { orderNumber, action: "track-now" });
+    if (status === 401) {
+      session.set("");
+      return showLogin("Code d'accès refusé.");
+    }
+    trackInfo.set(orderNumber, ok ? data.laposte : { error: data.laposte?.error || data.error || "Pas de réponse." });
+    if (!ok) toast(data.error || "Vérification impossible.", true);
+    else toast(data.changed === "shipped" ? "Colis pris en charge : commande expédiée, e-mail envoyé au client" : data.changed === "delivered" ? "Colis livré : commande livrée, e-mail envoyé" : "Suivi vérifié : pas de changement");
+    load();
   }
 
   async function act(orderNumber, body, card) {
@@ -208,6 +236,9 @@
     if (action === "edit-tracking") {
       editTracking.add(orderNumber);
       return render();
+    }
+    if (action === "track-now") {
+      return trackNow(orderNumber, card);
     }
     if (action === "send-now") {
       return act(orderNumber, { action: "ship", carrier: "Colissimo", trackingNumber: button.dataset.tracking, sendNow: true }, card);
