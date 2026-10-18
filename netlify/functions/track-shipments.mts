@@ -6,7 +6,7 @@ import { delivered, fetchTracking, pickedUp } from "../../lib/laposte.js";
 import { notifyOrderDelivered, notifyOrderShipped } from "../../lib/notifications.js";
 
 /**
- * Suivi Colissimo automatique (tâche planifiée, toutes les 30 minutes, site publié).
+ * Suivi Colissimo automatique (tâche planifiée, toutes les 2 heures en journée, site publié).
  *
  * Utilise l'API « Suivi v2 » de La Poste (clé LAPOSTE_API_KEY, gratuite sur
  * developer.laposte.fr) :
@@ -78,5 +78,6 @@ export default async () => {
 };
 
 export const config: Config = {
-  schedule: "*/30 * * * *",
+  // Toutes les 2 heures de 8h à 22h (heure de Paris en été) : la base peut dormir la nuit.
+  schedule: "0 6-20/2 * * *",
 };
