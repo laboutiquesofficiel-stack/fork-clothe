@@ -9,7 +9,7 @@ import { layout } from "../../lib/notifications.js";
 /**
  * Annonce automatique des nouveautés aux inscrits « Préviens-moi ».
  *
- * Tâche planifiée (toutes les 15 minutes, uniquement sur le site publié) :
+ * Tâche planifiée (4 fois par jour, uniquement sur le site publié) :
  * 1. tout article en vente du catalogue qui n'a encore jamais été annoncé
  *    déclenche une campagne (plusieurs nouveautés publiées ensemble = un seul
  *    e-mail). De nouvelles photos sur un article existant ne déclenchent rien ;
@@ -159,5 +159,6 @@ export default async () => {
 };
 
 export const config: Config = {
-  schedule: "*/15 * * * *",
+  // 4 fois par jour (9h, 13h, 17h, 21h heure de Paris en été) : la base peut dormir le reste du temps.
+  schedule: "0 7,11,15,19 * * *",
 };
