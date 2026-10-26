@@ -264,6 +264,22 @@ export default async (request: Request) => {
           .returning({ id: orders.id });
         if (updated[0]) await notifyOrderShipped(updated[0].id);
       }
+    } else if (action === "handover") {
+      // Remise en main propre (livraison locale) : pas de numéro de suivi, la commande passe directement « livrée ».
+      updated = await db
+        .update(orders)
+        .set({
+          status: "delivered",
+          shipmentStatus: "delivered",
+          carrier: "Remise en main propre",
+          trackingNumber: null,
+          trackingUrl: null,
+          shippedAt: new Date(),
+          deliveredAt: new Date(),
+        })
+        .where(where(["paid", "preparing"]))
+        .returning({ id: orders.id });
+      if (updated[0] && body?.notifyCustomer !== false) await notifyOrderDelivered(updated[0].id);
     } else if (action === "deliver") {
       updated = await db
         .update(orders)

@@ -97,3 +97,5 @@
 .mo-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); gap: 10px; }
 .manual-order textarea { border: 1px solid var(--line); background: var(--white); padding: 12px; width: 100%; font: inherit; }
 .notice .small { font-size: .78rem; color: var(--muted); line-height: 1.5; }
+.ship-tracking, .ship-hand { grid-column: 1 / -1; display: grid; gap: 10px; }
+.ship-form [hidden] { display: none !important; }
