@@ -130,10 +130,17 @@
     if ((o.status === "paid" || o.status === "preparing") && (!awaiting || editTracking.has(o.orderNumber))) {
       parts.push(`<form class="ship-form" data-ship novalidate>
         <div class="field"><label for="carrier-${o.id}">Transporteur</label><select id="carrier-${o.id}" name="carrier"><option>Colissimo</option><option>Remise en main propre</option><option>Autre</option></select></div>
+        <div class="ship-tracking">
         <div class="field"><label for="tracking-${o.id}">Numéro de suivi</label><div class="scan-row"><input id="tracking-${o.id}" name="trackingNumber" autocomplete="off" autocapitalize="characters" required value="${esc(o.trackingNumber || "")}">${"BarcodeDetector" in window ? `<button type="button" class="btn out" data-scan>Scanner</button>` : ""}</div>
           <p class="hint">Sur iPhone : touche la case, puis l'icône « Scanner du texte » du clavier et vise le numéro imprimé sous le code-barres.</p></div>
         <div class="field"><label for="url-${o.id}">Lien de suivi (facultatif pour Colissimo)</label><input id="url-${o.id}" name="trackingUrl" type="url" placeholder="https://…" autocomplete="off"></div>
-        <button type="submit" class="btn">${autoTracking ? "Enregistrer le numéro (e-mail envoyé au dépôt)" : "Marquer expédiée et prévenir le client"}</button>
+        </div>
+        <div class="ship-hand" hidden>
+          <p class="hint">Pas de numéro de suivi : la commande passe directement « Livrée ».</p>
+          <label class="check"><input type="checkbox" data-hand-notify checked> Envoyer au client l'e-mail « commande livrée » (avec le lien pour donner son avis)</label>
+          <button type="button" class="btn" data-act="handover">Marquer remise en main propre</button>
+        </div>
+        <button type="submit" class="btn ship-submit">${autoTracking ? "Enregistrer le numéro (e-mail envoyé au dépôt)" : "Marquer expédiée et prévenir le client"}</button>
       </form>`);
     }
     if (o.status === "shipped") {
@@ -215,7 +222,7 @@
       return load();
     }
     editTracking.delete(orderNumber);
-    toast(body.sendNow ? "E-mail d'expédition envoyé" : body.action === "ship" && autoTracking ? "Numéro enregistré : l'e-mail partira au dépôt du colis" : "Commande mise à jour");
+    toast(body.sendNow ? "E-mail d'expédition envoyé" : body.action === "handover" ? "Commande remise en main propre : marquée livrée" : body.action === "ship" && autoTracking ? "Numéro enregistré : l'e-mail partira au dépôt du colis" : "Commande mise à jour");
     load();
   }
 
@@ -243,9 +250,23 @@
     if (action === "send-now") {
       return act(orderNumber, { action: "ship", carrier: "Colissimo", trackingNumber: button.dataset.tracking, sendNow: true }, card);
     }
+    if (action === "handover") {
+      return act(orderNumber, { action: "handover", notifyCustomer: $("[data-hand-notify]", card)?.checked !== false }, card);
+    }
     if (action === "cancel") confirmCancel.delete(orderNumber);
     const extra = action === "deliver" ? { notifyCustomer: $("[data-notify]", card)?.checked !== false } : {};
     act(orderNumber, { action, ...extra }, card);
+  });
+
+  // Remise en main propre : on masque le suivi et on propose « Marquer remise en main propre ».
+  document.addEventListener("change", (e) => {
+    const select = e.target.closest("[data-ship] select[name=carrier]");
+    if (!select) return;
+    const form = select.closest("[data-ship]");
+    const hand = select.value === "Remise en main propre";
+    $(".ship-tracking", form).hidden = hand;
+    $(".ship-hand", form).hidden = !hand;
+    $(".ship-submit", form).hidden = hand;
   });
 
   document.addEventListener("submit", (e) => {
