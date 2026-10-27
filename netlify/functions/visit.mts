@@ -5,7 +5,7 @@ import { db } from "../../db/index.js";
 import { visitPages, visitVisitors } from "../../db/schema.js";
 
 /**
- * POST /api/visit { path, ref } — mesure d'audience maison, sans cookie.
+ * POST /api/visit { path, ref, src? } — mesure d'audience maison, sans cookie.
  *
  * Envoyé par le site à chaque page affichée. On enregistre :
  * - la page vue (compteur par jour et par page) ;
@@ -45,6 +45,27 @@ function sourceOf(ref: string, ownHost: string): string | null {
   return host.slice(0, 60);
 }
 
+/** Lien marqué ?src=… (bio Instagram, QR des cartes, pub…) : prioritaire sur le référent. */
+const SRC_LABELS: Record<string, string> = {
+  bio: "Instagram (lien bio)",
+  insta: "Instagram",
+  story: "Instagram (story)",
+  dm: "Instagram (message privé)",
+  pub: "Pub Instagram",
+  carte: "Carte FORK (QR)",
+  qr: "QR code",
+  stand: "Stand / marché (QR)",
+  tiktok: "TikTok",
+  "email-bienvenue": "E-mail de bienvenue",
+  "carte-cadeau": "Carte cadeau",
+};
+function labelOfSrc(src: unknown): string | null {
+  if (typeof src !== "string") return null;
+  const key = src.trim().toLowerCase();
+  if (!/^[a-z0-9-]{1,30}$/.test(key)) return null;
+  return SRC_LABELS[key] ?? `Lien « ${key} »`;
+}
+
 export default async (request: Request, context: Context) => {
   const done = new Response(null, { status: 204, headers: { "Cache-Control": "no-store" } });
   try {
@@ -52,7 +73,7 @@ export default async (request: Request, context: Context) => {
     const ua = request.headers.get("user-agent") ?? "";
     if (!secret || !ua || BOT.test(ua)) return done;
 
-    const body = (await request.json().catch(() => null)) as { path?: unknown; ref?: unknown } | null;
+    const body = (await request.json().catch(() => null)) as { path?: unknown; ref?: unknown; src?: unknown } | null;
     const path = typeof body?.path === "string" ? body.path.slice(0, 121) : "";
     if (!PATH.test(path)) return done;
     const ref = typeof body?.ref === "string" ? body.ref.slice(0, 500) : "";
@@ -67,7 +88,7 @@ export default async (request: Request, context: Context) => {
       .values({ day, path, views: 1 })
       .onConflictDoUpdate({ target: [visitPages.day, visitPages.path], set: { views: sql`${visitPages.views} + 1` } });
 
-    const source = sourceOf(ref, ownHost) ?? "Accès direct";
+    const source = labelOfSrc(body?.src) ?? sourceOf(ref, ownHost) ?? "Accès direct";
     await db.insert(visitVisitors).values({ day, visitor, source }).onConflictDoNothing({ target: [visitVisitors.day, visitVisitors.visitor] });
 
     if (Math.random() < 0.02) {

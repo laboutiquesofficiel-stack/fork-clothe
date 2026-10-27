@@ -25,7 +25,7 @@
     delivered: ["Livrée", "ok"],
     cancelled: ["Annulée", "err"],
   };
-  const ZONES = { free_zone: "Zone offerte", outside_zone: "Hors zone", geocoder_unavailable: "Zone à vérifier", unknown: "Zone inconnue" };
+  const ZONES = { free_zone: "Zone offerte", outside_zone: "Hors zone", geocoder_unavailable: "Zone à vérifier", unknown: "Zone inconnue", digital: "Par e-mail" };
 
   const session = {
     get() {
@@ -170,7 +170,11 @@
       .map((o) => {
         const [label, tone] = STATUS[o.status] || [o.status, "info"];
         const items = (Array.isArray(o.items) ? o.items : [])
-          .map((it) => `<li>${Number(it.quantity)} × ${esc(it.name)} · ${esc(it.color)} · <b>${esc(it.size)}</b></li>`)
+          .map((it) =>
+            it.giftCard
+              ? `<li>${Number(it.quantity)} × Carte cadeau <b>${esc(it.size)} €</b>${it.giftCard.toEmail ? ` · pour ${esc(it.giftCard.toName || "")} ${esc(it.giftCard.toEmail)}` : ""} · envoyée par e-mail</li>`
+              : `<li>${Number(it.quantity)} × ${esc(it.name)} · ${esc(it.color)} · <b>${esc(it.size)}</b></li>`,
+          )
           .join("");
         const tracking = o.trackingNumber
           ? `<p>${esc(o.carrier || "")} · ${esc(o.trackingNumber)}${o.trackingUrl && /^https:\/\//i.test(o.trackingUrl) ? ` · <a class="link" href="${esc(o.trackingUrl)}" target="_blank" rel="noopener">suivi</a>` : ""}</p>`
@@ -182,11 +186,15 @@
             <div class="col">
               <ul class="items">${items}</ul>
               <div class="row"><span>Sous-total</span><span>${euros(o.subtotalCents)}</span></div>
+              ${o.discountCents ? `<div class="row"><span>${esc(o.discountLabel || "Remise")}</span><span>-${euros(o.discountCents)}</span></div>` : ""}
               <div class="row"><span>Livraison · ${esc(ZONES[o.deliveryZone] || o.deliveryZone)}</span><span>${o.shippingCents ? euros(o.shippingCents) : "Offerte"}</span></div>
+              ${o.giftCardCents ? `<div class="row"><span>Carte cadeau ${esc(o.giftCardCode || "")}</span><span>-${euros(o.giftCardCents)}</span></div>` : ""}
               <div class="row total"><span>Total</span><span>${euros(o.totalCents)}</span></div>
-              ${o.paymentReference ? `<p class="hint">Réf. SumUp : ${esc(o.paymentReference)}</p>` : ""}
+              ${o.source ? `<p class="hint">Provenance : ${esc(o.source)}</p>` : ""}
+              ${o.paymentReference ? `<p class="hint">Réf. ${o.paymentProvider === "carte_cadeau" ? "carte cadeau" : "SumUp"} : ${esc(o.paymentReference)}</p>` : ""}
             </div>
             <div class="col">
+              ${o.isGift ? `<p class="notice warn">🎁 <b>C'est un cadeau</b> : glisse un mot manuscrit dans le colis.${o.giftMessage ? `<br>« ${esc(o.giftMessage)} »` : ""}</p>` : ""}
               <address><b>${esc(o.customerName)}</b><br>${esc(o.shippingAddress)}<br>${esc(o.customerPhone)}<br>${esc(o.customerEmail)}</address>
               ${tracking}
             </div>

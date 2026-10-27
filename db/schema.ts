@@ -17,6 +17,8 @@ export type OrderItem = {
   quantity: number;
   unitPriceCents: number;
   lineTotalCents: number;
+  /** Carte cadeau : envoyée par e-mail après le paiement (pas d'expédition). */
+  giftCard?: { toName: string; toEmail: string; message: string };
 };
 
 /**
@@ -172,6 +174,19 @@ export const orders = pgTable("orders", {
 
   shippedAt: timestamp("shipped_at", { withTimezone: true }),
   deliveredAt: timestamp("delivered_at", { withTimezone: true }),
+
+  /** Remise appliquée sur les t-shirts (pack ou code promo, la meilleure des deux). */
+  discountCents: integer("discount_cents").notNull().default(0),
+  discountLabel: text("discount_label"),
+  promoCode: text("promo_code"),
+  /** Carte cadeau utilisée pour payer une partie (ou la totalité) de la commande. */
+  giftCardCode: text("gift_card_code"),
+  giftCardCents: integer("gift_card_cents").notNull().default(0),
+  /** Commande à offrir : mot manuscrit glissé dans le colis. */
+  isGift: boolean("is_gift").notNull().default(false),
+  giftMessage: text("gift_message"),
+  /** Provenance du client (?src= du lien : bio, carte, pub…). */
+  source: text(),
 
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
@@ -393,4 +408,38 @@ export const moments = pgTable("moments", {
   visitorHash: text("visitor_hash"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   publishedAt: timestamp("published_at", { withTimezone: true }),
+});
+
+/**
+ * Codes promo et cartes cadeaux.
+ *
+ * kind « percent » : -percent % sur les t-shirts (pas cumulable avec le pack,
+ * la meilleure remise s'applique). Utilisable une fois par e-mail
+ * (oncePerEmail) et éventuellement réservé à une première commande.
+ * kind « gift » : carte cadeau à montant ; balanceCents diminue à chaque
+ * commande payée. Créée automatiquement au paiement d'une carte cadeau.
+ */
+export const promoCodes = pgTable("promo_codes", {
+  id: serial().primaryKey(),
+  code: text().notNull().unique(),
+  kind: text().notNull().default("percent"),
+  percent: integer(),
+  amountCents: integer("amount_cents"),
+  balanceCents: integer("balance_cents"),
+  firstOrderOnly: boolean("first_order_only").notNull().default(false),
+  oncePerEmail: boolean("once_per_email").notNull().default(true),
+  active: boolean().notNull().default(true),
+  startsAt: timestamp("starts_at", { withTimezone: true }),
+  endsAt: timestamp("ends_at", { withTimezone: true }),
+  note: text(),
+  giftOrderId: integer("gift_order_id"),
+  recipientEmail: text("recipient_email"),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+/** Réglages modifiables depuis l'admin (bandeau, pack, livraison offerte, fenêtre -10 %). */
+export const siteSettings = pgTable("site_settings", {
+  key: text().primaryKey(),
+  value: jsonb().$type<Record<string, unknown>>().notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });

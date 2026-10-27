@@ -121,6 +121,22 @@
   const byId = new Map(PRODUCTS.map((p) => [p.id, p]));
   const MAX_QTY = 20;
 
+  // Carte cadeau : vendue en ligne, envoyée par e-mail (pas de stock, pas de livraison).
+  const GIFT_SKU = "fork-carte-cadeau";
+  const GIFT_IMG = "assets/carte-cadeau.svg";
+  const isGiftLine = (l) => l.sku === GIFT_SKU;
+
+  // Réglages modifiables depuis l'admin (bandeau, pack, livraison offerte, fenêtre -10 %).
+  let shop = { banner: null, pack: { twoPercent: 10, threePercent: 0 }, freeShippingMin: 2, popup: { active: false, percent: 0 }, giftCardAmounts: [30, 50, 60] };
+
+  // Provenance (?src=bio, ?src=carte…) : gardée 30 jours pour savoir d'où viennent les ventes.
+  const SRC_KEY = "fork-src";
+  const urlSrc = (() => {
+    const q = new URLSearchParams(location.search);
+    const v = (q.get("src") || q.get("utm_source") || "").toLowerCase().replace(/[^a-z0-9-]/g, "").slice(0, 30);
+    return v || null;
+  })();
+
   // Stock public : par t-shirt et par taille, "in" | "out" | nombre restant (≤ 3).
   // Une taille absente n'est pas suivie et reste en vente.
   let stock = {};
@@ -723,6 +739,21 @@
     openDrawer("productDrawer");
     if (product.sku) loadReviews(product.sku);
   }
+  /** Encart pack + 3 lignes de réassurance sous le bouton d'achat. */
+  function productPerks() {
+    const two = shop.pack.twoPercent;
+    const free = shop.freeShippingMin === 2;
+    const pack =
+      two > 0 || free
+        ? `<div class="pack-box"><b>Pack 2 t-shirts : ${[two > 0 ? `-${two} %` : "", free ? "livraison offerte" : ""].filter(Boolean).join(" + ")}</b><span>Un pour toi, un à offrir. Appliqué tout seul dans le panier.</span></div>`
+        : "";
+    return `${pack}<ul class="perks">
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M8 3 4 6l2 4 2-1v12h8V9l2 1 2-4-4-3a4 4 0 0 1-8 0Z"/></svg>100 % coton 220 g, imprimé à La Farlède (Var)</li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7z"/><circle cx="7" cy="18" r="1.6"/><circle cx="17" cy="18" r="1.6"/></svg>Expédié depuis Toulon sous 48 h, Colissimo suivi</li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 12a8 8 0 1 0 3-6.2"/><path d="M4 4v4h4"/></svg>Retour possible sous 14 jours</li>
+    </ul>`;
+  }
+
   function renderProduct() {
     const p = sheet.product;
     const target = PAGE_PRODUCT ? $("#pageSheet") : $("#productSheet");
@@ -761,7 +792,8 @@
               <button type="button" class="btn full" id="addToCart" ${canBuy ? "" : "disabled"}>${sheet.size ? `Ajouter au panier · ${euros(p.priceCents * sheet.qty)}` : "Choisis ta taille"}</button>`
             : `<p class="notice">Ce modèle est épuisé pour le moment. Suis-nous sur Instagram pour être au courant de son retour.</p>`
         }
-        <p class="hint">Livraison offerte à moins de 10 km de Toulon, 7,64 € au-delà. Le montant exact est calculé avant le paiement.</p>
+        ${p.available ? productPerks() : ""}
+        <p class="hint">${shop.freeShippingMin > 0 ? `Livraison offerte dès ${shop.freeShippingMin} t-shirts ou à moins de 10 km de Toulon, sinon 7,64 €.` : "Livraison offerte à moins de 10 km de Toulon, 7,64 € au-delà."} Le montant exact est calculé avant le paiement.</p>
         <div class="pinfo">
           <details><summary>Matière</summary><p>100 % coton, 220 g/m².</p></details>
           <details><summary>Guide des tailles</summary>
@@ -814,7 +846,9 @@
   // ---------------------------------------------------------------------------
   const CART_KEY = "fork-cart-v3";
   const PENDING_KEY = "fork-pending-order-v1";
-  let cart = store.get(CART_KEY, []).filter((l) => bySku.has(l.sku) && bySku.get(l.sku).sizes.includes(l.size) && l.qty > 0);
+  let cart = store
+    .get(CART_KEY, [])
+    .filter((l) => l && l.qty > 0 && (isGiftLine(l) ? shop.giftCardAmounts.includes(Number(l.size)) : bySku.has(l.sku) && bySku.get(l.sku).sizes.includes(l.size)));
   let pending = store.get(PENDING_KEY, null);
 
   function saveCart() {
@@ -829,19 +863,91 @@
     }
     saveCart();
   }
-  function addToCart(sku, size, qty) {
+  function addToCart(sku, size, qty, gift) {
+    if (sku === GIFT_SKU) {
+      cart.push({ sku, size, qty, gift });
+      cartChanged();
+      return;
+    }
     const line = cart.find((l) => l.sku === sku && l.size === size);
     if (line) line.qty = Math.min(maxFor(sku, size) || MAX_QTY, line.qty + qty);
     else cart.push({ sku, size, qty });
     cartChanged();
   }
-  const subtotalCents = () => cart.reduce((sum, l) => sum + bySku.get(l.sku).priceCents * l.qty, 0);
+  const unitCents = (l) => (isGiftLine(l) ? Number(l.size) * 100 : bySku.get(l.sku)?.priceCents ?? 0);
+  const lineInfo = (l) =>
+    isGiftLine(l)
+      ? { name: "Carte cadeau", meta: `${l.size} € · ${l.gift?.toEmail ? `pour ${l.gift.toName || l.gift.toEmail}` : "envoyée à ton e-mail"}`, img: GIFT_IMG }
+      : { name: bySku.get(l.sku).name, meta: `${bySku.get(l.sku).color} · Taille ${l.size}`, img: bySku.get(l.sku).images[0].src };
+  const subtotalCents = () => cart.reduce((sum, l) => sum + unitCents(l) * l.qty, 0);
+  const tshirtCount = (lines = cart) => lines.filter((l) => !isGiftLine(l)).reduce((n, l) => n + l.qty, 0);
+  const hasPhysical = (lines = cart) => lines.some((l) => !isGiftLine(l));
+  const packPercentFor = (count) =>
+    count >= 3 && shop.pack.threePercent > 0 ? shop.pack.threePercent : count >= 2 ? shop.pack.twoPercent : 0;
+  const freeShippingFor = (count) => count > 0 && shop.freeShippingMin > 0 && count >= shop.freeShippingMin;
+
+  // Code promo / carte cadeau saisi à l'étape livraison (vérifié par le serveur, recalculé à la commande).
+  const promo = { input: "", state: "idle", code: null, kind: null, percent: 0, balanceCents: 0, message: "" };
+
+  /** Aperçu du prix, calculé comme le serveur (qui refait le calcul à la commande). */
+  function pricePreview(feeCents) {
+    const count = tshirtCount();
+    const tshirtCents = cart.filter((l) => !isGiftLine(l)).reduce((n, l) => n + unitCents(l) * l.qty, 0);
+    const subtotal = subtotalCents();
+    const pack = packPercentFor(count);
+    const codePct = promo.state === "ok" && promo.kind === "percent" && count > 0 ? promo.percent : 0;
+    let percent = 0;
+    let label = null;
+    let codeBeaten = false;
+    if (codePct > pack) {
+      percent = codePct;
+      label = `Code ${promo.code} (-${codePct} %)`;
+    } else if (pack > 0) {
+      percent = pack;
+      label = `Pack ${count >= 3 && shop.pack.threePercent > 0 ? 3 : 2} t-shirts (-${pack} %)`;
+      codeBeaten = codePct > 0;
+    }
+    const discount = Math.round((tshirtCents * percent) / 100);
+    const free = freeShippingFor(count);
+    const shipping = count === 0 || free ? 0 : feeCents == null ? null : feeCents;
+    const due = subtotal - discount + (shipping || 0);
+    const gift = promo.state === "ok" && promo.kind === "gift" ? Math.min(promo.balanceCents, due) : 0;
+    return { count, subtotal, discount, label, codeBeaten, free, shipping, gift, total: due - gift };
+  }
+
+  function priceRows(pr, { estimate = false } = {}) {
+    return `<div class="row"><span>Sous-total</span><span>${euros(pr.subtotal)}</span></div>
+      ${pr.discount ? `<div class="row save"><span>${esc(pr.label)}</span><span>-${euros(pr.discount)}</span></div>` : ""}
+      <div class="row"><span>Livraison</span><span>${pr.count === 0 ? "Par e-mail" : pr.free ? "Offerte" : pr.shipping === null ? "Saisis ton adresse" : pr.shipping ? euros(pr.shipping) : "Offerte"}</span></div>
+      ${pr.gift ? `<div class="row save"><span>Carte cadeau ${esc(promo.code)}</span><span>-${euros(pr.gift)}</span></div>` : ""}
+      <div class="row total"><span>${estimate ? "Total estimé" : "Total"}</span><span>${pr.count > 0 && !pr.free && pr.shipping === null ? "—" : euros(pr.total)}</span></div>`;
+  }
+
+  /** Encart « pack » du panier : ce qu'il manque pour en profiter. */
+  function packNudge() {
+    const count = tshirtCount();
+    if (!count) return "";
+    const two = shop.pack.twoPercent;
+    const three = shop.pack.threePercent;
+    const freeMin = shop.freeShippingMin;
+    if (count === 1 && (two > 0 || freeMin === 2)) {
+      const save = two > 0 ? Math.round(((unitCents(cart.find((l) => !isGiftLine(l))) * 2) * two) / 100) : 0;
+      return `<div class="pack-nudge"><b>Ajoute un 2e t-shirt${save ? ` et économise ${euros(save)}` : ""}${freeMin === 2 ? " + la livraison" : ""}</b><span>Pack 2 t-shirts : ${two > 0 ? `-${two} %` : ""}${two > 0 && freeMin === 2 ? " et " : ""}${freeMin === 2 ? "livraison offerte" : ""}. Un pour toi, un à offrir.</span><a class="link" href="#produits" data-close>Choisir un 2e t-shirt</a></div>`;
+    }
+    if (count === 2 && three > two) {
+      return `<div class="pack-nudge on"><b>✔ Pack 2 t-shirts activé${two ? ` : -${two} %` : ""}</b><span>Ajoute un 3e t-shirt : -${three} % sur les trois.</span><a class="link" href="#produits" data-close>Ajouter un 3e t-shirt</a></div>`;
+    }
+    const pct = packPercentFor(count);
+    if (pct > 0 || freeShippingFor(count))
+      return `<div class="pack-nudge on"><b>✔ Pack ${count >= 3 && three > 0 ? 3 : 2} t-shirts activé</b><span>${pct ? `-${pct} % sur tes t-shirts` : ""}${pct && freeShippingFor(count) ? " et " : ""}${freeShippingFor(count) ? "livraison offerte" : ""}.</span></div>`;
+    return "";
+  }
 
   // ---------------------------------------------------------------------------
   // Parcours de commande
   // ---------------------------------------------------------------------------
   let step = "cart";
-  const form = { name: "", email: "", phone: "", address: "", saveAddress: false, acceptCgv: false };
+  const form = { name: "", email: "", phone: "", address: "", saveAddress: false, acceptCgv: false, gift: false, giftMessage: "" };
   const quote = { state: "idle", address: "", zone: null, feeCents: 0, message: "" };
   let me = null;
   let savedAddresses = null;
@@ -877,23 +983,26 @@
     }
     body.innerHTML = cart
       .map((l, i) => {
-        const p = bySku.get(l.sku);
+        const info = lineInfo(l);
         return `<div class="line">
-          <img src="${esc(p.images[0].src)}" alt="" loading="lazy">
-          <div><div class="pname">${esc(p.name)}</div><div class="pmeta">${esc(p.color)} · Taille ${esc(l.size)}</div>
+          <img src="${esc(info.img)}" alt="" loading="lazy">
+          <div><div class="pname">${esc(info.name)}</div><div class="pmeta">${esc(info.meta)}</div>
             <div class="qty"><button type="button" data-line="${i}" data-delta="-1" aria-label="Retirer un article">−</button><span>${l.qty}</span><button type="button" data-line="${i}" data-delta="1" aria-label="Ajouter un article">+</button></div>
           </div>
-          <span class="price">${euros(p.priceCents * l.qty)}</span>
+          <span class="price">${euros(unitCents(l) * l.qty)}</span>
         </div>`;
       })
-      .join("");
-    foot.innerHTML = `<div class="row"><span>Sous-total</span><span>${euros(subtotalCents())}</span></div>
-      <p class="hint">Frais de livraison calculés à l'étape suivante, à partir de ton adresse. Livraison en France métropolitaine. TVA non applicable, art. 293 B du CGI.</p>
+      .join("") + packNudge();
+    const pr = pricePreview(null);
+    foot.innerHTML = `<div class="row"><span>Sous-total</span><span>${euros(pr.subtotal)}</span></div>
+      ${pr.discount ? `<div class="row save"><span>${esc(pr.label)}</span><span>-${euros(pr.discount)}</span></div>` : ""}
+      ${pr.count > 0 && pr.free ? `<div class="row save"><span>Livraison</span><span>Offerte</span></div>` : ""}
+      <p class="hint">${pr.count === 0 ? "Carte cadeau envoyée par e-mail, sans frais." : pr.free ? "Livraison Colissimo suivie offerte." : "Frais de livraison calculés à l'étape suivante, à partir de ton adresse."} Livraison en France métropolitaine. TVA non applicable, art. 293 B du CGI.</p>
       <button type="button" class="btn full" id="toDelivery">Passer à la livraison</button>`;
     $$("[data-line]", body).forEach((b) =>
       b.addEventListener("click", () => {
         const line = cart[Number(b.dataset.line)];
-        line.qty = Math.min(MAX_QTY, line.qty + Number(b.dataset.delta));
+        line.qty = Math.min(isGiftLine(line) ? 5 : MAX_QTY, line.qty + Number(b.dataset.delta));
         if (line.qty <= 0) cart.splice(Number(b.dataset.line), 1);
         cartChanged();
         renderCart();
@@ -914,13 +1023,15 @@
   }
 
   function quoteIsUsable() {
+    if (!hasPhysical()) return true;
     return quote.state === "ok" && quote.address === form.address.trim() && ["free_zone", "outside_zone", "geocoder_unavailable"].includes(quote.zone);
   }
 
   function renderDeliveryStep() {
     const body = $("#cartBody");
+    const physical = hasPhysical();
     const savedSelect =
-      me && savedAddresses && savedAddresses.length
+      physical && me && savedAddresses && savedAddresses.length
         ? `<div class="field"><label for="savedAddress">Mes adresses</label><select id="savedAddress"><option value="">Choisir une adresse enregistrée…</option>${savedAddresses
             .map((a) => `<option value="${a.id}">${esc(a.label || "Adresse")} · ${esc(a.address)}</option>`)
             .join("")}</select></div>`
@@ -930,31 +1041,57 @@
       <form id="deliveryForm" class="stack" novalidate>
         <div class="field"><label for="f-name">Nom et prénom</label><input id="f-name" autocomplete="name" maxlength="120" required value="${esc(form.name)}"></div>
         <div class="field"><label for="f-email">E-mail</label><input id="f-email" type="email" autocomplete="email" maxlength="200" required value="${esc(form.email)}"></div>
-        <div class="field"><label for="f-phone">Téléphone</label><input id="f-phone" type="tel" autocomplete="tel" maxlength="40" required value="${esc(form.phone)}"></div>
+        ${
+          physical
+            ? `<div class="field"><label for="f-phone">Téléphone</label><input id="f-phone" type="tel" autocomplete="tel" maxlength="40" required value="${esc(form.phone)}"></div>
         ${savedSelect}
         <div class="field"><label for="f-address">Adresse de livraison</label><input id="f-address" autocomplete="street-address" maxlength="500" required placeholder="12 rue Picot, 83000 Toulon" value="${esc(form.address)}">
           <p class="hint">Numéro, rue, code postal et ville. Le code postal sert à calculer la livraison.</p></div>
         ${me ? `<label class="check"><input type="checkbox" id="f-save" ${form.saveAddress ? "checked" : ""}> Enregistrer cette adresse dans mon compte</label>` : ""}
         <div id="quoteBox" aria-live="polite"></div>
+        <label class="check"><input type="checkbox" id="f-gift" ${form.gift ? "checked" : ""}><span>🎁 C'est un cadeau : on glisse un mot écrit à la main dans le colis.</span></label>
+        <div class="field" id="giftMsgField" ${form.gift ? "" : "hidden"}><label for="f-giftmsg">Ton mot (facultatif)</label><textarea id="f-giftmsg" rows="2" maxlength="300" placeholder="Joyeux anniversaire ! De la part de…">${esc(form.giftMessage)}</textarea></div>`
+            : `<p class="notice">La carte cadeau est envoyée par e-mail juste après le paiement : pas de livraison, pas de frais.</p>`
+        }
+        <div class="field promo-field"><label for="f-promo">Code promo ou carte cadeau</label>
+          <div class="promo-row"><input id="f-promo" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="30" placeholder="Ex. BIENVENUE10" value="${esc(promo.input)}"><button type="button" class="btn out" id="applyPromo">Appliquer</button></div>
+          <div id="promoBox" aria-live="polite"></div></div>
         <label class="check"><input type="checkbox" id="f-cgv" ${form.acceptCgv ? "checked" : ""}><span>J'accepte les <a class="link" href="cgv.html" target="_blank" rel="noopener">conditions générales de vente</a> et j'ai lu la <a class="link" href="confidentialite.html" target="_blank" rel="noopener">politique de confidentialité</a>.</span></label>
         <p class="notice err" id="deliveryError" hidden></p>
       </form>`;
 
     const bind = (id, key) =>
-      $(id).addEventListener("input", (e) => {
+      $(id)?.addEventListener("input", (e) => {
         form[key] = e.target.value;
         if (key === "address") scheduleQuote();
+        if (key === "email" && promo.state !== "idle") resetPromo(true);
         renderDeliveryFoot();
       });
     bind("#f-name", "name");
     bind("#f-email", "email");
     bind("#f-phone", "phone");
     bind("#f-address", "address");
+    $("#f-giftmsg")?.addEventListener("input", (e) => (form.giftMessage = e.target.value));
+    $("#f-gift")?.addEventListener("change", (e) => {
+      form.gift = e.target.checked;
+      $("#giftMsgField").hidden = !form.gift;
+    });
     $("#f-save")?.addEventListener("change", (e) => (form.saveAddress = e.target.checked));
     $("#f-cgv").addEventListener("change", (e) => {
       form.acceptCgv = e.target.checked;
       renderDeliveryFoot();
     });
+    $("#f-promo").addEventListener("input", (e) => {
+      promo.input = e.target.value;
+      if (promo.state !== "idle") resetPromo(false);
+    });
+    $("#f-promo").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        applyPromo();
+      }
+    });
+    $("#applyPromo").addEventListener("click", applyPromo);
     $("#savedAddress")?.addEventListener("change", (e) => {
       const a = savedAddresses.find((x) => String(x.id) === e.target.value);
       if (!a) return;
@@ -970,14 +1107,53 @@
       submitOrder();
     });
     renderQuote();
+    renderPromo();
     renderDeliveryFoot();
-    if (form.address.trim().length >= 5 && quote.address !== form.address.trim()) requestQuote();
+    if (physical && form.address.trim().length >= 5 && quote.address !== form.address.trim()) requestQuote();
+  }
+
+  function resetPromo(keepInput) {
+    Object.assign(promo, { state: "idle", code: null, kind: null, percent: 0, balanceCents: 0, message: "" });
+    if (!keepInput) promo.input = $("#f-promo")?.value ?? promo.input;
+    renderPromo();
+    renderDeliveryFoot();
+  }
+
+  async function applyPromo() {
+    const code = (promo.input || "").trim().toUpperCase().replace(/\s+/g, "");
+    if (!code) {
+      resetPromo(true);
+      return;
+    }
+    promo.state = "loading";
+    renderPromo();
+    const { ok, data } = await api("/api/promo-check", { method: "POST", body: { code, email: form.email.trim() } });
+    if (ok && data.ok) Object.assign(promo, { state: "ok", code: data.code, kind: data.kind, percent: data.percent || 0, balanceCents: data.balanceCents || 0, message: "" });
+    else Object.assign(promo, { state: "error", code: null, kind: null, message: data.error || "Code invalide." });
+    renderPromo();
+    renderDeliveryFoot();
+  }
+
+  function renderPromo() {
+    const box = $("#promoBox");
+    if (!box) return;
+    if (promo.state === "loading") box.innerHTML = `<p class="hint">Vérification du code…</p>`;
+    else if (promo.state === "error") box.innerHTML = `<p class="notice err">${esc(promo.message)}</p>`;
+    else if (promo.state === "ok") {
+      const pr = pricePreview(quoteIsUsable() ? quote.feeCents : null);
+      if (promo.kind === "gift") box.innerHTML = `<p class="notice ok">Carte cadeau ${esc(promo.code)} : ${euros(promo.balanceCents)} disponibles.</p>`;
+      else if (pr.codeBeaten) box.innerHTML = `<p class="notice warn">Le pack est plus avantageux que ton code : c'est lui qui s'applique. Garde ton code pour une prochaine commande.</p>`;
+      else if (!pr.count) box.innerHTML = `<p class="notice warn">Ce code s'applique aux t-shirts uniquement.</p>`;
+      else box.innerHTML = `<p class="notice ok">Code ${esc(promo.code)} appliqué : -${promo.percent} % sur tes t-shirts.</p>`;
+    } else box.innerHTML = "";
   }
 
   function renderQuote() {
     const box = $("#quoteBox");
     if (!box) return;
+    const free = freeShippingFor(tshirtCount());
     if (quote.state === "loading") box.innerHTML = `<p class="notice">Calcul des frais de livraison…</p>`;
+    else if (quote.state === "ok" && free && quote.zone !== "geocoder_unavailable") box.innerHTML = `<p class="notice ok">Livraison offerte avec ton pack de ${tshirtCount()} t-shirts 🎉</p>`;
     else if (quote.state === "ok") {
       const tone = quote.zone === "geocoder_unavailable" ? "warn" : "ok";
       box.innerHTML = `<p class="notice ${tone}">${esc(quote.message)}</p>`;
@@ -987,18 +1163,26 @@
 
   function renderDeliveryFoot() {
     const foot = $("#cartFoot");
+    const physical = hasPhysical();
     const usable = quoteIsUsable();
-    const fee = usable ? quote.feeCents : null;
+    const pr = pricePreview(usable && physical ? quote.feeCents : physical ? null : 0);
     const ready =
-      usable && form.acceptCgv && form.name.trim() && /^\S+@\S+\.\S+$/.test(form.email.trim()) && form.phone.trim().length >= 6;
-    foot.innerHTML = `<div class="row"><span>Sous-total</span><span>${euros(subtotalCents())}</span></div>
-      <div class="row"><span>Livraison</span><span>${fee === null ? "Saisis ton adresse" : fee ? euros(fee) : "Offerte"}</span></div>
-      <div class="row total"><span>Total estimé</span><span>${fee === null ? "—" : euros(subtotalCents() + fee)}</span></div>
+      usable &&
+      form.acceptCgv &&
+      promo.state !== "loading" &&
+      form.name.trim() &&
+      /^\S+@\S+\.\S+$/.test(form.email.trim()) &&
+      (!physical || form.phone.trim().length >= 6);
+    foot.innerHTML = `${priceRows(pr, { estimate: true })}
       <div class="actions"><button type="button" class="btn out" id="backToCart">Retour</button><button type="submit" form="deliveryForm" class="btn" id="submitOrder" ${ready ? "" : "disabled"}>Valider la commande</button></div>`;
     $("#backToCart").addEventListener("click", () => {
       step = "cart";
       renderCart();
     });
+    if (promo.state === "ok") {
+      const box = $("#promoBox");
+      if (box) renderPromo();
+    }
   }
 
   let quoteTimer = null;
@@ -1037,20 +1221,40 @@
     const button = $("#submitOrder");
     errorBox.hidden = true;
     if (!quoteIsUsable() || !form.acceptCgv) return;
+    if (promo.state === "error" && promo.input.trim()) {
+      errorBox.textContent = "Ton code n'est pas valide : corrige-le ou efface-le pour continuer.";
+      errorBox.hidden = false;
+      return;
+    }
     button.disabled = true;
     button.textContent = "Enregistrement…";
+    const physical = hasPhysical();
 
     const checkoutToken = uuidV4();
+    const saved = store.get(SRC_KEY, null);
+    const source = saved && Date.now() - saved.t < 30 * 864e5 ? saved.v : "";
     const { ok, data } = await api("/api/orders", {
       method: "POST",
       body: {
         checkoutToken,
-        customer: { name: form.name.trim(), email: form.email.trim(), phone: form.phone.trim(), address: form.address.trim() },
-        items: cart.map((l) => ({ sku: l.sku, size: l.size, color: bySku.get(l.sku).color, quantity: l.qty })),
+        customer: { name: form.name.trim(), email: form.email.trim(), phone: physical ? form.phone.trim() : form.phone.trim(), address: physical ? form.address.trim() : "" },
+        items: cart.map((l) =>
+          isGiftLine(l)
+            ? { sku: l.sku, size: l.size, quantity: l.qty, giftCard: l.gift || {} }
+            : { sku: l.sku, size: l.size, color: bySku.get(l.sku).color, quantity: l.qty },
+        ),
+        promoCode: promo.state === "ok" ? promo.code : "",
+        gift: physical && form.gift,
+        giftMessage: physical && form.gift ? form.giftMessage.trim() : "",
+        source,
       },
     });
 
     if (!ok || !data.orderNumber) {
+      if (data.field === "promoCode") {
+        Object.assign(promo, { state: "error", code: null, kind: null, message: data.error || "Code invalide." });
+        renderPromo();
+      }
       errorBox.textContent = data.error || "Impossible d'enregistrer la commande pour le moment.";
       errorBox.hidden = false;
       button.disabled = false;
@@ -1063,24 +1267,35 @@
       token: checkoutToken,
       subtotalCents: data.subtotalCents,
       shippingCents: data.shippingCents,
+      discountCents: data.discountCents || 0,
+      discountLabel: data.discountLabel || "",
+      giftCardCents: data.giftCardCents || 0,
+      giftCardCode: data.giftCardCode || "",
       totalCents: data.totalCents,
       deliveryMessage: data.delivery?.message || "",
-      address: form.address.trim(),
+      address: physical ? form.address.trim() : "",
       name: form.name.trim(),
       lines: cart.map((l) => ({ ...l })),
       paid: false,
     };
     store.set(PENDING_KEY, pending);
 
-    if (me && form.saveAddress) {
-      const saved = await api("/api/account-addresses", {
+    if (me && physical && form.saveAddress) {
+      const savedAddr = await api("/api/account-addresses", {
         method: "POST",
         body: { recipientName: form.name.trim(), address: form.address.trim(), phone: form.phone.trim() },
       });
-      if (saved.ok) savedAddresses = null;
+      if (savedAddr.ok) savedAddresses = null;
       form.saveAddress = false;
     }
+    resetPromo(true);
+    promo.input = "";
 
+    // Entièrement réglée par carte cadeau : déjà payée, rien à payer sur SumUp.
+    if (data.paid) {
+      checkPaymentStatus(pending.orderNumber);
+      return;
+    }
     step = "payment";
     renderCart();
   }
@@ -1093,21 +1308,25 @@
       renderCart();
       return;
     }
+    const physical = hasPhysical(pending.lines);
     body.innerHTML = `
       <div class="card">
         <div class="card-head"><span class="up">Commande</span><b>${esc(pending.orderNumber)}</b></div>
         <ul class="items">${pending.lines
           .map((l) => {
+            if (isGiftLine(l)) return `<li>${l.qty} × Carte cadeau ${esc(l.size)} €${l.gift?.toEmail ? ` · pour ${esc(l.gift.toEmail)}` : ""}</li>`;
             const p = bySku.get(l.sku);
             return `<li>${l.qty} × ${esc(p ? p.name : l.sku)} · ${esc(p ? p.color : "")} · ${esc(l.size)}</li>`;
           })
           .join("")}</ul>
       </div>
-      <div class="card"><span class="up">Livraison à</span><p>${esc(pending.name)}<br>${esc(pending.address)}</p>${pending.deliveryMessage ? `<p class="hint">${esc(pending.deliveryMessage)}</p>` : ""}</div>
+      ${physical ? `<div class="card"><span class="up">Livraison à</span><p>${esc(pending.name)}<br>${esc(pending.address)}</p>${pending.deliveryMessage ? `<p class="hint">${esc(pending.deliveryMessage)}</p>` : ""}</div>` : `<div class="card"><span class="up">Carte cadeau</span><p>Envoyée par e-mail juste après le paiement.</p></div>`}
       <p class="hint">Montant calculé par notre serveur. Le paiement se fait sur la page sécurisée de SumUp ; ta commande sera confirmée dès que SumUp nous aura confirmé le paiement.</p>
       <p class="notice err" id="payError" hidden></p>`;
     foot.innerHTML = `<div class="row"><span>Sous-total</span><span>${euros(pending.subtotalCents)}</span></div>
-      <div class="row"><span>Livraison</span><span>${pending.shippingCents ? euros(pending.shippingCents) : "Offerte"}</span></div>
+      ${pending.discountCents ? `<div class="row save"><span>${esc(pending.discountLabel || "Remise")}</span><span>-${euros(pending.discountCents)}</span></div>` : ""}
+      <div class="row"><span>Livraison</span><span>${pending.shippingCents ? euros(pending.shippingCents) : physical ? "Offerte" : "Par e-mail"}</span></div>
+      ${pending.giftCardCents ? `<div class="row save"><span>Carte cadeau ${esc(pending.giftCardCode)}</span><span>-${euros(pending.giftCardCents)}</span></div>` : ""}
       <div class="row total"><span>Total</span><span>${euros(pending.totalCents)}</span></div>
       <button type="button" class="btn full" id="payButton">Payer ${euros(pending.totalCents)} par carte</button>
       <button type="button" class="btn out full" id="alreadyPaid">J'ai déjà payé : vérifier le paiement</button>
@@ -1178,7 +1397,7 @@
       cart = [];
       saveCart();
       store.remove(PENDING_KEY);
-      body.innerHTML = `<div class="empty"><h4>Merci, commande confirmée</h4><p>Ton paiement de <b>${euros(data.totalCents)}</b> est confirmé pour la commande <b>${esc(orderNumber)}</b>.</p><p class="muted">Un e-mail de confirmation t'est envoyé. On t'écrit à nouveau avec le numéro de suivi dès l'expédition.</p></div>`;
+      body.innerHTML = `<div class="empty"><h4>Merci, commande confirmée</h4><p>Ton paiement de <b>${euros(data.totalCents)}</b> est confirmé pour la commande <b>${esc(orderNumber)}</b>.</p><p class="muted">Un e-mail de confirmation t'est envoyé. ${hasPhysical(pending.lines || []) ? "On t'écrit à nouveau avec le numéro de suivi dès l'expédition." : "La carte cadeau part par e-mail tout de suite."}</p></div>`;
       foot.innerHTML = `<button type="button" class="btn full" data-close>Continuer</button>`;
       pending = null;
       return;
@@ -1288,7 +1507,7 @@
     body.innerHTML = orders
       .map((o) => {
         const items = (Array.isArray(o.items) ? o.items : [])
-          .map((it) => `<li>${Number(it.quantity)} × ${esc(it.name)} · ${esc(it.color)} · ${esc(it.size)} <span class="muted">· ${euros(Number(it.lineTotalCents) || 0)}</span></li>`)
+          .map((it) => `<li>${Number(it.quantity)} × ${esc(it.name)} · ${esc(it.color)} · ${esc(it.size)}${it.giftCard ? " €" : ""} <span class="muted">· ${euros(Number(it.lineTotalCents) || 0)}</span></li>`)
           .join("");
         const tracking = o.trackingNumber && ["shipped", "delivered"].includes(o.status)
           ? `<div class="notice"><b>Commande expédiée</b><span>Transporteur : ${esc(o.carrier || "—")}</span><span>Numéro de suivi : ${esc(o.trackingNumber)}</span>${
@@ -1300,7 +1519,9 @@
           <div class="actions">${pill(STATUS, o.status)}${pill(PAYMENT, o.paymentStatus)}</div>
           <ul class="items">${items}</ul>
           <div class="row"><span>Sous-total</span><span>${euros(o.subtotalCents)}</span></div>
+          ${o.discountCents ? `<div class="row save"><span>${esc(o.discountLabel || "Remise")}</span><span>-${euros(o.discountCents)}</span></div>` : ""}
           <div class="row"><span>Livraison</span><span>${o.shippingCents ? euros(o.shippingCents) : "Offerte"}</span></div>
+          ${o.giftCardCents ? `<div class="row save"><span>Carte cadeau ${esc(o.giftCardCode || "")}</span><span>-${euros(o.giftCardCents)}</span></div>` : ""}
           <div class="row total"><span>Total</span><span>${euros(o.totalCents)}</span></div>
           ${tracking}
           ${["shipped", "delivered"].includes(o.status) ? `<button type="button" class="btn out full" data-review-order="${esc(o.orderNumber)}">Donner mon avis</button>` : ""}
@@ -1477,6 +1698,167 @@
   }
 
   // ---------------------------------------------------------------------------
+  // Réglages boutique (admin) : bandeau, pack, livraison offerte, fenêtre -10 %
+  // ---------------------------------------------------------------------------
+  async function loadShopSettings() {
+    try {
+      const r = await fetch("/api/shop-settings");
+      if (r.ok) {
+        const d = await r.json();
+        shop = {
+          banner: typeof d.banner === "string" ? d.banner : null,
+          pack: { twoPercent: Number(d.pack?.twoPercent) || 0, threePercent: Number(d.pack?.threePercent) || 0 },
+          freeShippingMin: Number(d.freeShippingMin) || 0,
+          popup: { active: Boolean(d.popup?.active), percent: Number(d.popup?.percent) || 0 },
+          giftCardAmounts: Array.isArray(d.giftCardAmounts) && d.giftCardAmounts.length ? d.giftCardAmounts.map(Number) : shop.giftCardAmounts,
+        };
+      }
+    } catch {
+      /* réglages par défaut */
+    }
+    const bar = $("#annonce");
+    if (bar && shop.banner !== null) {
+      bar.hidden = !shop.banner;
+      if (shop.banner) $("#annonceText").textContent = shop.banner;
+    }
+    $$("[data-pack-percent]").forEach((el) => (el.textContent = shop.pack.twoPercent ? `-${shop.pack.twoPercent} %` : ""));
+    if (sheet.product) renderProduct();
+    if (!$("#cartDrawer").hidden && step !== "status") renderCart();
+    schedulePopup();
+  }
+
+  // Fenêtre « -10 % sur ta première commande » : une seule fois par visiteur,
+  // après 8 secondes ou la moitié de la page, jamais pendant une commande.
+  const POP_KEY = "fork-pop-seen";
+  function schedulePopup() {
+    const box = $("#promoPop");
+    if (!box || !shop.popup.active || !shop.popup.percent) return;
+    if (store.get(POP_KEY, null) || store.get("fork-subscribed", null)) return;
+    if (urlSrc === "email-bienvenue" || new URLSearchParams(location.search).has("payment")) return;
+    let fired = false;
+    const fire = () => {
+      if (fired) return;
+      if (document.body.classList.contains("locked") || pending) {
+        setTimeout(fire, 6000);
+        return;
+      }
+      fired = true;
+      window.removeEventListener("scroll", onScroll);
+      showPopup();
+    };
+    const onScroll = () => {
+      const max = document.documentElement.scrollHeight - innerHeight;
+      if (max > 0 && scrollY / max >= 0.5) fire();
+    };
+    setTimeout(fire, 8000);
+    window.addEventListener("scroll", onScroll, { passive: true });
+  }
+  function showPopup() {
+    const box = $("#promoPop");
+    store.set(POP_KEY, Date.now());
+    box.innerHTML = `<button type="button" class="x" data-pop-close aria-label="Fermer">✕</button>
+      <p class="up">Bienvenue chez FORK</p>
+      <h3 id="promoTitle">-${shop.popup.percent} % sur ta première commande</h3>
+      <p class="muted">Et les sorties FORK en avant-première.</p>
+      <form id="popForm" novalidate>
+        <label class="hp" aria-hidden="true">Ne pas remplir<input type="text" name="website" tabindex="-1" autocomplete="off"></label>
+        <input type="email" name="email" required maxlength="254" autocomplete="email" placeholder="Ton adresse e-mail" aria-label="Ton adresse e-mail">
+        <label class="check"><input type="checkbox" name="consent" required><span>J'accepte de recevoir les e-mails de FORK (désinscription en un clic). <a class="link" href="confidentialite.html" target="_blank" rel="noopener">Confidentialité</a></span></label>
+        <button type="submit" class="btn full">Je veux mes -${shop.popup.percent} %</button>
+        <p class="pop-msg" aria-live="polite"></p>
+      </form>`;
+    box.hidden = false;
+    box.querySelector("[data-pop-close]").addEventListener("click", () => (box.hidden = true));
+    $("#popForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const f = e.target;
+      const msg = f.querySelector(".pop-msg");
+      const email = f.email.value.trim();
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+        msg.textContent = "Indique une adresse e-mail valide.";
+        return;
+      }
+      if (!f.consent.checked) {
+        msg.textContent = "Coche la case pour recevoir ton code par e-mail.";
+        return;
+      }
+      const btn = f.querySelector("button[type=submit]");
+      btn.disabled = true;
+      const { ok, data } = await api("/api/newsletter", { method: "POST", body: { email, consent: true, source: "popup", website: f.website.value } });
+      btn.disabled = false;
+      if (!ok) {
+        msg.textContent = data.error || "Inscription impossible pour le moment.";
+        return;
+      }
+      store.set("fork-subscribed", Date.now());
+      box.innerHTML = `<button type="button" class="x" data-pop-close aria-label="Fermer">✕</button>
+        <h3>C'est envoyé !</h3>
+        <p>Ton code de -${shop.popup.percent} % t'attend dans ta boîte mail. Pense à regarder dans les spams.</p>
+        <button type="button" class="btn full" data-pop-close>Voir la collection</button>`;
+      $$("[data-pop-close]", box).forEach((b) =>
+        b.addEventListener("click", () => {
+          box.hidden = true;
+          if (b.classList.contains("btn") && $("#produits")) $("#produits").scrollIntoView();
+        }),
+      );
+    });
+  }
+
+  // ---------------------------------------------------------------------------
+  // Carte cadeau
+  // ---------------------------------------------------------------------------
+  const giftForm = { amount: null, toName: "", toEmail: "", message: "" };
+  function openGiftCard() {
+    if (!giftForm.amount) giftForm.amount = shop.giftCardAmounts[0];
+    renderGiftCard();
+    openDrawer("giftDrawer");
+  }
+  function renderGiftCard() {
+    const body = $("#giftBody");
+    const foot = $("#giftFoot");
+    if (!body) return;
+    body.innerHTML = `
+      <img class="gift-visual" src="${GIFT_IMG}" alt="Carte cadeau FORK" width="600" height="360">
+      <p>Le cadeau parfait pour un Toulonnais, même sans connaître sa taille. La carte est envoyée par e-mail juste après le paiement, valable 1 an, utilisable en une ou plusieurs fois.</p>
+      <div class="field"><span class="up">Montant</span><div class="sizes">${shop.giftCardAmounts
+        .map((a) => `<button type="button" class="size" data-gift-amount="${a}" aria-pressed="${giftForm.amount === a}">${a} €</button>`)
+        .join("")}</div></div>
+      <div class="field"><label for="g-name">Son prénom (facultatif)</label><input id="g-name" maxlength="60" value="${esc(giftForm.toName)}"></div>
+      <div class="field"><label for="g-email">Son e-mail (facultatif)</label><input id="g-email" type="email" maxlength="200" value="${esc(giftForm.toEmail)}">
+        <p class="hint">Vide : la carte t'est envoyée à toi, pour que tu la transfères ou l'imprimes.</p></div>
+      <div class="field"><label for="g-msg">Ton petit mot (facultatif)</label><textarea id="g-msg" rows="3" maxlength="300">${esc(giftForm.message)}</textarea></div>
+      <p class="notice err" id="giftError" hidden></p>`;
+    foot.innerHTML = `<button type="button" class="btn full" id="giftAdd">Ajouter au panier · ${euros(giftForm.amount * 100)}</button>`;
+    $$("[data-gift-amount]", body).forEach((b) =>
+      b.addEventListener("click", () => {
+        giftForm.amount = Number(b.dataset.giftAmount);
+        renderGiftCard();
+      }),
+    );
+    $("#g-name").addEventListener("input", (e) => (giftForm.toName = e.target.value));
+    $("#g-email").addEventListener("input", (e) => (giftForm.toEmail = e.target.value));
+    $("#g-msg").addEventListener("input", (e) => (giftForm.message = e.target.value));
+    $("#giftAdd").addEventListener("click", () => {
+      const toEmail = giftForm.toEmail.trim();
+      if (toEmail && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(toEmail)) {
+        $("#giftError").textContent = "L'e-mail de la personne n'est pas valide (ou laisse-le vide).";
+        $("#giftError").hidden = false;
+        return;
+      }
+      addToCart(GIFT_SKU, String(giftForm.amount), 1, { toName: giftForm.toName.trim(), toEmail, message: giftForm.message.trim() });
+      Object.assign(giftForm, { toName: "", toEmail: "", message: "" });
+      toast("Carte cadeau ajoutée au panier");
+      openCart();
+    });
+  }
+  document.addEventListener("click", (e) => {
+    if (e.target.closest("[data-giftcard]")) {
+      e.preventDefault();
+      openGiftCard();
+    }
+  });
+
+  // ---------------------------------------------------------------------------
   // Démarrage
   // ---------------------------------------------------------------------------
   function consumeUrlParams() {
@@ -1506,6 +1888,8 @@
       sheet.product = byId.get(PAGE_PRODUCT);
       renderProduct();
     }
+    if (urlSrc) store.set(SRC_KEY, { v: urlSrc, t: Date.now() });
+    loadShopSettings();
     loadReviewSummary();
     loadStockInfo();
     await loadMe();
@@ -1745,7 +2129,7 @@
       /* stockage indisponible : on compte quand même */
     }
     const path = document.body.dataset.page === "404" ? "/404" : location.pathname;
-    const payload = JSON.stringify({ path, ref: document.referrer || "" });
+    const payload = JSON.stringify({ path, ref: document.referrer || "", ...(urlSrc ? { src: urlSrc } : {}) });
     try {
       if (navigator.sendBeacon && navigator.sendBeacon("/api/visit", new Blob([payload], { type: "application/json" }))) return;
     } catch {

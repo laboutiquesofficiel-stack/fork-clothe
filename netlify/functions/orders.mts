@@ -1,10 +1,13 @@
 import { createHash, randomBytes } from "node:crypto";
 import type { Config } from "@netlify/functions";
-import { eq } from "drizzle-orm";
+import { and, eq, ne } from "drizzle-orm";
 import { db } from "../../db/index.js";
 import { orders, sessions, type OrderItem } from "../../db/schema.js";
-import { available, loadStock } from "../../lib/stock.js";
+import { available, decrementForOrder, loadStock } from "../../lib/stock.js";
 import { quoteDelivery, type DeliveryQuote } from "../../lib/delivery.js";
+import { checkCode, cleanCode, GIFT_CARD_AMOUNTS, GIFT_CARD_SKU, onOrderPaid, priceCart } from "../../lib/promos.js";
+import { loadSettings } from "../../lib/settings.js";
+import { notifyOrderPaid } from "../../lib/notifications.js";
 
 type Product = {
   name: string;
@@ -57,12 +60,21 @@ function createOrderNumber(): string {
 }
 
 const orderSummary = {
+  id: orders.id,
   orderNumber: orders.orderNumber,
   subtotalCents: orders.subtotalCents,
   shippingCents: orders.shippingCents,
+  discountCents: orders.discountCents,
+  discountLabel: orders.discountLabel,
+  giftCardCode: orders.giftCardCode,
+  giftCardCents: orders.giftCardCents,
   totalCents: orders.totalCents,
   currency: orders.currency,
+  paymentStatus: orders.paymentStatus,
 };
+
+const EMAIL = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+const SOURCE = /^[a-z0-9-]{1,30}$/;
 
 function deliverySummary(delivery: DeliveryQuote) {
   return {
@@ -105,6 +117,8 @@ async function sendFormspreeNotification(
   delivery: DeliveryQuote,
   subtotalCents: number,
   totalCents: number,
+  shippingCents: number,
+  discountText: string,
 ): Promise<boolean> {
   const endpoint = getFormspreeEndpoint();
 
@@ -138,7 +152,8 @@ async function sendFormspreeNotification(
         articles,
         sous_total: `${(subtotalCents / 100).toFixed(2)} EUR`,
         zone_livraison: describeDeliveryZone(delivery),
-        frais_livraison: `${(delivery.feeCents / 100).toFixed(2)} EUR`,
+        frais_livraison: `${(shippingCents / 100).toFixed(2)} EUR`,
+        remise: discountText || "aucune",
         total: `${(totalCents / 100).toFixed(2)} EUR`,
       }),
     });
@@ -237,10 +252,13 @@ export default async (request: Request) => {
       address: cleanText(body?.customer?.address, 500),
     };
 
+    const hasPhysical = Array.isArray(body?.items) && body.items.some((i: any) => i?.sku !== GIFT_CARD_SKU);
+    if (!hasPhysical && !customer.address) customer.address = "Carte cadeau envoyée par e-mail";
+
     if (
       !customer.name ||
-      !customer.email.includes("@") ||
-      !customer.phone ||
+      !EMAIL.test(customer.email) ||
+      (hasPhysical && !customer.phone) ||
       !customer.address
     ) {
       return Response.json(
@@ -278,6 +296,37 @@ export default async (request: Request) => {
       const item = input as Record<string, unknown>;
 
       const sku = cleanText(item.sku, 80);
+      const quantityRaw = Number(item.quantity);
+
+      // Carte cadeau : montant choisi parmi les montants proposés, envoyée par e-mail.
+      if (sku === GIFT_CARD_SKU) {
+        const euros = Number(cleanText(item.size, 10));
+        const gift = (item.giftCard ?? {}) as Record<string, unknown>;
+        const toEmail = cleanText(gift.toEmail, 200).toLowerCase();
+        if (
+          !(GIFT_CARD_AMOUNTS as readonly number[]).includes(euros) ||
+          !Number.isInteger(quantityRaw) ||
+          quantityRaw < 1 ||
+          quantityRaw > 5 ||
+          (toEmail && !EMAIL.test(toEmail))
+        ) {
+          throw new Error("INVALID_ITEM");
+        }
+        return {
+          sku,
+          name: "Carte cadeau FORK",
+          color: "Envoyée par e-mail",
+          size: String(euros),
+          quantity: quantityRaw,
+          unitPriceCents: euros * 100,
+          lineTotalCents: euros * 100 * quantityRaw,
+          giftCard: {
+            toName: cleanText(gift.toName, 60),
+            toEmail,
+            message: cleanText(gift.message, 300),
+          },
+        };
+      }
       const size = cleanText(item.size, 10);
       const color = cleanText(item.color, 80);
       const quantity = Number(item.quantity);
@@ -341,8 +390,10 @@ export default async (request: Request) => {
       );
     }
 
-    // Les frais sont recalculés côté serveur.
-    const delivery = await quoteDelivery(customer.address);
+    // Les frais sont recalculés côté serveur (pas de livraison pour une carte cadeau seule).
+    const delivery: DeliveryQuote = hasPhysical
+      ? await quoteDelivery(customer.address)
+      : ({ zone: "digital", feeCents: 0, distanceKm: null, distanceMeters: null, message: "Carte cadeau envoyée par e-mail après le paiement." } as unknown as DeliveryQuote);
 
     if (
       delivery.zone === "needs_postcode" ||
@@ -358,8 +409,19 @@ export default async (request: Request) => {
       );
     }
 
-    const totalCents = subtotalCents + delivery.feeCents;
+    // Pack, livraison offerte, code promo ou carte cadeau : tout est recalculé ici.
+    const settings = await loadSettings();
+    const rawCode = cleanCode(body?.promoCode);
+    const code = rawCode ? await checkCode(rawCode, customer.email) : null;
+    if (code && !code.ok) {
+      return Response.json({ error: code.error, field: "promoCode" }, { status: 400 });
+    }
+    const pricing = priceCart(items, settings, delivery.feeCents, code);
+    const totalCents = pricing.totalCents;
     const orderNumber = createOrderNumber();
+    const isGift = hasPhysical && body?.gift === true;
+    const giftMessage = isGift ? cleanText(body?.giftMessage, 300) : "";
+    const source = cleanText(body?.source, 30).toLowerCase();
 
     const [createdOrder] = await db
       .insert(orders)
@@ -378,9 +440,17 @@ export default async (request: Request) => {
         items,
         itemCount,
         subtotalCents,
-        shippingCents: delivery.feeCents,
+        shippingCents: pricing.shippingCents,
         deliveryZone: delivery.zone,
         deliveryDistanceMeters: delivery.distanceMeters,
+        discountCents: pricing.discountCents,
+        discountLabel: pricing.discountLabel,
+        promoCode: pricing.promoCode,
+        giftCardCode: pricing.giftCardCode,
+        giftCardCents: pricing.giftCardCents,
+        isGift,
+        giftMessage: giftMessage || null,
+        source: SOURCE.test(source) ? source : null,
         totalCents,
       })
       .onConflictDoNothing({ target: orders.checkoutToken })
@@ -397,12 +467,29 @@ export default async (request: Request) => {
         throw new Error("ORDER_RETRY_LOOKUP_FAILED");
       }
 
+      const { id: _existingId, ...existingPublic } = existingOrder;
       return Response.json({
-        ...existingOrder,
+        ...existingPublic,
+        paid: existingOrder.paymentStatus === "paid",
         delivery: deliverySummary(delivery),
         notificationSent: null,
         reused: true,
       });
+    }
+
+    // Entièrement réglée par carte cadeau : pas de paiement SumUp, commande payée tout de suite.
+    if (createdOrder.totalCents === 0) {
+      const paid = await db
+        .update(orders)
+        .set({ paymentStatus: "paid", paymentProvider: "carte_cadeau", paymentReference: pricing.giftCardCode, status: "paid" })
+        .where(and(eq(orders.id, createdOrder.id), ne(orders.paymentStatus, "paid")))
+        .returning({ id: orders.id });
+      if (paid.length) {
+        await onOrderPaid(createdOrder.id);
+        await decrementForOrder(createdOrder.id);
+        await notifyOrderPaid(createdOrder.id);
+      }
+      createdOrder.paymentStatus = "paid";
     }
 
     const notificationSent = await sendFormspreeNotification(
@@ -412,11 +499,15 @@ export default async (request: Request) => {
       delivery,
       subtotalCents,
       createdOrder.totalCents,
+      pricing.shippingCents,
+      [pricing.discountLabel && `${pricing.discountLabel} : -${(pricing.discountCents / 100).toFixed(2)} EUR`, pricing.giftCardCode && `Carte cadeau ${pricing.giftCardCode} : -${(pricing.giftCardCents / 100).toFixed(2)} EUR`].filter(Boolean).join(" · "),
     );
+    const { id: _id, ...publicOrder } = createdOrder;
 
     return Response.json(
       {
-        ...createdOrder,
+        ...publicOrder,
+        paid: createdOrder.paymentStatus === "paid",
         delivery: deliverySummary(delivery),
         notificationSent,
         reused: false,

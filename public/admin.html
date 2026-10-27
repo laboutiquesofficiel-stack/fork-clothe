@@ -18,6 +18,7 @@
   <script src="assets/js/admin-scan.js" defer></script>
   <script src="assets/js/admin-visits.js" defer></script>
   <script src="assets/js/admin-moments.js" defer></script>
+  <script src="assets/js/admin-promos.js" defer></script>
 </head>
 <body>
   <header class="site-header">
@@ -50,6 +51,7 @@
         <button type="button" class="switch" data-view="stock" aria-selected="false">Stock</button>
         <button type="button" class="switch" data-view="news" aria-selected="false">Inscrits</button>
         <button type="button" class="switch" data-view="visits" aria-selected="false">Visites</button>
+        <button type="button" class="switch" data-view="promos" aria-selected="false">Promos</button>
       </div>
       <div id="ordersPane">
       <div class="sec-head">
@@ -115,6 +117,10 @@
           <button type="button" class="tab" data-visits-days="365" aria-selected="false">1 an</button>
         </div>
         <div id="visitsBody" aria-live="polite"></div>
+      </div>
+      <div id="promosPane" hidden>
+        <div class="sec-head"><h1>Promos et carte cadeau</h1></div>
+        <div id="promosBody" aria-live="polite"></div>
       </div>
       <div id="reviewsPane" hidden>
         <div class="sec-head"><h1>Avis clients</h1></div>
