@@ -106,6 +106,16 @@
       <div id="momentsPane" hidden>
         <div class="sec-head"><h1>Vos moments</h1></div>
         <p class="hint">Les photos où l'IA a reconnu un t-shirt FORK sont publiées toutes seules. Ici arrivent celles où elle a un doute (t-shirt mal visible, mineur sur la photo, vérification indisponible) : à toi de les publier ou de les masquer. Supprime définitivement une photo si la personne demande son retrait.</p>
+        <details class="card manual-order" id="shopMomentBox">
+          <summary><b>+ Publier une photo FORK</b></summary>
+          <p class="hint">Pour tes propres photos (colis qui part, stand, marché…). Elles s'affichent sur le site avec la mention « Par FORK », jamais comme si un client les avait envoyées.</p>
+          <form id="shopMoment" class="stack" novalidate>
+            <div class="field"><label for="sm-photo">Photo</label><input id="sm-photo" name="photo" type="file" accept="image/*" required></div>
+            <div class="field"><label for="sm-place">Légende (facultatif)</label><input id="sm-place" name="place" maxlength="60" placeholder="Un colis qui part de Toulon"></div>
+            <div class="field"><label for="sm-sku">Modèle sur la photo (facultatif)</label><select id="sm-sku" name="sku"><option value="">Aucun / plusieurs</option><option value="fork-les-minots">Les Minots</option><option value="fork-authentique">L'Authentique</option><option value="fork-lou-faron">Lou Faron</option><option value="fork-les-boutades">Les Boutades</option></select></div>
+            <button type="submit" class="btn full">Publier la photo</button>
+          </form>
+        </details>
         <div class="admin-list" id="momentsList" aria-live="polite"></div>
       </div>
       <div id="visitsPane" hidden>

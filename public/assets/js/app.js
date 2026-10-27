@@ -1957,12 +1957,12 @@
   let momentsNext = null;
 
   const momentCaption = (m) =>
-    `<span><b>${esc(m.firstName)}</b>${m.place ? ` · ${esc(m.place)}` : ""}</span>${m.product ? `<a href="${esc(m.product.url)}">${esc(m.product.name)}</a>` : ""}`;
+    `<span>${m.byShop ? `<b class="by-fork">Par FORK</b>` : `<b>${esc(m.firstName)}</b>`}${m.place ? ` · ${esc(m.place)}` : ""}</span>${m.product ? `<a href="${esc(m.product.url)}">${esc(m.product.name)}</a>` : ""}`;
 
   function momentCard(m) {
     return `<figure class="moment">
-      <button type="button" class="moment-open" data-moment-photo="${esc(m.photo)}" data-moment-cap="${esc(m.firstName)}${m.place ? ` · ${esc(m.place)}` : ""}${m.product ? ` · ${esc(m.product.name)}` : ""}" aria-label="Agrandir la photo de ${esc(m.firstName)}">
-        <img src="${esc(m.photo)}" alt="${esc(m.firstName)} avec son ${esc(m.product ? m.product.name : "t-shirt FORK")}${m.place ? `, ${esc(m.place)}` : ""}" loading="lazy">
+      <button type="button" class="moment-open" data-moment-photo="${esc(m.photo)}" data-moment-cap="${m.byShop ? "Par FORK" : esc(m.firstName)}${m.place ? ` · ${esc(m.place)}` : ""}${m.product ? ` · ${esc(m.product.name)}` : ""}" aria-label="Agrandir la photo ${m.byShop ? "publiée par FORK" : `de ${esc(m.firstName)}`}">
+        <img src="${esc(m.photo)}" alt="${m.byShop ? `Photo FORK${m.place ? ` : ${esc(m.place)}` : ""}` : `${esc(m.firstName)} avec son ${esc(m.product ? m.product.name : "t-shirt FORK")}${m.place ? `, ${esc(m.place)}` : ""}`}" loading="lazy">
       </button>
       <figcaption>${momentCaption(m)}</figcaption>
     </figure>`;

@@ -55,7 +55,7 @@
             <img src="${esc(m.image)}" alt="Photo de ${esc(m.firstName)}">
             <div class="col">
               <div class="actions"><span class="pill ${cls}">${label}</span><span class="muted">${esc(new Date(m.createdAt).toLocaleString("fr-FR", { dateStyle: "short", timeStyle: "short" }))}</span></div>
-              <b>${esc(m.firstName)}${m.place ? ` · ${esc(m.place)}` : ""}</b>
+              <b>${m.byShop ? "Par FORK" : esc(m.firstName)}${m.place ? ` · ${esc(m.place)}` : ""}</b>
               <span class="muted">${esc(m.product || "Modèle non reconnu")} · ${esc(m.email)}</span>
               ${m.aiNote ? `<p class="hint">Vérification : ${esc(m.aiNote)}</p>` : ""}
               <div class="actions">
@@ -94,5 +94,50 @@
     }
     toast(action === "publish" ? "Photo publiée, la personne est prévenue" : action === "hide" ? "Photo retirée du site" : "Photo supprimée");
     render(data.moments || []);
+  });
+  // Photo publiée par FORK : réduite dans le navigateur (1600 px, JPEG) avant l'envoi.
+  function shrink(file) {
+    return new Promise((resolve, reject) => {
+      const url = URL.createObjectURL(file);
+      const img = new Image();
+      img.onload = () => {
+        const scale = Math.min(1, 1600 / Math.max(img.naturalWidth, img.naturalHeight));
+        const c = document.createElement("canvas");
+        c.width = Math.round(img.naturalWidth * scale);
+        c.height = Math.round(img.naturalHeight * scale);
+        c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+        URL.revokeObjectURL(url);
+        resolve(c.toDataURL("image/jpeg", 0.85));
+      };
+      img.onerror = () => {
+        URL.revokeObjectURL(url);
+        reject(new Error("Cette photo n'a pas pu être lue."));
+      };
+      img.src = url;
+    });
+  }
+  document.addEventListener("submit", async (e) => {
+    const form = e.target.closest("#shopMoment");
+    if (!form) return;
+    e.preventDefault();
+    const file = form.photo.files[0];
+    if (!file) return toast("Choisis une photo.", true);
+    const btn = form.querySelector("button[type=submit]");
+    btn.disabled = true;
+    btn.textContent = "Envoi…";
+    try {
+      const photo = await shrink(file);
+      const { ok, data } = await call("POST", { action: "create", photo, place: form.place.value, sku: form.sku.value });
+      if (!ok) throw new Error(data.error || "Publication impossible.");
+      form.reset();
+      $("#shopMomentBox").open = false;
+      render(data.moments || []);
+      toast("Photo publiée sur le site");
+    } catch (err) {
+      toast(err.message, true);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "Publier la photo";
+    }
   });
 })();

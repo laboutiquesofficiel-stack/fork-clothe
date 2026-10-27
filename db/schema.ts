@@ -408,6 +408,8 @@ export const moments = pgTable("moments", {
   visitorHash: text("visitor_hash"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   publishedAt: timestamp("published_at", { withTimezone: true }),
+  /** Photo publiée par FORK elle-même (affichée « Par FORK », jamais comme un client). */
+  byShop: boolean("by_shop").notNull().default(false),
 });
 
 /**

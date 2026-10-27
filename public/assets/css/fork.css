@@ -446,3 +446,4 @@ h1, h2, h3, h4 { margin: 0; text-transform: uppercase; font-weight: 900; letter-
 .promo-pop .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
 .line img[src$=".svg"] { object-fit: contain; height: 64px; }
 #giftDrawer textarea, #cartDrawer textarea { width: 100%; padding: 12px; border: 1px solid var(--line); background: var(--white); font-size: 16px; resize: vertical; }
+.by-fork { background: var(--ink); color: var(--white); padding: 1px 6px; font-size: .72rem; letter-spacing: .06em; text-transform: uppercase; }

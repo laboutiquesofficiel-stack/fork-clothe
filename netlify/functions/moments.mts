@@ -24,7 +24,7 @@ const MAX_PER_DAY = 5;
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const clean = (v: unknown, n: number) => (typeof v === "string" ? v.replace(/\s+/g, " ").trim().slice(0, n) : "");
 
-function publicItem(m: { id: number; firstName: string; place: string | null; productSku: string | null; publishedAt: Date | null; createdAt: Date }) {
+function publicItem(m: { id: number; firstName: string; place: string | null; productSku: string | null; publishedAt: Date | null; createdAt: Date; byShop: boolean }) {
   const p = productBySku(m.productSku);
   return {
     id: m.id,
@@ -33,6 +33,7 @@ function publicItem(m: { id: number; firstName: string; place: string | null; pr
     product: p ? { sku: p.sku, name: `${p.type} ${p.name}`, url: `/t-shirt/${p.id}/` } : null,
     date: m.publishedAt ?? m.createdAt,
     photo: `/api/moment-photo?id=${m.id}`,
+    byShop: m.byShop,
   };
 }
 
@@ -48,6 +49,7 @@ export default async (request: Request, context: Context) => {
           productSku: moments.productSku,
           publishedAt: moments.publishedAt,
           createdAt: moments.createdAt,
+          byShop: moments.byShop,
         })
         .from(moments)
         .where(Number.isInteger(before) && before > 0 ? and(eq(moments.status, "published"), lt(moments.id, before)) : eq(moments.status, "published"))

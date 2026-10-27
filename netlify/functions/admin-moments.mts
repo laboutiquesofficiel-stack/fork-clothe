@@ -13,6 +13,8 @@ import { notifyMomentPublished } from "../../lib/notifications.js";
  * POST /api/admin/moments { id, action: "publish" | "hide" | "delete" }
  *   publish : met en ligne (e-mail à la personne la première fois) ;
  *   hide : retire du site ; delete : supprime définitivement (demande de retrait).
+ * POST /api/admin/moments { action: "create", photo: "data:image/jpeg;base64,…", place?, sku? }
+ *   photo publiée par FORK elle-même : affichée « Par FORK » sur le site, jamais comme un client.
  */
 
 function isAuthorized(request: Request): boolean {
@@ -40,12 +42,13 @@ async function list() {
       aiNote: moments.aiNote,
       createdAt: moments.createdAt,
       publishedAt: moments.publishedAt,
+      byShop: moments.byShop,
     })
     .from(moments)
     .orderBy(desc(moments.id))
     .limit(60);
   return {
-    moments: rows.map((m: { id: number; status: string; firstName: string; place: string | null; productSku: string | null; email: string; contentType: string; data: string; aiNote: string | null; createdAt: Date; publishedAt: Date | null }) => {
+    moments: rows.map((m: { id: number; status: string; firstName: string; place: string | null; productSku: string | null; email: string; contentType: string; data: string; aiNote: string | null; createdAt: Date; publishedAt: Date | null; byShop: boolean }) => {
       const p = productBySku(m.productSku);
       return {
         id: m.id,
@@ -58,6 +61,7 @@ async function list() {
         createdAt: m.createdAt,
         publishedAt: m.publishedAt,
         image: `data:${m.contentType};base64,${m.data}`,
+        byShop: m.byShop,
       };
     }),
   };
@@ -74,9 +78,31 @@ export default async (request: Request) => {
   try {
     if (request.method === "GET") return Response.json(await list(), { headers: noStore });
 
-    const body = (await request.json().catch(() => null)) as { id?: unknown; action?: unknown } | null;
-    const id = Number(body?.id);
+    const body = (await request.json().catch(() => null)) as { id?: unknown; action?: unknown; photo?: unknown; place?: unknown; sku?: unknown } | null;
     const action = body?.action;
+
+    if (action === "create") {
+      const match = typeof body?.photo === "string" ? /^data:(image\/(?:jpeg|png|webp));base64,([A-Za-z0-9+/=]+)$/.exec(body.photo) : null;
+      if (!match) return Response.json({ error: "Photo illisible : choisis une image JPEG ou PNG." }, { status: 400 });
+      if (match[2].length > 3_000_000) return Response.json({ error: "Photo trop lourde." }, { status: 413 });
+      const place = typeof body?.place === "string" ? body.place.replace(/\s+/g, " ").trim().slice(0, 60) || null : null;
+      const sku = typeof body?.sku === "string" && productBySku(body.sku) ? body.sku : null;
+      await db.insert(moments).values({
+        status: "published",
+        firstName: "FORK",
+        place,
+        productSku: sku,
+        email: process.env.SHOP_EMAIL?.trim() || "forkofficiel@gmail.com",
+        contentType: match[1],
+        dataBase64: match[2],
+        aiNote: "Photo publiée par FORK",
+        publishedAt: new Date(),
+        byShop: true,
+      });
+      return Response.json(await list(), { headers: noStore, status: 201 });
+    }
+
+    const id = Number(body?.id);
     if (!Number.isInteger(id) || id <= 0) return Response.json({ error: "Photo introuvable." }, { status: 400 });
 
     if (action === "publish") {
