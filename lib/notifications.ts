@@ -1,7 +1,8 @@
 import { createHash } from "node:crypto";
 import { eq } from "drizzle-orm";
 import { db } from "../db/index.js";
-import { moments, newsletterSubscribers, orders, productReviews, type OrderItem } from "../db/schema.js";
+import { moments, newsletterSubscribers, orders, productReviews, promoCodes, type OrderItem } from "../db/schema.js";
+import { loadSettings } from "./settings.js";
 import { escapeHtml, formatEuros, sendEmail } from "./email.js";
 
 /**
@@ -23,6 +24,13 @@ type OrderForEmail = {
   subtotalCents: number;
   shippingCents: number;
   totalCents: number;
+  discountCents: number;
+  discountLabel: string | null;
+  giftCardCode: string | null;
+  giftCardCents: number;
+  isGift: boolean;
+  giftMessage: string | null;
+  source: string | null;
   carrier: string | null;
   trackingNumber: string | null;
   trackingUrl: string | null;
@@ -39,6 +47,13 @@ async function loadOrder(orderId: number): Promise<OrderForEmail | null> {
       subtotalCents: orders.subtotalCents,
       shippingCents: orders.shippingCents,
       totalCents: orders.totalCents,
+      discountCents: orders.discountCents,
+      discountLabel: orders.discountLabel,
+      giftCardCode: orders.giftCardCode,
+      giftCardCents: orders.giftCardCents,
+      isGift: orders.isGift,
+      giftMessage: orders.giftMessage,
+      source: orders.source,
       carrier: orders.carrier,
       trackingNumber: orders.trackingNumber,
       trackingUrl: orders.trackingUrl,
@@ -75,19 +90,25 @@ export function layout(title: string, bodyHtml: string): string {
 function itemsTable(order: OrderForEmail): string {
   const rows = order.items
     .map(
-      (item) => `<tr><td style="padding:8px 0;border-bottom:1px solid #e4e4e2">${item.quantity} × ${escapeHtml(item.name)}<br><span style="color:#6b6b6b;font-size:13px">${escapeHtml(item.color)} · Taille ${escapeHtml(item.size)}</span></td><td align="right" style="padding:8px 0;border-bottom:1px solid #e4e4e2;white-space:nowrap">${formatEuros(item.lineTotalCents)}</td></tr>`,
+      (item) => `<tr><td style="padding:8px 0;border-bottom:1px solid #e4e4e2">${item.quantity} × ${escapeHtml(item.name)}<br><span style="color:#6b6b6b;font-size:13px">${escapeHtml(item.color)} · ${escapeHtml(sizeLabel(item))}${item.giftCard?.toEmail ? ` · pour ${escapeHtml(item.giftCard.toEmail)}` : ""}</span></td><td align="right" style="padding:8px 0;border-bottom:1px solid #e4e4e2;white-space:nowrap">${formatEuros(item.lineTotalCents)}</td></tr>`,
     )
     .join("");
   return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;margin:16px 0">${rows}
 <tr><td style="padding:8px 0 0">Sous-total</td><td align="right" style="padding:8px 0 0">${formatEuros(order.subtotalCents)}</td></tr>
-<tr><td>Livraison</td><td align="right">${order.shippingCents ? formatEuros(order.shippingCents) : "Offerte"}</td></tr>
+${order.discountCents ? `<tr><td>${escapeHtml(order.discountLabel ?? "Remise")}</td><td align="right">-${formatEuros(order.discountCents)}</td></tr>` : ""}
+<tr><td>Livraison</td><td align="right">${order.shippingCents ? formatEuros(order.shippingCents) : hasPhysical(order) ? "Offerte" : "Par e-mail"}</td></tr>
+${order.giftCardCents ? `<tr><td>Carte cadeau ${escapeHtml(order.giftCardCode ?? "")}</td><td align="right">-${formatEuros(order.giftCardCents)}</td></tr>` : ""}
 <tr><td style="padding-top:6px;font-weight:bold">Total payé</td><td align="right" style="padding-top:6px;font-weight:bold">${formatEuros(order.totalCents)}</td></tr></table>`;
 }
 
+const hasPhysical = (order: OrderForEmail) => order.items.some((i) => !i.giftCard);
+const sizeLabel = (item: OrderItem) => (item.giftCard ? `${item.size} €` : `Taille ${item.size}`);
+
 function itemsText(order: OrderForEmail): string {
-  return order.items
-    .map((item) => `- ${item.quantity} × ${item.name} (${item.color}, taille ${item.size}) : ${formatEuros(item.lineTotalCents)}`)
-    .join("\n");
+  const lines = order.items.map((item) => `- ${item.quantity} × ${item.name} (${item.color}, ${sizeLabel(item).toLowerCase()}) : ${formatEuros(item.lineTotalCents)}`);
+  if (order.discountCents) lines.push(`${order.discountLabel ?? "Remise"} : -${formatEuros(order.discountCents)}`);
+  if (order.giftCardCents) lines.push(`Carte cadeau ${order.giftCardCode ?? ""} : -${formatEuros(order.giftCardCents)}`);
+  return lines.join("\n");
 }
 
 function trackingBlock(order: OrderForEmail): { html: string; text: string } {
@@ -112,11 +133,12 @@ export async function notifyOrderPaid(orderId: number): Promise<void> {
       "Commande confirmée",
       `<p style="font-size:14px;line-height:1.6">Merci ${escapeHtml(firstName(order.customerName))} ! Ton paiement est bien reçu et ta commande <b>${escapeHtml(order.orderNumber)}</b> est confirmée.</p>
 ${itemsTable(order)}
-<p style="font-size:14px;line-height:1.6"><b>Livraison à :</b><br>${escapeHtml(order.customerName)}<br>${escapeHtml(order.shippingAddress)}</p>
-<p style="font-size:14px;line-height:1.6">On prépare ton colis. Tu recevras un e-mail avec le numéro de suivi dès l'expédition.</p>
+${hasPhysical(order) ? `<p style="font-size:14px;line-height:1.6"><b>Livraison à :</b><br>${escapeHtml(order.customerName)}<br>${escapeHtml(order.shippingAddress)}</p>
+<p style="font-size:14px;line-height:1.6">On prépare ton colis. Tu recevras un e-mail avec le numéro de suivi dès l'expédition.</p>` : ""}
+${order.items.some((i) => i.giftCard) ? `<p style="font-size:14px;line-height:1.6">Ta carte cadeau vient d'être envoyée par e-mail${order.items.some((i) => i.giftCard?.toEmail) ? " à la personne que tu as indiquée" : " à ton adresse : tu peux la transférer ou l'imprimer"}.</p>` : ""}
 <p style="font-size:11px;line-height:1.5;color:#6b6b6b;margin-top:24px">${escapeHtml(MEDIATION_TEXT).replace(/\n/g, "<br>")}</p>`,
     );
-    const text = `Commande confirmée ${order.orderNumber}\n\nMerci ${firstName(order.customerName)} ! Ton paiement est bien reçu.\n\n${itemsText(order)}\nLivraison : ${order.shippingCents ? formatEuros(order.shippingCents) : "offerte"}\nTotal payé : ${formatEuros(order.totalCents)}\n\nLivraison à :\n${order.customerName}\n${order.shippingAddress}\n\nTu recevras le numéro de suivi dès l'expédition.\nFORK · Toulon\n\n${MEDIATION_TEXT}`;
+    const text = `Commande confirmée ${order.orderNumber}\n\nMerci ${firstName(order.customerName)} ! Ton paiement est bien reçu.\n\n${itemsText(order)}\nLivraison : ${order.shippingCents ? formatEuros(order.shippingCents) : hasPhysical(order) ? "offerte" : "par e-mail"}\nTotal payé : ${formatEuros(order.totalCents)}${hasPhysical(order) ? `\n\nLivraison à :\n${order.customerName}\n${order.shippingAddress}\n\nTu recevras le numéro de suivi dès l'expédition.` : "\n\nTa carte cadeau est envoyée par e-mail."}\nFORK · Toulon\n\n${MEDIATION_TEXT}`;
 
     await sendEmail({
       to: order.customerEmail,
@@ -133,9 +155,9 @@ ${itemsTable(order)}
         subject: `Nouvelle commande payée ${order.orderNumber} · ${formatEuros(order.totalCents)}`,
         html: layout(
           "Nouvelle commande payée",
-          `<p style="font-size:14px;line-height:1.6"><b>${escapeHtml(order.orderNumber)}</b><br>${escapeHtml(order.customerName)} · ${escapeHtml(order.customerEmail)}<br>${escapeHtml(order.shippingAddress)}</p>${itemsTable(order)}`,
+          `<p style="font-size:14px;line-height:1.6"><b>${escapeHtml(order.orderNumber)}</b><br>${escapeHtml(order.customerName)} · ${escapeHtml(order.customerEmail)}<br>${escapeHtml(order.shippingAddress)}${order.source ? `<br>Provenance : ${escapeHtml(order.source)}` : ""}</p>${order.isGift ? `<p style="font-size:14px;line-height:1.6;background:#fff4d6;padding:10px 12px"><b>🎁 C'est un cadeau</b> : glisse un mot manuscrit dans le colis.${order.giftMessage ? `<br>Message : « ${escapeHtml(order.giftMessage)} »` : ""}</p>` : ""}${itemsTable(order)}`,
         ),
-        text: `Nouvelle commande payée ${order.orderNumber}\n${order.customerName} · ${order.customerEmail}\n${order.shippingAddress}\n\n${itemsText(order)}\nTotal : ${formatEuros(order.totalCents)}`,
+        text: `Nouvelle commande payée ${order.orderNumber}\n${order.customerName} · ${order.customerEmail}\n${order.shippingAddress}${order.isGift ? `\n\nC'EST UN CADEAU : mot manuscrit à glisser dans le colis.${order.giftMessage ? `\nMessage : « ${order.giftMessage} »` : ""}` : ""}\n\n${itemsText(order)}\nTotal : ${formatEuros(order.totalCents)}`,
         idempotencyKey: `shop-paid-${order.orderNumber}`,
       });
     }
@@ -276,16 +298,32 @@ export async function notifyNewsletterWelcome(subscriberId: number): Promise<voi
       .limit(1);
     if (!sub) return;
     const unsubscribe = `https://fork-clothe.com/api/newsletter?unsubscribe=${sub.token}`;
+    // Code de bienvenue (fenêtre -10 %) s'il est actif.
+    const settings = await loadSettings();
+    let welcome: { code: string; percent: number } | null = null;
+    if (settings.popup.active && settings.popup.code) {
+      const [code] = await db.select().from(promoCodes).where(eq(promoCodes.code, settings.popup.code)).limit(1);
+      if (code?.active && code.kind === "percent" && code.percent && (!code.endsAt || code.endsAt.getTime() > Date.now()))
+        welcome = { code: code.code, percent: code.percent };
+    }
+    const codeHtml = welcome
+      ? `<p style="font-size:14px;line-height:1.6">Ici, chaque t-shirt est dessiné à Toulon et imprimé à La Farlède, sur du coton 220 g.</p>
+<p style="margin:20px 0;text-align:center"><span style="display:inline-block;border:2px dashed #111;padding:12px 20px;font-size:22px;font-weight:900;letter-spacing:2px">${escapeHtml(welcome.code)}</span><br><span style="font-size:13px;color:#6b6b6b">-${welcome.percent} % sur ta première commande</span></p>
+<p style="margin:20px 0;text-align:center"><a href="https://fork-clothe.com/?src=email-bienvenue#produits" style="display:inline-block;background:#111;color:#fff;text-decoration:none;padding:14px 24px;font-weight:bold;text-transform:uppercase;font-size:13px;letter-spacing:1px">Voir la collection</a></p>
+<p style="font-size:14px;line-height:1.6">Et tu seras prévenu(e) avant tout le monde des nouvelles sorties.<br>À très vite,<br>Matisse · FORK</p>`
+      : "";
     await sendEmail({
       to: sub.email,
-      subject: "FORK · Tu seras prévenu de la prochaine collection",
+      subject: welcome ? `FORK · Tes -${welcome.percent} % sont là ☀️` : "FORK · Tu seras prévenu de la prochaine collection",
       html: layout(
-        "C'est noté !",
-        `<p style="font-size:14px;line-height:1.6">Merci ! Tu seras parmi les premiers prévenus de la sortie de la prochaine collection FORK.</p>
-<p style="font-size:14px;line-height:1.6">En attendant, la collection actuelle t'attend sur <a href="https://fork-clothe.com" style="color:#111">fork-clothe.com</a>.</p>
-<p style="font-size:12px;line-height:1.6;color:#6b6b6b">Tu ne veux plus recevoir ces e-mails ? <a href="${unsubscribe}" style="color:#6b6b6b">Se désinscrire en un clic</a>.</p>`,
+        welcome ? "Bienvenue chez FORK" : "C'est noté !",
+        (welcome
+          ? codeHtml
+          : `<p style="font-size:14px;line-height:1.6">Merci ! Tu seras parmi les premiers prévenus de la sortie de la prochaine collection FORK.</p>
+<p style="font-size:14px;line-height:1.6">En attendant, la collection actuelle t'attend sur <a href="https://fork-clothe.com" style="color:#111">fork-clothe.com</a>.</p>`) +
+          `<p style="font-size:12px;line-height:1.6;color:#6b6b6b">Tu ne veux plus recevoir ces e-mails ? <a href="${unsubscribe}" style="color:#6b6b6b">Se désinscrire en un clic</a>.</p>`,
       ),
-      text: `Merci ! Tu seras prévenu de la sortie de la prochaine collection FORK.\n\nSe désinscrire : ${unsubscribe}\n\nFORK · Toulon`,
+      text: `${welcome ? `Bienvenue chez FORK !\n\nTon code : ${welcome.code} (-${welcome.percent} % sur ta première commande)\nhttps://fork-clothe.com\n\nTu seras aussi prévenu(e) avant tout le monde des nouvelles sorties.` : "Merci ! Tu seras prévenu de la sortie de la prochaine collection FORK."}\n\nSe désinscrire : ${unsubscribe}\n\nFORK · Toulon`,
       idempotencyKey: `newsletter-welcome-${subscriberId}-${sub.token.slice(0, 8)}-${new Date().toISOString().slice(0, 10)}`,
     });
   } catch (error) {

@@ -1,3 +1,4 @@
+import { onOrderPaid } from "./promos.js";
 import { and, eq, ne, sql } from "drizzle-orm";
 import { db } from "../db/index.js";
 import { orders, payments } from "../db/schema.js";
@@ -179,6 +180,7 @@ async function confirmInner(checkoutId: string): Promise<ConfirmResult> {
     if (transitioned[0].status !== "paid") {
       console.warn("Payment confirmed on an order that was not pending", order.id, transitioned[0].status);
     }
+    await onOrderPaid(order.id);
     await decrementForOrder(order.id);
     await notifyOrderPaid(order.id);
   } else {

@@ -413,3 +413,36 @@ h1, h2, h3, h4 { margin: 0; text-transform: uppercase; font-weight: 900; letter-
 .size-table { width: 100%; border-collapse: collapse; font-size: .9rem; margin: 6px 0; }
 .size-table th, .size-table td { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--line); font-variant-numeric: tabular-nums; }
 .size-table thead th { font-size: .7rem; text-transform: uppercase; letter-spacing: .05em; }
+
+/* Pack, réassurance, codes promo, carte cadeau, fenêtre -10 % */
+.pack-band { margin-top: 36px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px 24px; border: 1px solid var(--ink); padding: 18px 20px; }
+.pack-band div { display: grid; gap: 2px; }
+.pack-band b { text-transform: uppercase; letter-spacing: .03em; }
+.pack-band span { font-size: .86rem; color: var(--muted); }
+.pack-box { border: 1px dashed var(--ink); padding: 12px 14px; display: grid; gap: 2px; }
+.pack-box b { text-transform: uppercase; font-size: .82rem; letter-spacing: .04em; }
+.pack-box span { font-size: .82rem; color: var(--muted); }
+.perks { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; font-size: .86rem; }
+.perks li { display: flex; align-items: center; gap: 10px; }
+.perks svg { width: 20px; height: 20px; flex: none; }
+.pack-nudge { margin-top: 14px; border: 1px dashed var(--ink); padding: 12px 14px; display: grid; gap: 4px; font-size: .86rem; }
+.pack-nudge.on { border-style: solid; border-color: var(--ok); }
+.pack-nudge.on b { color: var(--ok); }
+.pack-nudge span { color: var(--muted); }
+.pack-nudge .link { justify-self: start; }
+.row.save { color: var(--ok); font-weight: 600; }
+.promo-row { display: flex; gap: 8px; }
+.promo-row input { flex: 1; min-width: 0; text-transform: uppercase; }
+.promo-row .btn { padding-inline: 16px; min-height: 44px; }
+.gift-visual { width: 100%; height: auto; border-radius: 14px; margin-bottom: 14px; }
+.promo-pop { position: fixed; z-index: 70; left: 50%; bottom: max(16px, env(safe-area-inset-bottom)); transform: translateX(-50%); width: min(420px, calc(100% - 32px)); background: var(--bg); border: 1px solid var(--ink); box-shadow: 0 18px 50px rgba(0, 0, 0, .25); padding: 24px 20px 18px; display: grid; gap: 10px; animation: popIn .35s ease-out; }
+.promo-pop h3 { font-size: 1.5rem; padding-right: 28px; }
+.promo-pop p { margin: 0; }
+.promo-pop form { display: grid; gap: 10px; margin-top: 4px; }
+.promo-pop input[type="email"] { width: 100%; padding: 13px 14px; border: 1px solid var(--ink); background: var(--white); font-size: 16px; }
+.promo-pop .x { position: absolute; top: 10px; right: 10px; width: 40px; height: 40px; font-size: 1.1rem; }
+.pop-msg { font-size: .84rem; color: var(--red); min-height: 0; }
+@keyframes popIn { from { opacity: 0; transform: translate(-50%, 16px); } to { opacity: 1; transform: translate(-50%, 0); } }
+.promo-pop .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.line img[src$=".svg"] { object-fit: contain; height: 64px; }
+#giftDrawer textarea, #cartDrawer textarea { width: 100%; padding: 12px; border: 1px solid var(--line); background: var(--white); font-size: 16px; resize: vertical; }

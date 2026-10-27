@@ -78,12 +78,20 @@ const listColumns = {
   status: orders.status,
   paymentStatus: orders.paymentStatus,
   paymentReference: orders.paymentReference,
+  paymentProvider: orders.paymentProvider,
   carrier: orders.carrier,
   trackingNumber: orders.trackingNumber,
   trackingUrl: orders.trackingUrl,
   shipmentStatus: orders.shipmentStatus,
   shippedAt: orders.shippedAt,
   deliveredAt: orders.deliveredAt,
+  discountCents: orders.discountCents,
+  discountLabel: orders.discountLabel,
+  giftCardCode: orders.giftCardCode,
+  giftCardCents: orders.giftCardCents,
+  isGift: orders.isGift,
+  giftMessage: orders.giftMessage,
+  source: orders.source,
 };
 
 export default async (request: Request) => {

@@ -28,8 +28,8 @@
   <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebSite", "name": "FORK", "alternateName": ["FORK Clothe", "FORK Toulon", "FORK vêtements"], "url": "https://fork-clothe.com/"}</script>
 </head>
 <body>
-  <div class="annonce">
-    <div class="wrap">Livraison offerte à moins de 10 km de Toulon · Colissimo suivi en France métropolitaine</div>
+  <div class="annonce" id="annonce">
+    <div class="wrap" id="annonceText">Livraison offerte dès 2 t-shirts · Expédié depuis Toulon sous 48 h</div>
   </div>
 
   <a class="ticker" href="https://fork-padel-cup.forkofficiel.workers.dev/" target="_blank" rel="noopener" aria-label="FORK PADEL CUP : tournoi de padel par équipes de 2, billetterie bientôt disponible. En savoir plus">
@@ -113,6 +113,10 @@
         </div>
       </div>
       <div class="pgrid" id="productGrid"></div>
+      <div class="pack-band">
+        <div><b>Pack 2 t-shirts : <span data-pack-percent>-10 %</span> et livraison offerte</b><span>Un pour toi, un à offrir. La remise s'applique toute seule dans le panier.</span></div>
+        <button type="button" class="btn out" data-giftcard>Offrir une carte cadeau</button>
+      </div>
     </section>
 
     <section class="mood" aria-label="Ambiance FORK">
@@ -198,8 +202,8 @@
     <div class="wrap">
       <div class="trust">
         <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="10" width="16" height="11"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><b>Paiement sécurisé</b><span>Carte bancaire via SumUp</span></div>
-        <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7z"/><circle cx="7" cy="18" r="1.6"/><circle cx="17" cy="18" r="1.6"/></svg><b>Livraison offerte</b><span>À moins de 10 km de Toulon</span></div>
-        <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3 3 7.5v9L12 21l9-4.5v-9L12 3Z"/><path d="m3 7.5 9 4.5 9-4.5M12 12v9"/></svg><b>Colissimo suivi</b><span>7,64 € au-delà de 10 km</span></div>
+        <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7z"/><circle cx="7" cy="18" r="1.6"/><circle cx="17" cy="18" r="1.6"/></svg><b>Livraison offerte</b><span>Dès 2 t-shirts, ou à moins de 10 km de Toulon</span></div>
+        <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3 3 7.5v9L12 21l9-4.5v-9L12 3Z"/><path d="m3 7.5 9 4.5 9-4.5M12 12v9"/></svg><b>Expédié sous 48 h</b><span>Colissimo suivi · 7,64 € pour 1 t-shirt au-delà de 10 km</span></div>
         <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg><b>Compte client</b><span>Commandes et suivi au même endroit</span></div>
       </div>
     </div>
@@ -207,11 +211,13 @@
     <section class="sec wrap" id="faq">
       <div class="sec-head"><h2>Questions fréquentes</h2></div>
       <div class="faq">
-        <details><summary>Quels sont les délais et frais de livraison ?</summary><p>Les commandes sont expédiées en Colissimo avec suivi, en France métropolitaine, en général 1 à 3 jours ouvrés après la validation du paiement ; le délai de transport dépend ensuite de La Poste. La livraison est offerte à moins de 10 km du centre de Toulon. Au-delà, elle coûte 7,64 €. Le montant exact est calculé à partir de ton adresse et affiché avant le paiement.</p></details>
+        <details><summary>Quels sont les délais et frais de livraison ?</summary><p>Les commandes sont expédiées en Colissimo avec suivi, en France métropolitaine, sous 48 h après la validation du paiement ; le délai de transport dépend ensuite de La Poste. La livraison est offerte dès 2 t-shirts, ou à moins de 10 km du centre de Toulon. Sinon, elle coûte 7,64 €. Le montant exact est calculé à partir de ton adresse et affiché avant le paiement.</p></details>
         <details><summary>Quelle taille choisir ?</summary><p>Nos t-shirts existent en S, M, L, XL, XXL et 3XL selon les modèles (les tailles disponibles sont indiquées sur chaque fiche). Mesures à plat (largeur d'aisselle à aisselle × longueur) : S 46 × 71 cm, M 50 × 73 cm, L 55 × 76 cm, XL 59 × 76 cm, XXL 63 × 79 cm, 3XL 65 × 82 cm. Le tableau est aussi sur chaque fiche. Un doute ? Écris-nous sur WhatsApp au 07 66 75 18 40, on te conseille.</p></details>
         <details><summary>Dois-je créer un compte pour commander ?</summary><p>Non. Tu peux commander sans compte. Si tu te connectes plus tard avec Google en utilisant la même adresse e-mail, ta commande apparaît automatiquement dans « Mes commandes ».</p></details>
         <details><summary>Comment suivre mon colis ?</summary><p>Dès l'expédition, tu reçois un e-mail avec le numéro de suivi et le bouton « Suivre mon colis ». Le suivi est aussi visible dans ton compte, rubrique « Mes commandes ».</p></details>
         <details><summary>Puis-je retourner un article ?</summary><p>Oui. Tu as 14 jours à compter de la réception de ta commande pour changer d'avis, sans avoir à te justifier. Préviens-nous par e-mail à <a href="mailto:forkofficiel@gmail.com">forkofficiel@gmail.com</a>, puis renvoie les articles non portés et dans leur état d'origine dans les 14 jours, à : Pialat Matisse – FORK, 147 avenue Guichon de Grandpont, 83200 Toulon. Les frais de renvoi sont à ta charge. On te rembourse la totalité des sommes versées, y compris la livraison initiale au tarif standard, au plus tard 14 jours après ta demande (le remboursement peut attendre la réception du colis ou la preuve de son envoi). Si l'article est défectueux ou si l'erreur vient de nous, les frais sont pour nous. Tous les détails sont dans nos <a href="cgv.html">CGV</a>.</p></details>
+        <details><summary>Comment fonctionne la carte cadeau ?</summary><p>Tu choisis un montant (30, 50 ou 60 €) et tu ajoutes un petit mot si tu veux. Après le paiement, la carte est envoyée par e-mail à la personne de ton choix, ou à toi pour que tu la transfères ou l'imprimes. Elle est valable un an et s'utilise en une ou plusieurs fois sur fork-clothe.com : il suffit de saisir son code au moment de la commande. Pratique quand on ne connaît pas la taille !</p></details>
+        <details><summary>Comment profiter du pack 2 t-shirts ?</summary><p>Mets au moins 2 t-shirts dans ton panier (modèles et tailles au choix) : la remise du pack et la livraison offerte s'appliquent toutes seules. Le pack ne se cumule pas avec un code promo : c'est la remise la plus avantageuse qui compte.</p></details>
         <details><summary>Puis-je modifier ou annuler ma commande ?</summary><p>Oui, tant que le colis n'a pas été expédié. Écris-nous sur WhatsApp au 07 66 75 18 40 avec ton numéro de commande.</p></details>
       </div>
     </section>
@@ -224,7 +230,7 @@
           <div class="flogo"><img src="logo.png" alt="" width="56" height="56">FORK</div>
           <p class="muted">La vibe de Toulon dans ton dressing.</p>
         </div>
-        <div><h4>Boutique</h4><ul><li><a href="#produits" data-filter="all">La collection</a></li><li><a href="#produits" data-filter="homme">Homme</a></li><li><a href="#produits" data-filter="femme">Femme</a></li></ul></div>
+        <div><h4>Boutique</h4><ul><li><a href="#produits" data-filter="all">La collection</a></li><li><a href="#produits" data-filter="homme">Homme</a></li><li><a href="#produits" data-filter="femme">Femme</a></li><li><button type="button" data-giftcard>Carte cadeau</button></li></ul></div>
         <div><h4>FORK</h4><ul><li><a href="#histoire">Notre histoire</a></li><li><a href="#match">Jour de match</a></li><li><button type="button" data-open-account>Mon compte</button></li></ul></div>
         <div><h4>Aide</h4><ul><li><a href="#faq">FAQ</a></li><li><a href="https://wa.me/33766751840" target="_blank" rel="noopener">WhatsApp · 07 66 75 18 40</a></li><li><a href="mailto:forkofficiel@gmail.com">E-mail · forkofficiel@gmail.com</a></li><li><a href="https://www.instagram.com/fork__off/" target="_blank" rel="noopener">Instagram · @fork__off</a></li></ul></div>
       </div>
@@ -244,6 +250,7 @@
         <a href="#moments">Vos moments</a>
         <a href="#match">Jour de match</a>
         <a href="#histoire">À propos</a>
+        <button type="button" data-giftcard>Carte cadeau</button>
         <a href="#faq">Aide</a>
         <button type="button" data-open-account>Mon compte</button>
         <a href="https://www.instagram.com/fork__off/" target="_blank" rel="noopener">Instagram · @fork__off</a>
@@ -282,6 +289,14 @@
       <div class="search-results" id="searchResults"></div>
     </div>
   </aside>
+
+  <aside class="drawer" id="giftDrawer" hidden aria-label="Carte cadeau">
+    <div class="dhead"><h3>Carte cadeau</h3><button class="x" data-close aria-label="Fermer">✕</button></div>
+    <div class="dbody" id="giftBody"></div>
+    <div class="dfoot" id="giftFoot"></div>
+  </aside>
+
+  <div class="promo-pop" id="promoPop" hidden role="dialog" aria-modal="false" aria-labelledby="promoTitle"></div>
 
   <aside class="drawer" id="cartDrawer" hidden aria-label="Panier">
     <div class="dhead"><h3 id="cartTitle">Panier</h3><button class="x" data-close aria-label="Fermer le panier">✕</button></div>
