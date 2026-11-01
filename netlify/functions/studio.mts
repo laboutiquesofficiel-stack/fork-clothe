@@ -5,7 +5,7 @@ import { studioDesigns } from "../../db/schema.js";
 import { cleanDesign, loadStudioSettings, priceOf, studioOpen, tierOf } from "../../lib/studio.js";
 
 /**
- * POST /api/studio/designs { design } → enregistre une création du Studio et
+ * POST /api/studio/designs { design, contest? } → enregistre une création du Studio et
  * renvoie son identifiant, son niveau et son prix (calculés ici, jamais par le navigateur).
  */
 export default async (request: Request) => {
@@ -14,7 +14,7 @@ export default async (request: Request) => {
     if (!studioOpen(settings)) {
       return Response.json({ error: "Le Studio ne prend pas de commandes en ce moment." }, { status: 409 });
     }
-    const body = (await request.json().catch(() => null)) as { design?: unknown } | null;
+    const body = (await request.json().catch(() => null)) as { design?: unknown; contest?: unknown } | null;
     const result = await cleanDesign(body?.design, settings);
     if (!result.ok) return Response.json({ error: result.error }, { status: 400 });
     const tier = tierOf(result.design);
@@ -23,6 +23,7 @@ export default async (request: Request) => {
     await db.insert(studioDesigns).values({
       publicId,
       design: result.design as unknown as Record<string, unknown>,
+      contest: body?.contest === true,
       tier,
       priceCents,
     });

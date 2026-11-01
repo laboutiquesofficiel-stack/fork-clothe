@@ -62,6 +62,7 @@ async function overview() {
         priceCents: r.priceCents,
         design: r.design,
         adminNote: r.adminNote,
+        contest: r.contest,
         createdAt: r.createdAt,
         order: o ? { number: o.orderNumber, name: o.customerName, email: o.customerEmail, status: o.status, paid: o.paymentStatus === "paid", date: o.createdAt } : null,
         size: item?.size ?? null,

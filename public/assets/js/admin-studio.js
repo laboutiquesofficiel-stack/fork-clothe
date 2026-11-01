@@ -86,6 +86,7 @@
       .join("");
     return `<article class="card" data-design="${esc(d.id)}">
       <div class="card-head"><b>${d.order ? esc(d.order.number) : "Sans commande"}</b><span class="pill ${tone}">${esc(label)}</span></div>
+      ${d.contest ? `<p class="pill ok">🏆 Participe au concours${d.design.front.concat(d.design.back).some((e) => e.t === "image") ? " · contient une image importée : à exclure sauf preuve qu'elle est à lui" : ""}</p>` : ""}
       <div class="st-recap-views">
         <figure>${L.renderSide(d.design, "front", { settings: s, imageHref: L.imageUrl })}<figcaption>Devant</figcaption></figure>
         <figure>${L.renderSide(d.design, "back", { settings: s, imageHref: L.imageUrl })}<figcaption>Dos</figcaption></figure>
@@ -114,7 +115,7 @@
     const box = $("#studioBody");
     const s = data.settings;
     const list = data.designs.filter((d) => d.order?.paid !== false);
-    const shown = filter === "all" ? list : list.filter((d) => d.status === filter);
+    const shown = filter === "all" ? list : filter === "contest" ? list.filter((d) => d.contest) : list.filter((d) => d.status === filter);
     const count = (st) => list.filter((d) => d.status === st).length;
     box.innerHTML = `
       <form class="card stack" id="studioSettings">
@@ -141,7 +142,7 @@
       </form>
       ${summary(list)}
       <div class="stock-modes" role="tablist" aria-label="Filtre">
-        ${[["to_review", `À vérifier (${count("to_review")})`], ["approved", `Validées (${count("approved")})`], ["in_production", `En fabrication (${count("in_production")})`], ["rejected", `Refusées (${count("rejected")})`], ["all", "Toutes"]]
+        ${[["to_review", `À vérifier (${count("to_review")})`], ["approved", `Validées (${count("approved")})`], ["in_production", `En fabrication (${count("in_production")})`], ["rejected", `Refusées (${count("rejected")})`], ["contest", `Concours (${list.filter((d) => d.contest).length})`], ["all", "Toutes"]]
           .map(([id, name]) => `<button type="button" class="tab" data-sfilter="${id}" aria-selected="${filter === id}">${name}</button>`)
           .join("")}
       </div>

@@ -464,6 +464,8 @@ export const studioDesigns = pgTable("studio_designs", {
   status: text().notNull().default("draft"),
   orderId: integer("order_id"),
   adminNote: text("admin_note"),
+  /** Le client participe au concours FORK Studio (case cochée par lui, jamais par défaut). */
+  contest: boolean().notNull().default(false),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });

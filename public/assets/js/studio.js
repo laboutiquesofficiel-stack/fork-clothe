@@ -652,7 +652,7 @@
   });
 
   // --- Récapitulatif et ajout au panier ---------------------------------------
-  const rec = { size: null, qty: 1, ok: false, busy: false };
+  const rec = { size: null, qty: 1, ok: false, busy: false, contest: false };
   function openRecap() {
     if (!st.design.front.length && !st.design.back.length) return toast("Ajoute au moins un texte, un motif ou une image.", true);
     st.sel = null;
@@ -677,6 +677,7 @@
         <div class="field"><span class="up">Quantité</span><div class="qty"><button type="button" data-rqty="-1" aria-label="Diminuer">−</button><span>${rec.qty}</span><button type="button" data-rqty="1" aria-label="Augmenter">+</button></div></div>
         <p class="notice">${esc(cfg.deliveryText || "Précommande de Noël")}${cfg.deadline ? ` · commande avant le ${esc(dateFr(cfg.deadline))}` : ""}. Chaque création est vérifiée par FORK avant fabrication.</p>
         <label class="check"><input type="checkbox" id="stOk" ${rec.ok ? "checked" : ""}><span>J'ai compris : mon t-shirt est fabriqué sur mesure pour moi et ne pourra pas être retourné (sauf défaut de fabrication).</span></label>
+        <label class="check"><input type="checkbox" id="stContest" ${rec.contest ? "checked" : ""}><span>🏆 <b>Je participe au concours FORK Studio</b> (facultatif) : si ma création est choisie, FORK pourra la vendre en édition limitée, signée de mon prénom. <a class="link" href="/studio/concours.html" target="_blank" rel="noopener">Règlement</a></span></label>
         <p class="notice err" id="stRecapErr" hidden></p>
         <button type="button" class="btn full" id="stAdd" ${rec.size && rec.ok && unit && !rec.busy ? "" : "disabled"}>${rec.busy ? "Enregistrement…" : `Ajouter au panier · ${unit ? euros(unit * rec.qty) : "—"}`}</button>
         <button type="button" class="link" data-st="back">Modifier ma création</button>
@@ -705,6 +706,7 @@
     if (b.id === "stAdd") return addToCart();
   });
   recap.addEventListener("change", (e) => {
+    if (e.target.id === "stContest") rec.contest = e.target.checked;
     if (e.target.id === "stOk") {
       rec.ok = e.target.checked;
       renderRecap();
@@ -715,7 +717,7 @@
     rec.busy = true;
     renderRecap();
     try {
-      const res = await fetch("/api/studio/designs", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ design: st.design }) });
+      const res = await fetch("/api/studio/designs", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ design: st.design, contest: rec.contest }) });
       const data = await res.json().catch(() => ({}));
       if (!res.ok || !data.id) throw new Error(data.error || "Impossible d'enregistrer ta création pour le moment.");
       let thumb = null;
