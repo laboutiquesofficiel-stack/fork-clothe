@@ -134,3 +134,5 @@ body.st-open { overflow: hidden; }
 .st-end { margin-left: auto; }
 .st-recap .row b { white-space: nowrap; }
 .st-sw-mini { display: inline-block; width: 14px; height: 14px; vertical-align: -2px; border-width: 1px; }
+.st-svg .fk-ink-light { mix-blend-mode: multiply; }
+.st-svg .fk-ink-dark { opacity: .96; }

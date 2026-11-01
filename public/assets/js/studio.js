@@ -169,7 +169,7 @@
   const imageHref = (el) => L.imageUrl(el);
   function renderStage() {
     stage.innerHTML =
-      L.renderSide(st.design, st.side, { settings: cfg, interactive: true, selected: st.sel, showZone: true, imageHref }) +
+      L.renderSide(st.design, st.side, { settings: cfg, interactive: true, selected: st.sel, showZone: true, imageHref, crop: true }) +
       (st.hint && !els().length ? `<p class="st-hint">${st.side === "back" ? "Le dos est vide : ajoute un texte ou un motif ↓" : "Devant : ton logo FORK + ta zone en pointillés"}</p>` : "") +
       (st.hint && els().length && st.sel !== null ? `<p class="st-hint">Glisse pour déplacer · pince ou tire la poignée pour agrandir</p>` : "");
     const el = selected();
@@ -295,9 +295,10 @@
   // --- Gestes sur le t-shirt (doigt, souris) ---------------------------------
   const pointers = new Map();
   let gest = null;
+  // Coordonnées du doigt dans la zone d'impression (en mm), quel que soit le cadrage de la photo.
   function toSvg(e) {
-    const svg = stage.querySelector("svg");
-    const m = svg?.getScreenCTM();
+    const layer = stage.querySelector(".st-layer");
+    const m = layer?.getScreenCTM();
     if (!m) return { x: 0, y: 0 };
     const p = new DOMPoint(e.clientX, e.clientY).matrixTransform(m.inverse());
     return { x: p.x, y: p.y };
@@ -322,10 +323,9 @@
     pointers.set(e.pointerId, p);
     if (pointers.size === 2) return startPinch();
     if (pointers.size > 2) return;
-    const z = zone();
     if (e.target.closest(".st-handle-hit") && selected()) {
       const el = selected();
-      const c = { x: el.x + z.x, y: el.y + z.y };
+      const c = { x: el.x, y: el.y };
       gest = { type: "handle", c, d0: Math.max(1, dist(p, c)), a0: ang(c, p), size0: sizeOf(el), r0: el.r || 0, before: snap() };
       return;
     }

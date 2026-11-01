@@ -163,6 +163,8 @@
   }
 
   let uid = 0;
+  // Rendu de l'encre sur le tissu (repris dans studio.css pour l'affichage sur la page).
+  const INK_CSS = ".fk-ink-light{mix-blend-mode:multiply}.fk-ink-dark{opacity:.96}";
   function logoSvg(color, rect, href) {
     const id = `fkLogoTint${++uid}`;
     return `<filter id="${id}" x="0" y="0" width="1" height="1" color-interpolation-filters="sRGB"><feFlood flood-color="${esc(color)}"/><feComposite in2="SourceAlpha" operator="in"/></filter>
@@ -173,7 +175,22 @@
    * Aperçu d'une face du t-shirt (vêtement + zone + éléments + logo).
    * opts : { settings, interactive, selected, showZone, imageHref(el), logoHref }
    */
+  // Photos « portées » (t-shirts vierges) et calage : position du milieu du col (cx, top, en px)
+  // et échelle s (px par mm) pour poser la création au bon endroit sur le torse.
+  const PHOTOS = {
+    blanc: {
+      front: { src: "/studio/portes/blanc-devant.jpg", w: 1200, h: 1600, cx: 600, top: 769, s: 1.725 },
+      back: { src: "/studio/portes/blanc-dos.jpg", w: 1200, h: 1600, cx: 588, top: 425, s: 1.644 },
+    },
+    noir: {
+      front: { src: "/studio/portes/noir-devant.jpg", w: 1200, h: 1600, cx: 594, top: 650, s: 1.919 },
+      back: { src: "/studio/portes/noir-dos.jpg", w: 1200, h: 1600, cx: 600, top: 494, s: 1.769 },
+    },
+  };
+  const photoOf = (design, side) => (PHOTOS[design.color] || PHOTOS.blanc)[side];
+
   function renderSide(design, side, opts = {}) {
+    if (opts.photo !== false && typeof renderPhoto === "function") return renderPhoto(design, side, opts);
     const g = GARMENTS[design.color] || GARMENTS.blanc;
     const neck = side === "front" ? 135 : 72;
     const z = zoneRect(side, opts.settings);
@@ -190,6 +207,31 @@
       ${opts.showZone ? `<rect class="st-zone" x="${z.x}" y="${z.y}" width="${z.w}" height="${z.h}" fill="none" stroke="${design.color === "noir" ? "rgba(255,255,255,.45)" : "rgba(0,0,0,.35)"}" stroke-width="1.6" stroke-dasharray="6 6" rx="2"/>` : ""}
       <g transform="translate(${z.x} ${z.y})" class="st-layer">${els}</g>
       ${logo}
+    </svg>`;
+  }
+
+  /**
+   * Aperçu « porté » : la création posée sur la photo d'un t-shirt vierge.
+   * Sur le blanc, l'impression est fondue (multiplication) pour garder plis et ombres du tissu.
+   * opts.crop : cadrage resserré sur le torse (éditeur).
+   */
+  function renderPhoto(design, side, opts = {}) {
+    const P = photoOf(design, side);
+    const z = zoneRect(side, opts.settings);
+    const bg = design.color === "noir" ? "#1a1a1a" : "#f4f2ee";
+    const els = (design[side] || [])
+      .map((el, i) => elementSvg(el, { interactive: opts.interactive, index: i, selected: opts.selected === i, bg, imageHref: opts.imageHref }))
+      .join("");
+    const logo = side === "front" ? logoSvg(design.logoColor || "#111111", logoRect(opts.settings), opts.logoHref || "/studio/logo-fork.png") : "";
+    const y0 = opts.crop ? Math.max(0, Math.round(P.top - 70 * P.s)) : 0;
+    const blend = design.color === "noir" ? "fk-ink-dark" : "fk-ink-light";
+    const zoneStroke = design.color === "noir" ? "rgba(255,255,255,.55)" : "rgba(0,0,0,.4)";
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 ${y0} ${P.w} ${P.h - y0}" class="st-svg st-photo" role="img" aria-label="T-shirt ${design.color === "noir" ? "noir" : "blanc"} porté, ${side === "front" ? "devant" : "dos"}">
+      <image href="${esc(opts.photoHref ? opts.photoHref(P) : P.src)}" x="0" y="0" width="${P.w}" height="${P.h}"/>
+      <g transform="translate(${(P.cx - CX * P.s).toFixed(2)} ${(P.top - 45 * P.s).toFixed(2)}) scale(${P.s})">
+        ${opts.showZone ? `<rect class="st-zone" x="${z.x}" y="${z.y}" width="${z.w}" height="${z.h}" fill="none" stroke="${zoneStroke}" stroke-width="1.4" stroke-dasharray="6 6" rx="2"/>` : ""}
+        <g class="${blend}"><g transform="translate(${z.x} ${z.y})" class="st-layer">${els}</g>${logo}</g>
+      </g>
     </svg>`;
   }
 
@@ -308,9 +350,16 @@
   /** Aperçu du t-shirt (vêtement compris) en image, pour le panier. */
   async function mockupDataUrl(design, side, settings, widthPx = 320) {
     const a = await embedAssets(design);
-    let svg = renderSide(design, side, { settings, logoHref: a.logoHref, imageHref: a.imageHref });
-    svg = svg.replace("<defs>", `<defs><style>${a.fontCss}</style>`).replace("<svg ", `<svg width="${W}" height="${H}" `);
-    const canvas = await svgToCanvas(svg, widthPx, (widthPx * H) / W, "#f8f4ec");
+    const P = photoOf(design, side);
+    const photo = await fetchDataUrl(P.src);
+    let svg = renderSide(design, side, { settings, logoHref: a.logoHref, imageHref: a.imageHref, photoHref: () => photo, crop: true });
+    const m = /viewBox="0 (\d+) (\d+) (\d+)"/.exec(svg);
+    const vw = Number(m[2]);
+    const vh = Number(m[3]);
+    svg = svg
+      .replace("<svg ", `<svg width="${vw}" height="${vh}" `)
+      .replace(/(<svg [^>]*>)/, `$1<style>${a.fontCss}${INK_CSS}</style>`);
+    const canvas = await svgToCanvas(svg, widthPx, (widthPx * vh) / vw, "#f8f4ec");
     return canvas.toDataURL("image/jpeg", 0.82);
   }
 
