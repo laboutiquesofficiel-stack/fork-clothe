@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <base href="/">
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" href="/favicon-96.png" type="image/png" sizes="96x96">
+  <link rel="icon" href="/favicon-192.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <meta name="theme-color" content="#0e2a3f">
+  <link rel="stylesheet" href="assets/css/fork.css">
+  <script src="assets/js/app.js" defer></script>
+  <link rel="stylesheet" href="assets/css/studio.css">
+  <script src="assets/js/studio-lib.js" defer></script>
+  <script src="assets/js/studio.js" defer></script>
+  <title>FORK Custom Studio · Crée ton t-shirt FORK personnalisé</title>
+  <meta name="description" content="FORK Custom Studio : crée ton propre t-shirt FORK avec tes textes, des motifs de Noël et de Toulon ou ta photo. Édition de Noël, fabriqué à La Farlède.">
+  <link rel="canonical" href="https://fork-clothe.com/studio/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="FORK">
+  <meta property="og:locale" content="fr_FR">
+  <meta property="og:url" content="https://fork-clothe.com/studio/">
+  <meta property="og:title" content="FORK Custom Studio · Ton t-shirt. Ton univers.">
+  <meta property="og:description" content="Crée ton propre t-shirt FORK pour Noël : textes, motifs, ta photo. Le logo FORK reste, tu choisis sa couleur.">
+  <meta property="og:image" content="https://fork-clothe.com/og-image.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+</head>
+<body data-page="studio">
+  <div class="annonce" id="annonce">
+    <div class="wrap" id="annonceText">Livraison offerte dès 2 t-shirts · Expédié depuis Toulon sous 48 h</div>
+  </div>
+
+  <a class="ticker" href="https://fork-padel-cup.forkofficiel.workers.dev/" target="_blank" rel="noopener" aria-label="FORK PADEL CUP : tournoi de padel par équipes de 2, billetterie bientôt disponible. En savoir plus">
+    <span class="tick-track" aria-hidden="true"><span class="tick-item"><b>🎾 FORK PADEL CUP</b><span>Tournoi de padel par équipes de 2</span><span>Billetterie bientôt disponible</span><span class="tick-cta">En savoir plus →</span></span><span class="tick-item"><b>🎾 FORK PADEL CUP</b><span>Tournoi de padel par équipes de 2</span><span>Billetterie bientôt disponible</span><span class="tick-cta">En savoir plus →</span></span><span class="tick-item"><b>🎾 FORK PADEL CUP</b><span>Tournoi de padel par équipes de 2</span><span>Billetterie bientôt disponible</span><span class="tick-cta">En savoir plus →</span></span><span class="tick-item"><b>🎾 FORK PADEL CUP</b><span>Tournoi de padel par équipes de 2</span><span>Billetterie bientôt disponible</span><span class="tick-cta">En savoir plus →</span></span><span class="tick-item"><b>🎾 FORK PADEL CUP</b><span>Tournoi de padel par équipes de 2</span><span>Billetterie bientôt disponible</span><span class="tick-cta">En savoir plus →</span></span><span class="tick-item"><b>🎾 FORK PADEL CUP</b><span>Tournoi de padel par équipes de 2</span><span>Billetterie bientôt disponible</span><span class="tick-cta">En savoir plus →</span></span><span class="tick-item"><b>🎾 FORK PADEL CUP</b><span>Tournoi de padel par équipes de 2</span><span>Billetterie bientôt disponible</span><span class="tick-cta">En savoir plus →</span></span><span class="tick-item"><b>🎾 FORK PADEL CUP</b><span>Tournoi de padel par équipes de 2</span><span>Billetterie bientôt disponible</span><span class="tick-cta">En savoir plus →</span></span></span>
+  </a>
+
+  <header class="site-header" id="top">
+    <div class="wrap hrow">
+      <div class="hside">
+        <button class="ico burger" id="menuOpen" aria-label="Ouvrir le menu" aria-controls="menuDrawer">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        </button>
+        <button class="ico" id="searchOpen" aria-label="Rechercher un article" aria-controls="searchDrawer">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <span class="txt">Rechercher</span>
+        </button>
+        <a class="ico ig" href="https://www.instagram.com/fork__off/" target="_blank" rel="noopener" aria-label="Instagram FORK">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>
+          <span class="txt">Instagram</span>
+        </a>
+      </div>
+      <a href="#top" class="brand" aria-label="FORK, accueil">
+        <img src="logo.png" alt="" width="46" height="46">
+        <span>FORK</span>
+      </a>
+      <div class="hside right">
+        <button class="ico" id="accountOpen" aria-controls="accountDrawer">
+          <span id="accountIcon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg></span>
+          <span class="txt" id="accountLabel">Compte</span>
+        </button>
+        <button class="ico" id="cartOpen" aria-controls="cartDrawer">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 8h14l-1 12H6L5 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+          <span class="txt">Panier</span>
+          <span class="count" id="cartCount">0</span>
+        </button>
+      </div>
+    </div>
+    <nav class="mainnav" aria-label="Navigation principale">
+      <a href="#produits" data-filter="all">La collection</a>
+      <a href="#produits" data-filter="homme">Homme</a>
+      <a href="#produits" data-filter="femme">Femme</a>
+      <a href="/studio/" class="nav-studio" data-studio-link hidden>Custom Studio</a>
+      <a href="#moments">Vos moments</a>
+      <a href="#match">Jour de match</a>
+      <a href="#histoire">À propos</a>
+      <a href="#faq">Aide</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="st-hero">
+      <div class="st-hero-txt">
+        <p class="up">FORK Custom Studio · Christmas Edition</p>
+        <h1>Ton t-shirt.<br>Ton univers.</h1>
+        <p>Crée ton propre t-shirt FORK : textes, motifs de Noël, soleil de Toulon, ta photo… Le logo FORK, lui, reste à sa place. Tu choisis juste sa couleur.</p>
+        <div class="st-hero-ctas">
+          <button type="button" class="btn light" data-studio-start disabled>Créer mon t-shirt</button>
+          <a class="btn out light-out" href="#st-niveaux">Voir les prix</a>
+        </div>
+        <p class="st-status" id="stStatus" aria-live="polite">Chargement…</p>
+      </div>
+      <div class="st-hero-art" id="stHeroArt" aria-hidden="true"></div>
+    </section>
+
+    <section class="sec wrap" aria-labelledby="stHow">
+      <div class="sec-head"><h2 id="stHow">Comment ça marche</h2></div>
+      <ol class="st-steps">
+        <li><b>Choisis ton t-shirt</b><span>Blanc ou noir, 100 % coton 220 g, du S au 3XL.</span></li>
+        <li><b>Crée ton design</b><span>Devant et dos : textes, motifs, formes, couleurs ou ta propre image. Déplace, agrandis et fais tourner au doigt.</span></li>
+        <li><b>On le fabrique pour Noël</b><span>On vérifie chaque création, puis elles sont imprimées ensemble à La Farlède et envoyées en même temps.</span></li>
+      </ol>
+    </section>
+
+    <section class="sec wrap" aria-labelledby="stEx">
+      <div class="sec-head"><div><h2 id="stEx">Exemples de créations</h2><p class="muted">Des idées faites par FORK pour te lancer. Pars de l'une d'elles et change ce que tu veux.</p></div></div>
+      <div class="st-examples" id="stExamples"></div>
+    </section>
+
+    <section class="sec wrap" id="st-niveaux" aria-labelledby="stTiers">
+      <div class="sec-head"><div><h2 id="stTiers">Les trois niveaux</h2><p class="muted">Le prix s'adapte tout seul à ce que tu utilises dans ta création.</p></div></div>
+      <div class="st-tiers">
+        <article class="st-tier"><span class="up">FORK Basic</span><b data-tier-price="basic">—</b><p>Motifs de la bibliothèque, formes et couleurs. Couleur du logo au choix.</p></article>
+        <article class="st-tier"><span class="up">FORK Custom</span><b data-tier-price="custom">—</b><p>Tout le Basic + tes propres textes, avec 9 polices.</p></article>
+        <article class="st-tier"><span class="up">FORK Unlimited</span><b data-tier-price="unlimited">—</b><p>Tout le Custom + ta propre photo ou image.</p></article>
+      </div>
+      <p class="hint" id="stBothSides"></p>
+    </section>
+
+    <section class="split dark" aria-labelledby="stXmas">
+      <div class="split-img st-xmas-art" id="stXmasArt" aria-hidden="true"></div>
+      <div class="split-txt">
+        <span class="up">Édition limitée</span>
+        <h2 id="stXmas">Christmas Edition</h2>
+        <p>Flocons, sapins, étoiles, houx, bonnet… revisités à la sauce FORK, avec une police spéciale Noël. À offrir, ou à porter au repas de famille.</p>
+        <p id="stDeadline"></p>
+      </div>
+    </section>
+
+    <section class="sec wrap" aria-labelledby="stMade">
+      <div class="sec-head"><h2 id="stMade">Fabrication et livraison</h2></div>
+      <div class="faq">
+        <details open><summary>Comment est fabriqué mon t-shirt ?</summary><p>Ta création est imprimée en DTF à La Farlède, sur nos t-shirts 100 % coton 220 g. Ce que tu vois dans le studio est un aperçu : les couleurs peuvent légèrement varier entre l'écran et le tissu, mais les positions et les tailles sont exactement celles du fichier imprimé.</p></details>
+        <details><summary>Quand vais-je le recevoir ?</summary><p id="stDeliveryFaq">C'est une précommande : toutes les créations sont fabriquées ensemble, puis envoyées en Colissimo suivi.</p></details>
+        <details><summary>Est-ce que FORK vérifie ma création ?</summary><p>Oui, chaque création est vérifiée avant fabrication. On refuse les contenus haineux, choquants ou illégaux, et les images que tu n'as pas le droit d'utiliser (logos d'autres marques, personnages, photos de quelqu'un d'autre…). Si on doit refuser ta création, on te prévient et on te rembourse entièrement.</p></details>
+        <details><summary>Puis-je la retourner ?</summary><p>Non : un article fabriqué sur mesure selon tes choix ne peut pas être retourné (article L221-28 du Code de la consommation). Vérifie bien ta taille avec le guide des tailles avant de commander. Un défaut de fabrication reste bien sûr couvert par la garantie légale.</p></details>
+        <details><summary>Quelle taille choisir ?</summary><p>Mesures à plat (largeur d'aisselle à aisselle × longueur) : S 46 × 71 cm, M 50 × 73 cm, L 55 × 76 cm, XL 59 × 76 cm, XXL 63 × 79 cm, 3XL 65 × 82 cm. Compare avec un t-shirt que tu aimes porter.</p></details>
+      </div>
+    </section>
+
+    <div class="st-editor" id="stEditor" hidden role="dialog" aria-modal="true" aria-label="Éditeur de t-shirt">
+      <header class="st-top">
+        <button type="button" class="st-ico" data-st="close" aria-label="Fermer l'éditeur">✕</button>
+        <div class="st-sides" role="tablist" aria-label="Face du t-shirt">
+          <button type="button" role="tab" data-side="front">Devant</button>
+          <button type="button" role="tab" data-side="back">Dos</button>
+        </div>
+        <button type="button" class="st-ico" data-st="undo" aria-label="Annuler">↶</button>
+        <button type="button" class="st-ico" data-st="redo" aria-label="Rétablir">↷</button>
+        <span class="st-price" id="stPrice"></span>
+      </header>
+      <div class="st-stage" id="stStage"></div>
+      <div class="st-panel" id="stPanel"></div>
+      <nav class="st-tabs" aria-label="Outils">
+        <button type="button" data-tab="tshirt"><span aria-hidden="true">👕</span>T-shirt</button>
+        <button type="button" data-tab="text"><span aria-hidden="true">Aa</span>Texte</button>
+        <button type="button" data-tab="motifs"><span aria-hidden="true">✦</span>Motifs</button>
+        <button type="button" data-tab="photo"><span aria-hidden="true">▣</span>Photo</button>
+        <button type="button" class="st-done" data-st="recap">Terminer</button>
+      </nav>
+    </div>
+
+    <div class="st-editor st-recap" id="stRecap" hidden role="dialog" aria-modal="true" aria-label="Récapitulatif de ma création">
+      <header class="st-top">
+        <button type="button" class="st-ico" data-st="back" aria-label="Revenir à l'éditeur">←</button>
+        <b class="st-recap-title">Ma création</b>
+        <span></span>
+      </header>
+      <div class="st-recap-body" id="stRecapBody"></div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="fcols">
+        <div>
+          <div class="flogo"><img src="logo.png" alt="" width="56" height="56">FORK</div>
+          <p class="muted">La vibe de Toulon dans ton dressing.</p>
+        </div>
+        <div><h4>Boutique</h4><ul><li><a href="#produits" data-filter="all">La collection</a></li><li><a href="#produits" data-filter="homme">Homme</a></li><li><a href="#produits" data-filter="femme">Femme</a></li><li><button type="button" data-giftcard>Carte cadeau</button></li></ul></div>
+        <div><h4>FORK</h4><ul><li><a href="#histoire">Notre histoire</a></li><li><a href="#match">Jour de match</a></li><li><button type="button" data-open-account>Mon compte</button></li></ul></div>
+        <div><h4>Aide</h4><ul><li><a href="#faq">FAQ</a></li><li><a href="https://wa.me/33766751840" target="_blank" rel="noopener">WhatsApp · 07 66 75 18 40</a></li><li><a href="mailto:forkofficiel@gmail.com">E-mail · forkofficiel@gmail.com</a></li><li><a href="https://www.instagram.com/fork__off/" target="_blank" rel="noopener">Instagram · @fork__off</a></li></ul></div>
+      </div>
+      <div class="fbottom"><span>© <span id="year">2026</span> FORK · fork-clothe.com</span><span class="flegal"><a href="mentions-legales.html">Mentions légales</a> · <a href="cgv.html">CGV</a> · <a href="confidentialite.html">Confidentialité</a></span></div>
+    </div>
+  </footer>
+
+  <div class="overlay" id="overlay" hidden></div>
+
+  <aside class="drawer left" id="menuDrawer" hidden aria-label="Menu">
+    <div class="dhead"><h3>Menu</h3><button class="x" data-close aria-label="Fermer le menu">✕</button></div>
+    <div class="dbody">
+      <nav class="mnav-links">
+        <a href="#produits" data-filter="all">La collection</a>
+        <a href="#produits" data-filter="homme">Homme</a>
+        <a href="#produits" data-filter="femme">Femme</a>
+        <a href="/studio/" data-studio-link hidden>Custom Studio ✦</a>
+        <a href="#moments">Vos moments</a>
+        <a href="#match">Jour de match</a>
+        <a href="#histoire">À propos</a>
+        <button type="button" data-giftcard>Carte cadeau</button>
+        <a href="#faq">Aide</a>
+        <button type="button" data-open-account>Mon compte</button>
+        <a href="https://www.instagram.com/fork__off/" target="_blank" rel="noopener">Instagram · @fork__off</a>
+      </nav>
+    </div>
+  </aside>
+
+  <aside class="drawer wide" id="productDrawer" hidden aria-label="Fiche produit">
+    <div class="dhead"><h3 id="productTitle">Produit</h3><button class="x" data-close aria-label="Fermer la fiche produit">✕</button></div>
+    <div class="sheet" id="productSheet"></div>
+  </aside>
+
+  <aside class="drawer" id="reviewDrawer" hidden aria-label="Donner mon avis">
+    <div class="dhead"><h3>Donner mon avis</h3><button class="x" data-close aria-label="Fermer">✕</button></div>
+    <div class="dbody" id="reviewBody"></div>
+  </aside>
+
+  <aside class="drawer" id="momentDrawer" hidden aria-label="Partager mon moment">
+    <div class="dhead"><h3>Partager mon moment</h3><button class="x" data-close aria-label="Fermer">✕</button></div>
+    <div class="dbody" id="momentBody"></div>
+  </aside>
+
+  <div class="lightbox" id="momentLightbox" hidden role="dialog" aria-modal="true" aria-label="Photo">
+    <button class="x" type="button" data-lightbox-close aria-label="Fermer la photo">✕</button>
+    <figure><img id="lightboxImg" alt=""><figcaption id="lightboxCap"></figcaption></figure>
+  </div>
+
+  <aside class="drawer" id="searchDrawer" hidden aria-label="Rechercher un article">
+    <div class="dhead"><h3>Rechercher</h3><button class="x" data-close aria-label="Fermer la recherche">✕</button></div>
+    <div class="dbody">
+      <div class="search-field">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input type="search" id="searchInput" placeholder="Un t-shirt, une couleur, un mot…" autocomplete="off" enterkeyhint="search" aria-label="Rechercher un article" aria-controls="searchResults">
+      </div>
+      <p class="hint" id="searchHint" aria-live="polite"></p>
+      <div class="search-results" id="searchResults"></div>
+    </div>
+  </aside>
+
+  <aside class="drawer" id="giftDrawer" hidden aria-label="Carte cadeau">
+    <div class="dhead"><h3>Carte cadeau</h3><button class="x" data-close aria-label="Fermer">✕</button></div>
+    <div class="dbody" id="giftBody"></div>
+    <div class="dfoot" id="giftFoot"></div>
+  </aside>
+
+  <div class="promo-pop" id="promoPop" hidden role="dialog" aria-modal="false" aria-labelledby="promoTitle"></div>
+
+  <aside class="drawer" id="cartDrawer" hidden aria-label="Panier">
+    <div class="dhead"><h3 id="cartTitle">Panier</h3><button class="x" data-close aria-label="Fermer le panier">✕</button></div>
+    <div class="steps" id="cartSteps"><span data-step="cart">Panier</span><span data-step="delivery">Livraison</span><span data-step="payment">Paiement</span></div>
+    <div class="dbody" id="cartBody"></div>
+    <div class="dfoot" id="cartFoot"></div>
+  </aside>
+
+  <aside class="drawer" id="accountDrawer" hidden aria-label="Mon compte">
+    <div class="dhead"><h3>Mon compte</h3><button class="x" data-close aria-label="Fermer mon compte">✕</button></div>
+    <div class="acct-tabs" id="accountTabs" role="tablist" hidden>
+      <button role="tab" data-acct="orders" aria-selected="true">Mes commandes</button>
+      <button role="tab" data-acct="addresses" aria-selected="false">Mes adresses</button>
+      <button role="tab" data-acct="info" aria-selected="false">Mes informations</button>
+    </div>
+    <div class="dbody" id="accountBody"></div>
+  </aside>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+</body>
+</html>

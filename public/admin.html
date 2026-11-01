@@ -11,6 +11,7 @@
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="stylesheet" href="assets/css/fork.css">
   <link rel="stylesheet" href="assets/css/admin.css">
+  <link rel="stylesheet" href="assets/css/studio.css">
   <script src="assets/js/admin.js" defer></script>
   <script src="assets/js/admin-reviews.js" defer></script>
   <script src="assets/js/admin-news.js" defer></script>
@@ -19,6 +20,8 @@
   <script src="assets/js/admin-visits.js" defer></script>
   <script src="assets/js/admin-moments.js" defer></script>
   <script src="assets/js/admin-promos.js" defer></script>
+  <script src="assets/js/studio-lib.js" defer></script>
+  <script src="assets/js/admin-studio.js" defer></script>
 </head>
 <body>
   <header class="site-header">
@@ -52,6 +55,7 @@
         <button type="button" class="switch" data-view="news" aria-selected="false">Inscrits</button>
         <button type="button" class="switch" data-view="visits" aria-selected="false">Visites</button>
         <button type="button" class="switch" data-view="promos" aria-selected="false">Promos</button>
+        <button type="button" class="switch" data-view="studio" aria-selected="false">Studio</button>
       </div>
       <div id="ordersPane">
       <div class="sec-head">
@@ -127,6 +131,10 @@
           <button type="button" class="tab" data-visits-days="365" aria-selected="false">1 an</button>
         </div>
         <div id="visitsBody" aria-live="polite"></div>
+      </div>
+      <div id="studioPane" hidden>
+        <div class="sec-head"><h1>FORK Custom Studio</h1></div>
+        <div id="studioBody" aria-live="polite"></div>
       </div>
       <div id="promosPane" hidden>
         <div class="sec-head"><h1>Promos et carte cadeau</h1></div>

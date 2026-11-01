@@ -1,13 +1,14 @@
 import { createHash, randomBytes } from "node:crypto";
 import type { Config } from "@netlify/functions";
-import { and, eq, ne } from "drizzle-orm";
+import { and, eq, inArray, ne } from "drizzle-orm";
 import { db } from "../../db/index.js";
-import { orders, sessions, type OrderItem } from "../../db/schema.js";
+import { orders, sessions, studioDesigns, type OrderItem } from "../../db/schema.js";
 import { available, decrementForOrder, loadStock } from "../../lib/stock.js";
 import { quoteDelivery, type DeliveryQuote } from "../../lib/delivery.js";
 import { checkCode, cleanCode, GIFT_CARD_AMOUNTS, GIFT_CARD_SKU, onOrderPaid, priceCart } from "../../lib/promos.js";
 import { loadSettings } from "../../lib/settings.js";
 import { notifyOrderPaid } from "../../lib/notifications.js";
+import { cleanDesign, loadStudioSettings, priceOf, STUDIO_SKU, studioOpen, tierOf, TIER_NAMES, type StudioDesign } from "../../lib/studio.js";
 
 type Product = {
   name: string;
@@ -292,11 +293,60 @@ export default async (request: Request) => {
       );
     }
 
+    // Créations du Studio : précommande, commandées seules (pas avec des articles classiques).
+    const studioIds: string[] = body.items
+      .filter((i: any) => i?.sku === STUDIO_SKU)
+      .map((i: any) => (typeof i?.designId === "string" ? i.designId : ""));
+    const studioMap = new Map<string, { design: StudioDesign; status: string }>();
+    let studioSettings = null as Awaited<ReturnType<typeof loadStudioSettings>> | null;
+    if (studioIds.length) {
+      if (studioIds.length !== body.items.length) {
+        return Response.json(
+          { error: "Les créations du Studio se commandent à part (elles sont livrées pour Noël). Termine d'abord l'une des deux commandes." },
+          { status: 400 },
+        );
+      }
+      studioSettings = await loadStudioSettings();
+      if (!studioOpen(studioSettings)) {
+        return Response.json({ error: "Les commandes du Studio sont fermées." }, { status: 409 });
+      }
+      const valid = studioIds.filter((id) => /^[a-f0-9]{16}$/.test(id));
+      const rows = valid.length
+        ? await db.select({ publicId: studioDesigns.publicId, design: studioDesigns.design, status: studioDesigns.status }).from(studioDesigns).where(inArray(studioDesigns.publicId, valid))
+        : [];
+      for (const r of rows) {
+        // On renettoie la création avec les réglages du jour (zones, prix) : rien ne vient du navigateur.
+        const cleaned = await cleanDesign(r.design, studioSettings);
+        if (cleaned.ok) studioMap.set(r.publicId, { design: cleaned.design, status: r.status });
+      }
+    }
+
     const items: OrderItem[] = body.items.map((input: unknown) => {
       const item = input as Record<string, unknown>;
 
       const sku = cleanText(item.sku, 80);
       const quantityRaw = Number(item.quantity);
+
+      if (sku === STUDIO_SKU) {
+        const designId = cleanText(item.designId, 20);
+        const found = studioMap.get(designId);
+        const size = cleanText(item.size, 10);
+        if (!found || !studioSettings || !studioSettings.sizes.includes(size) || !Number.isInteger(quantityRaw) || quantityRaw < 1 || quantityRaw > 10) {
+          throw new Error("INVALID_ITEM");
+        }
+        const tier = tierOf(found.design);
+        const unit = priceOf(found.design, studioSettings);
+        return {
+          sku,
+          name: `Création FORK Studio · ${TIER_NAMES[tier]}`,
+          color: found.design.color === "noir" ? "Noir" : "Blanc",
+          size,
+          quantity: quantityRaw,
+          unitPriceCents: unit,
+          lineTotalCents: unit * quantityRaw,
+          studio: { designId, tier },
+        };
+      }
 
       // Carte cadeau : montant choisi parmi les montants proposés, envoyée par e-mail.
       if (sku === GIFT_CARD_SKU) {

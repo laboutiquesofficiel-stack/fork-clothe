@@ -19,6 +19,8 @@ export type OrderItem = {
   lineTotalCents: number;
   /** Carte cadeau : envoyée par e-mail après le paiement (pas d'expédition). */
   giftCard?: { toName: string; toEmail: string; message: string };
+  /** Création FORK Custom Studio (précommande, fabriquée sur mesure). */
+  studio?: { designId: string; tier: string };
 };
 
 /**
@@ -444,4 +446,39 @@ export const siteSettings = pgTable("site_settings", {
   key: text().primaryKey(),
   value: jsonb().$type<Record<string, unknown>>().notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+/**
+ * FORK Custom Studio : créations des clients.
+ *
+ * design : la création nettoyée par le serveur (positions en mm par zone).
+ * status : draft (pas encore payée) | to_review (payée, à vérifier) |
+ * approved | rejected | in_production.
+ */
+export const studioDesigns = pgTable("studio_designs", {
+  id: serial().primaryKey(),
+  publicId: text("public_id").notNull().unique(),
+  design: jsonb().$type<Record<string, unknown>>().notNull(),
+  tier: text().notNull(),
+  priceCents: integer("price_cents").notNull(),
+  status: text().notNull().default("draft"),
+  orderId: integer("order_id"),
+  adminNote: text("admin_note"),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+/** Images importées dans le Studio (vérifiées par l'IA puis par FORK avant fabrication). */
+export const studioImages = pgTable("studio_images", {
+  id: serial().primaryKey(),
+  publicId: text("public_id").notNull().unique(),
+  key: text().notNull(),
+  contentType: text("content_type").notNull(),
+  dataBase64: text("data_base64").notNull(),
+  width: integer().notNull(),
+  height: integer().notNull(),
+  aiVerdict: jsonb("ai_verdict").$type<Record<string, unknown>>(),
+  aiNote: text("ai_note"),
+  visitorHash: text("visitor_hash"),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });

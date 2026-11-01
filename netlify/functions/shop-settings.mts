@@ -4,6 +4,7 @@ import { db } from "../../db/index.js";
 import { promoCodes } from "../../db/schema.js";
 import { GIFT_CARD_AMOUNTS } from "../../lib/promos.js";
 import { DEFAULT_SETTINGS, loadSettings } from "../../lib/settings.js";
+import { loadStudioSettings, studioOpen } from "../../lib/studio.js";
 
 /**
  * GET /api/shop-settings → réglages publics de la boutique (bandeau, pack,
@@ -12,6 +13,7 @@ import { DEFAULT_SETTINGS, loadSettings } from "../../lib/settings.js";
  */
 export default async () => {
   const settings = await loadSettings();
+  const studio = await loadStudioSettings();
   let popupPercent = 0;
   try {
     if (settings.popup.active && settings.popup.code) {
@@ -32,6 +34,16 @@ export default async () => {
       freeShippingMin: settings.freeShippingMin,
       popup: { active: settings.popup.active && popupPercent > 0, percent: popupPercent },
       giftCardAmounts: GIFT_CARD_AMOUNTS,
+      studio: {
+        enabled: studio.enabled,
+        open: studioOpen(studio),
+        deadline: studio.deadline,
+        deliveryText: studio.deliveryText,
+        prices: studio.prices,
+        zones: studio.zones,
+        logoWidth: studio.logoWidth,
+        sizes: studio.sizes,
+      },
     },
     {
       headers: {

@@ -1,7 +1,7 @@
 import { randomBytes } from "node:crypto";
-import { and, eq, gte, sql } from "drizzle-orm";
+import { and, eq, gte, inArray, sql } from "drizzle-orm";
 import { db } from "../db/index.js";
-import { orders, promoCodes, type OrderItem } from "../db/schema.js";
+import { orders, promoCodes, studioDesigns, type OrderItem } from "../db/schema.js";
 import { escapeHtml, formatEuros, sendEmail } from "./email.js";
 import { layout } from "./notifications.js";
 import { packPercent, type ShopSettings } from "./settings.js";
@@ -91,8 +91,11 @@ export function priceCart(
   deliveryFeeCents: number,
   code: CodeCheck | null,
 ): Pricing {
-  const tshirts = items.filter((i) => !i.giftCard);
+  // Remises (pack, code) : t-shirts classiques uniquement, jamais les créations du Studio ni les cartes cadeaux.
+  const tshirts = items.filter((i) => !i.giftCard && !i.studio);
   const tshirtCount = tshirts.reduce((n, i) => n + i.quantity, 0);
+  // Livraison offerte : tout ce qui part par colis (t-shirts et créations du Studio).
+  const physicalCount = items.filter((i) => !i.giftCard).reduce((n, i) => n + i.quantity, 0);
   const tshirtCents = tshirts.reduce((n, i) => n + i.lineTotalCents, 0);
   const subtotalCents = items.reduce((n, i) => n + i.lineTotalCents, 0);
 
@@ -105,7 +108,7 @@ export function priceCart(
   let codeOk = Boolean(code?.ok);
 
   if (code?.ok && code.kind === "percent" && tshirtCount === 0) {
-    codeMessage = "Ce code s'applique aux t-shirts uniquement.";
+    codeMessage = items.some((i) => i.studio) ? "Les codes promo ne s'appliquent pas aux créations du Studio." : "Ce code s'applique aux t-shirts uniquement.";
     codeOk = false;
   }
   if (codePercent > pack) {
@@ -122,8 +125,8 @@ export function priceCart(
   }
   const discountCents = Math.round((tshirtCents * percent) / 100);
 
-  const freeShipping = tshirtCount > 0 && settings.freeShippingMin > 0 && tshirtCount >= settings.freeShippingMin;
-  const shippingCents = tshirtCount === 0 || freeShipping ? 0 : Math.max(0, deliveryFeeCents);
+  const freeShipping = physicalCount > 0 && settings.freeShippingMin > 0 && physicalCount >= settings.freeShippingMin;
+  const shippingCents = physicalCount === 0 || freeShipping ? 0 : Math.max(0, deliveryFeeCents);
 
   const due = subtotalCents - discountCents + shippingCents;
   let giftCardCode: string | null = null;
@@ -183,6 +186,15 @@ export async function onOrderPaid(orderId: number): Promise<void> {
             idempotencyKey: `giftcard-low-${order.orderNumber}`,
           });
       }
+    }
+
+    // Créations du Studio : à vérifier par FORK avant la fabrication groupée.
+    const studioIds = (order.items as OrderItem[]).map((i) => i.studio?.designId).filter((x): x is string => Boolean(x));
+    if (studioIds.length) {
+      await db
+        .update(studioDesigns)
+        .set({ status: "to_review", orderId: order.id, updatedAt: new Date() })
+        .where(and(inArray(studioDesigns.publicId, studioIds), eq(studioDesigns.status, "draft")));
     }
 
     const giftItems = (order.items as OrderItem[]).filter((i) => i.giftCard);

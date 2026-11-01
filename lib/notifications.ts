@@ -3,6 +3,7 @@ import { eq } from "drizzle-orm";
 import { db } from "../db/index.js";
 import { moments, newsletterSubscribers, orders, productReviews, promoCodes, type OrderItem } from "../db/schema.js";
 import { loadSettings } from "./settings.js";
+import { loadStudioSettings } from "./studio.js";
 import { escapeHtml, formatEuros, sendEmail } from "./email.js";
 
 /**
@@ -129,16 +130,18 @@ export async function notifyOrderPaid(orderId: number): Promise<void> {
     const order = await loadOrder(orderId);
     if (!order) return;
 
+    const studioText = order.items.some((i) => i.studio) ? (await loadStudioSettings()).deliveryText : "";
     const html = layout(
       "Commande confirmée",
       `<p style="font-size:14px;line-height:1.6">Merci ${escapeHtml(firstName(order.customerName))} ! Ton paiement est bien reçu et ta commande <b>${escapeHtml(order.orderNumber)}</b> est confirmée.</p>
 ${itemsTable(order)}
 ${hasPhysical(order) ? `<p style="font-size:14px;line-height:1.6"><b>Livraison à :</b><br>${escapeHtml(order.customerName)}<br>${escapeHtml(order.shippingAddress)}</p>
 <p style="font-size:14px;line-height:1.6">On prépare ton colis. Tu recevras un e-mail avec le numéro de suivi dès l'expédition.</p>` : ""}
+${order.items.some((i) => i.studio) ? `<p style="font-size:14px;line-height:1.6;background:#f3f3f1;padding:10px 12px"><b>Ta création FORK Studio</b> est fabriquée sur mesure, rien que pour toi. On la vérifie, puis elle part en fabrication avec les autres créations de Noël. ${escapeHtml(studioText)}.<br><span style="font-size:12px;color:#6b6b6b">Un article personnalisé ne peut pas être retourné (article L221-28 du Code de la consommation).</span></p>` : ""}
 ${order.items.some((i) => i.giftCard) ? `<p style="font-size:14px;line-height:1.6">Ta carte cadeau vient d'être envoyée par e-mail${order.items.some((i) => i.giftCard?.toEmail) ? " à la personne que tu as indiquée" : " à ton adresse : tu peux la transférer ou l'imprimer"}.</p>` : ""}
 <p style="font-size:11px;line-height:1.5;color:#6b6b6b;margin-top:24px">${escapeHtml(MEDIATION_TEXT).replace(/\n/g, "<br>")}</p>`,
     );
-    const text = `Commande confirmée ${order.orderNumber}\n\nMerci ${firstName(order.customerName)} ! Ton paiement est bien reçu.\n\n${itemsText(order)}\nLivraison : ${order.shippingCents ? formatEuros(order.shippingCents) : hasPhysical(order) ? "offerte" : "par e-mail"}\nTotal payé : ${formatEuros(order.totalCents)}${hasPhysical(order) ? `\n\nLivraison à :\n${order.customerName}\n${order.shippingAddress}\n\nTu recevras le numéro de suivi dès l'expédition.` : "\n\nTa carte cadeau est envoyée par e-mail."}\nFORK · Toulon\n\n${MEDIATION_TEXT}`;
+    const text = `Commande confirmée ${order.orderNumber}\n\nMerci ${firstName(order.customerName)} ! Ton paiement est bien reçu.\n\n${itemsText(order)}\nLivraison : ${order.shippingCents ? formatEuros(order.shippingCents) : hasPhysical(order) ? "offerte" : "par e-mail"}\nTotal payé : ${formatEuros(order.totalCents)}${hasPhysical(order) ? `\n\nLivraison à :\n${order.customerName}\n${order.shippingAddress}\n\nTu recevras le numéro de suivi dès l'expédition.` : "\n\nTa carte cadeau est envoyée par e-mail."}${studioText ? `\n\nTa création FORK Studio est fabriquée sur mesure. ${studioText}. Un article personnalisé ne peut pas être retourné.` : ""}\nFORK · Toulon\n\n${MEDIATION_TEXT}`;
 
     await sendEmail({
       to: order.customerEmail,

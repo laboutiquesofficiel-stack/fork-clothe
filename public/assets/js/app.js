@@ -125,6 +125,9 @@
   const GIFT_SKU = "fork-carte-cadeau";
   const GIFT_IMG = "assets/carte-cadeau.svg";
   const isGiftLine = (l) => l.sku === GIFT_SKU;
+  // Création FORK Custom Studio : précommande fabriquée sur mesure (prix recalculé par le serveur).
+  const STUDIO_SKU = "fork-studio";
+  const isStudioLine = (l) => l.sku === STUDIO_SKU;
 
   // Réglages modifiables depuis l'admin (bandeau, pack, livraison offerte, fenêtre -10 %).
   let shop = { banner: null, pack: { twoPercent: 10, threePercent: 0 }, freeShippingMin: 2, popup: { active: false, percent: 0 }, giftCardAmounts: [30, 50, 60] };
@@ -835,7 +838,7 @@
       }),
     );
     $("#addToCart")?.addEventListener("click", () => {
-      addToCart(p.sku, sheet.size, sheet.qty);
+      if (!addToCart(p.sku, sheet.size, sheet.qty)) return;
       toast(`${p.name} · ${sheet.size} ajouté au panier`);
       openCart();
     });
@@ -848,7 +851,16 @@
   const PENDING_KEY = "fork-pending-order-v1";
   let cart = store
     .get(CART_KEY, [])
-    .filter((l) => l && l.qty > 0 && (isGiftLine(l) ? shop.giftCardAmounts.includes(Number(l.size)) : bySku.has(l.sku) && bySku.get(l.sku).sizes.includes(l.size)));
+    .filter(
+      (l) =>
+        l &&
+        l.qty > 0 &&
+        (isGiftLine(l)
+          ? shop.giftCardAmounts.includes(Number(l.size))
+          : isStudioLine(l)
+            ? /^[a-f0-9]{16}$/.test(l.designId || "") && Number(l.unitCents) > 0
+            : bySku.has(l.sku) && bySku.get(l.sku).sizes.includes(l.size)),
+    );
   let pending = store.get(PENDING_KEY, null);
 
   function saveCart() {
@@ -863,24 +875,58 @@
     }
     saveCart();
   }
+  /** Une création du Studio se commande seule : elle part en précommande pour Noël. */
+  function addStudioToCart(line) {
+    if (cart.length && !cart.every(isStudioLine)) {
+      return { ok: false, reason: "mixed" };
+    }
+    cart.push({ sku: STUDIO_SKU, size: line.size, qty: line.qty, designId: line.designId, unitCents: line.unitCents, tierName: line.tierName, colorName: line.colorName, thumb: line.thumb });
+    cartChanged();
+    return { ok: true };
+  }
+  window.ForkShop = {
+    addStudioToCart,
+    clearCart() {
+      cart = [];
+      cartChanged();
+    },
+    openCart: () => openCart(),
+    get shop() {
+      return shop;
+    },
+    onShop(fn) {
+      shopListeners.push(fn);
+    },
+  };
+  const shopListeners = [];
+
   function addToCart(sku, size, qty, gift) {
+    if (cart.some(isStudioLine)) {
+      toast("Ton panier contient une création FORK Studio (précommande de Noël) : elle se commande à part. Termine-la ou retire-la d'abord.", true);
+      return false;
+    }
     if (sku === GIFT_SKU) {
       cart.push({ sku, size, qty, gift });
       cartChanged();
-      return;
+      return true;
     }
     const line = cart.find((l) => l.sku === sku && l.size === size);
     if (line) line.qty = Math.min(maxFor(sku, size) || MAX_QTY, line.qty + qty);
     else cart.push({ sku, size, qty });
     cartChanged();
+    return true;
   }
-  const unitCents = (l) => (isGiftLine(l) ? Number(l.size) * 100 : bySku.get(l.sku)?.priceCents ?? 0);
+  const unitCents = (l) => (isGiftLine(l) ? Number(l.size) * 100 : isStudioLine(l) ? Number(l.unitCents) || 0 : bySku.get(l.sku)?.priceCents ?? 0);
   const lineInfo = (l) =>
-    isGiftLine(l)
+    isStudioLine(l)
+      ? { name: "Ma création FORK Studio", meta: `${l.tierName || "Création"} · ${l.colorName || ""} · Taille ${l.size}`, img: l.thumb && /^data:image\/(png|jpeg);base64,/.test(l.thumb) ? l.thumb : "/studio/logo-fork.png" }
+      : isGiftLine(l)
       ? { name: "Carte cadeau", meta: `${l.size} € · ${l.gift?.toEmail ? `pour ${l.gift.toName || l.gift.toEmail}` : "envoyée à ton e-mail"}`, img: GIFT_IMG }
       : { name: bySku.get(l.sku).name, meta: `${bySku.get(l.sku).color} · Taille ${l.size}`, img: bySku.get(l.sku).images[0].src };
   const subtotalCents = () => cart.reduce((sum, l) => sum + unitCents(l) * l.qty, 0);
-  const tshirtCount = (lines = cart) => lines.filter((l) => !isGiftLine(l)).reduce((n, l) => n + l.qty, 0);
+  const tshirtCount = (lines = cart) => lines.filter((l) => !isGiftLine(l) && !isStudioLine(l)).reduce((n, l) => n + l.qty, 0);
+  const parcelCount = (lines = cart) => lines.filter((l) => !isGiftLine(l)).reduce((n, l) => n + l.qty, 0);
+  const hasStudio = (lines = cart) => lines.some(isStudioLine);
   const hasPhysical = (lines = cart) => lines.some((l) => !isGiftLine(l));
   const packPercentFor = (count) =>
     count >= 3 && shop.pack.threePercent > 0 ? shop.pack.threePercent : count >= 2 ? shop.pack.twoPercent : 0;
@@ -892,7 +938,8 @@
   /** Aperçu du prix, calculé comme le serveur (qui refait le calcul à la commande). */
   function pricePreview(feeCents) {
     const count = tshirtCount();
-    const tshirtCents = cart.filter((l) => !isGiftLine(l)).reduce((n, l) => n + unitCents(l) * l.qty, 0);
+    const tshirtCents = cart.filter((l) => !isGiftLine(l) && !isStudioLine(l)).reduce((n, l) => n + unitCents(l) * l.qty, 0);
+    const parcels = parcelCount();
     const subtotal = subtotalCents();
     const pack = packPercentFor(count);
     const codePct = promo.state === "ok" && promo.kind === "percent" && count > 0 ? promo.percent : 0;
@@ -908,11 +955,11 @@
       codeBeaten = codePct > 0;
     }
     const discount = Math.round((tshirtCents * percent) / 100);
-    const free = freeShippingFor(count);
-    const shipping = count === 0 || free ? 0 : feeCents == null ? null : feeCents;
+    const free = freeShippingFor(parcels);
+    const shipping = parcels === 0 || free ? 0 : feeCents == null ? null : feeCents;
     const due = subtotal - discount + (shipping || 0);
     const gift = promo.state === "ok" && promo.kind === "gift" ? Math.min(promo.balanceCents, due) : 0;
-    return { count, subtotal, discount, label, codeBeaten, free, shipping, gift, total: due - gift };
+    return { count: parcels, tshirts: count, subtotal, discount, label, codeBeaten, free, shipping, gift, total: due - gift };
   }
 
   function priceRows(pr, { estimate = false } = {}) {
@@ -926,6 +973,7 @@
   /** Encart « pack » du panier : ce qu'il manque pour en profiter. */
   function packNudge() {
     const count = tshirtCount();
+    if (hasStudio()) return `<div class="pack-nudge"><b>Précommande FORK Studio</b><span>${esc(shop.studio?.deliveryText || "Livraison prévue pour Noël")}. Fabriquée sur mesure : pas de retour possible.</span></div>`;
     if (!count) return "";
     const two = shop.pack.twoPercent;
     const three = shop.pack.threePercent;
@@ -1151,9 +1199,9 @@
   function renderQuote() {
     const box = $("#quoteBox");
     if (!box) return;
-    const free = freeShippingFor(tshirtCount());
+    const free = freeShippingFor(parcelCount());
     if (quote.state === "loading") box.innerHTML = `<p class="notice">Calcul des frais de livraison…</p>`;
-    else if (quote.state === "ok" && free && quote.zone !== "geocoder_unavailable") box.innerHTML = `<p class="notice ok">Livraison offerte avec ton pack de ${tshirtCount()} t-shirts 🎉</p>`;
+    else if (quote.state === "ok" && free && quote.zone !== "geocoder_unavailable") box.innerHTML = `<p class="notice ok">Livraison offerte dès ${shop.freeShippingMin} articles 🎉</p>`;
     else if (quote.state === "ok") {
       const tone = quote.zone === "geocoder_unavailable" ? "warn" : "ok";
       box.innerHTML = `<p class="notice ${tone}">${esc(quote.message)}</p>`;
@@ -1239,7 +1287,9 @@
         checkoutToken,
         customer: { name: form.name.trim(), email: form.email.trim(), phone: physical ? form.phone.trim() : form.phone.trim(), address: physical ? form.address.trim() : "" },
         items: cart.map((l) =>
-          isGiftLine(l)
+          isStudioLine(l)
+            ? { sku: l.sku, size: l.size, quantity: l.qty, designId: l.designId }
+            : isGiftLine(l)
             ? { sku: l.sku, size: l.size, quantity: l.qty, giftCard: l.gift || {} }
             : { sku: l.sku, size: l.size, color: bySku.get(l.sku).color, quantity: l.qty },
         ),
@@ -1314,6 +1364,7 @@
         <div class="card-head"><span class="up">Commande</span><b>${esc(pending.orderNumber)}</b></div>
         <ul class="items">${pending.lines
           .map((l) => {
+            if (isStudioLine(l)) return `<li>${l.qty} × Création FORK Studio · ${esc(l.colorName || "")} · ${esc(l.size)}</li>`;
             if (isGiftLine(l)) return `<li>${l.qty} × Carte cadeau ${esc(l.size)} €${l.gift?.toEmail ? ` · pour ${esc(l.gift.toEmail)}` : ""}</li>`;
             const p = bySku.get(l.sku);
             return `<li>${l.qty} × ${esc(p ? p.name : l.sku)} · ${esc(p ? p.color : "")} · ${esc(l.size)}</li>`;
@@ -1711,6 +1762,7 @@
           freeShippingMin: Number(d.freeShippingMin) || 0,
           popup: { active: Boolean(d.popup?.active), percent: Number(d.popup?.percent) || 0 },
           giftCardAmounts: Array.isArray(d.giftCardAmounts) && d.giftCardAmounts.length ? d.giftCardAmounts.map(Number) : shop.giftCardAmounts,
+          studio: d.studio && typeof d.studio === "object" ? d.studio : null,
         };
       }
     } catch {
@@ -1722,6 +1774,14 @@
       if (shop.banner) $("#annonceText").textContent = shop.banner;
     }
     $$("[data-pack-percent]").forEach((el) => (el.textContent = shop.pack.twoPercent ? `-${shop.pack.twoPercent} %` : ""));
+    $$("[data-studio-link]").forEach((el) => (el.hidden = !shop.studio?.enabled));
+    shopListeners.forEach((fn) => {
+      try {
+        fn(shop);
+      } catch {
+        /* rien */
+      }
+    });
     if (sheet.product) renderProduct();
     if (!$("#cartDrawer").hidden && step !== "status") renderCart();
     schedulePopup();
@@ -1845,7 +1905,7 @@
         $("#giftError").hidden = false;
         return;
       }
-      addToCart(GIFT_SKU, String(giftForm.amount), 1, { toName: giftForm.toName.trim(), toEmail, message: giftForm.message.trim() });
+      if (!addToCart(GIFT_SKU, String(giftForm.amount), 1, { toName: giftForm.toName.trim(), toEmail, message: giftForm.message.trim() })) return;
       Object.assign(giftForm, { toName: "", toEmail: "", message: "" });
       toast("Carte cadeau ajoutée au panier");
       openCart();
