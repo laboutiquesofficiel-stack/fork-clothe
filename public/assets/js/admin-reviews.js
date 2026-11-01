@@ -112,6 +112,10 @@
       $("#stockPane").hidden = view !== "stock";
       $("#visitsPane").hidden = view !== "visits";
       $("#momentsPane").hidden = view !== "moments";
+      $("#promosPane").hidden = view !== "promos";
+      $("#studioPane").hidden = view !== "studio";
+      if (view === "studio") document.dispatchEvent(new CustomEvent("fork:studio"));
+      if (view === "promos") document.dispatchEvent(new CustomEvent("fork:promos"));
       if (view === "moments") document.dispatchEvent(new CustomEvent("fork:moments"));
       if (view === "visits") document.dispatchEvent(new CustomEvent("fork:visits"));
       if (view === "stock") document.dispatchEvent(new CustomEvent("fork:stock"));

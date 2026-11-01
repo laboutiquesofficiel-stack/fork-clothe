@@ -164,6 +164,36 @@ ${newsBlock}
 }
 
 // --- Page introuvable -----------------------------------------------------
+// --- FORK Custom Studio (/studio/) ------------------------------------------
+{
+  const studioMain = readFileSync(join(ROOT, "scripts", "studio-main.html"), "utf8");
+  mkdirSync(join(PUB, "studio"), { recursive: true });
+  writeFileSync(
+    join(PUB, "studio", "index.html"),
+    `<!doctype html>
+<html lang="fr">
+<head>
+${SHARED_HEAD}
+  <link rel="stylesheet" href="assets/css/studio.css">
+  <script src="assets/js/studio-lib.js" defer></script>
+  <script src="assets/js/studio.js" defer></script>
+  <title>FORK Custom Studio · Crée ton t-shirt FORK personnalisé</title>
+  <meta name="description" content="FORK Custom Studio : crée ton propre t-shirt FORK avec tes textes, des motifs de Noël et de Toulon ou ta photo. Édition de Noël, fabriqué à La Farlède.">
+  <link rel="canonical" href="${SITE}/studio/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="FORK">
+  <meta property="og:locale" content="fr_FR">
+  <meta property="og:url" content="${SITE}/studio/">
+  <meta property="og:title" content="FORK Custom Studio · Ton t-shirt. Ton univers.">
+  <meta property="og:description" content="Crée ton propre t-shirt FORK pour Noël : textes, motifs, ta photo. Le logo FORK reste, tu choisis sa couleur.">
+  <meta property="og:image" content="${SITE}/og-image.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+</head>
+<body data-page="studio">${header}  <main>
+${studioMain}  </main>${tail}`,
+  );
+}
+
 writeFileSync(
   join(PUB, "404.html"),
   `<!doctype html>
@@ -275,3 +305,20 @@ export const CATALOGUE: CatalogueItem[] = ${JSON.stringify(
 );
 
 console.log(`${forSale.length} pages t-shirt, 404, sitemap (${urls.length} adresses), flux Merchant (${items.length} articles)`);
+
+// --- Studio : identifiants des motifs et polices autorisés côté serveur ----
+{
+  const lib = readFileSync(join(PUB, "assets/js/studio-lib.js"), "utf8");
+  const motifIds = [...lib.matchAll(/\{ id: "([a-z0-9-]+)", cat: "/g)].map((m) => m[1]);
+  const fontIds = [...lib.matchAll(/\{ id: "([a-z0-9-]+)", name: "[^"]+", file: "/g)].map((m) => m[1]);
+  const motifAr = Object.fromEntries([...lib.matchAll(/\{ id: "([a-z0-9-]+)", cat: "[a-z]+", name: "[^"]+", ar: ([0-9.]+)/g)].map((m) => [m[1], Number(m[2])]));
+  writeFileSync(
+    join(ROOT, "lib", "studio-catalog.generated.ts"),
+    `// Fichier généré par scripts/build-pages.mjs à partir de public/assets/js/studio-lib.js. Ne pas modifier à la main.
+export const STUDIO_MOTIFS: string[] = ${JSON.stringify(motifIds)};
+export const STUDIO_MOTIF_AR: Record<string, number> = ${JSON.stringify(motifAr)};
+export const STUDIO_FONTS: string[] = ${JSON.stringify(fontIds)};
+`,
+  );
+  console.log(`Studio : ${motifIds.length} motifs, ${fontIds.length} polices`);
+}

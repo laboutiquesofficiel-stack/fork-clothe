@@ -98,6 +98,9 @@ export default async (request: Request) => {
         .set({ status: "subscribed", source, consentAt: new Date(), unsubscribedAt: null })
         .where(eq(newsletterSubscribers.id, existing.id));
       await notifyNewsletterWelcome(existing.id);
+    } else if (source === "popup") {
+      // Déjà inscrit qui demande son code via la fenêtre -10 % : on lui renvoie l'e-mail de bienvenue (une fois par jour au plus).
+      await notifyNewsletterWelcome(existing.id);
     }
 
     return Response.json({ ok: true }, { headers: { "Cache-Control": "no-store" } });

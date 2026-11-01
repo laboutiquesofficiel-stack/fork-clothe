@@ -1,0 +1,89 @@
+    <section class="st-hero">
+      <div class="st-hero-txt">
+        <p class="up">FORK Custom Studio · Christmas Edition</p>
+        <h1>Ton t-shirt.<br>Ton univers.</h1>
+        <p>Crée ton propre t-shirt FORK : textes, motifs de Noël, soleil de Toulon, ta photo… Le logo FORK, lui, reste à sa place. Tu choisis juste sa couleur.</p>
+        <div class="st-hero-ctas">
+          <button type="button" class="btn light" data-studio-start disabled>Créer mon t-shirt</button>
+          <a class="btn out light-out" href="#st-niveaux">Voir les prix</a>
+        </div>
+        <p class="st-status" id="stStatus" aria-live="polite">Chargement…</p>
+      </div>
+      <div class="st-hero-art" id="stHeroArt" aria-hidden="true"></div>
+    </section>
+
+    <section class="sec wrap" aria-labelledby="stHow">
+      <div class="sec-head"><h2 id="stHow">Comment ça marche</h2></div>
+      <ol class="st-steps">
+        <li><b>Choisis ton t-shirt</b><span>Blanc ou noir, 100 % coton 220 g, du S au 3XL.</span></li>
+        <li><b>Crée ton design</b><span>Devant et dos : textes, motifs, formes, couleurs ou ta propre image. Déplace, agrandis et fais tourner au doigt.</span></li>
+        <li><b>On le fabrique pour Noël</b><span>On vérifie chaque création, puis elles sont imprimées ensemble à La Farlède et envoyées en même temps.</span></li>
+      </ol>
+    </section>
+
+    <section class="sec wrap" aria-labelledby="stEx">
+      <div class="sec-head"><div><h2 id="stEx">Exemples de créations</h2><p class="muted">Des idées faites par FORK pour te lancer. Pars de l'une d'elles et change ce que tu veux.</p></div></div>
+      <div class="st-examples" id="stExamples"></div>
+    </section>
+
+    <section class="sec wrap" id="st-niveaux" aria-labelledby="stTiers">
+      <div class="sec-head"><div><h2 id="stTiers">Les trois niveaux</h2><p class="muted">Le prix s'adapte tout seul à ce que tu utilises dans ta création.</p></div></div>
+      <div class="st-tiers">
+        <article class="st-tier"><span class="up">FORK Basic</span><b data-tier-price="basic">—</b><p>Motifs de la bibliothèque, formes et couleurs. Couleur du logo au choix.</p></article>
+        <article class="st-tier"><span class="up">FORK Custom</span><b data-tier-price="custom">—</b><p>Tout le Basic + tes propres textes, avec 9 polices.</p></article>
+        <article class="st-tier"><span class="up">FORK Unlimited</span><b data-tier-price="unlimited">—</b><p>Tout le Custom + ta propre photo ou image.</p></article>
+      </div>
+      <p class="hint" id="stBothSides"></p>
+    </section>
+
+    <section class="split dark" aria-labelledby="stXmas">
+      <div class="split-img st-xmas-art" id="stXmasArt" aria-hidden="true"></div>
+      <div class="split-txt">
+        <span class="up">Édition limitée</span>
+        <h2 id="stXmas">Christmas Edition</h2>
+        <p>Flocons, sapins, étoiles, houx, bonnet… revisités à la sauce FORK, avec une police spéciale Noël. À offrir, ou à porter au repas de famille.</p>
+        <p id="stDeadline"></p>
+      </div>
+    </section>
+
+    <section class="sec wrap" aria-labelledby="stMade">
+      <div class="sec-head"><h2 id="stMade">Fabrication et livraison</h2></div>
+      <div class="faq">
+        <details open><summary>Comment est fabriqué mon t-shirt ?</summary><p>Ta création est imprimée en DTF à La Farlède, sur nos t-shirts 100 % coton 220 g. Ce que tu vois dans le studio est un aperçu : les couleurs peuvent légèrement varier entre l'écran et le tissu, mais les positions et les tailles sont exactement celles du fichier imprimé.</p></details>
+        <details><summary>Quand vais-je le recevoir ?</summary><p id="stDeliveryFaq">C'est une précommande : toutes les créations sont fabriquées ensemble, puis envoyées en Colissimo suivi.</p></details>
+        <details><summary>Est-ce que FORK vérifie ma création ?</summary><p>Oui, chaque création est vérifiée avant fabrication. On refuse les contenus haineux, choquants ou illégaux, et les images que tu n'as pas le droit d'utiliser (logos d'autres marques, personnages, photos de quelqu'un d'autre…). Si on doit refuser ta création, on te prévient et on te rembourse entièrement.</p></details>
+        <details><summary>Puis-je la retourner ?</summary><p>Non : un article fabriqué sur mesure selon tes choix ne peut pas être retourné (article L221-28 du Code de la consommation). Vérifie bien ta taille avec le guide des tailles avant de commander. Un défaut de fabrication reste bien sûr couvert par la garantie légale.</p></details>
+        <details><summary>Quelle taille choisir ?</summary><p>Mesures à plat (largeur d'aisselle à aisselle × longueur) : S 46 × 71 cm, M 50 × 73 cm, L 55 × 76 cm, XL 59 × 76 cm, XXL 63 × 79 cm, 3XL 65 × 82 cm. Compare avec un t-shirt que tu aimes porter.</p></details>
+      </div>
+    </section>
+
+    <div class="st-editor" id="stEditor" hidden role="dialog" aria-modal="true" aria-label="Éditeur de t-shirt">
+      <header class="st-top">
+        <button type="button" class="st-ico" data-st="close" aria-label="Fermer l'éditeur">✕</button>
+        <div class="st-sides" role="tablist" aria-label="Face du t-shirt">
+          <button type="button" role="tab" data-side="front">Devant</button>
+          <button type="button" role="tab" data-side="back">Dos</button>
+        </div>
+        <button type="button" class="st-ico" data-st="undo" aria-label="Annuler">↶</button>
+        <button type="button" class="st-ico" data-st="redo" aria-label="Rétablir">↷</button>
+        <span class="st-price" id="stPrice"></span>
+      </header>
+      <div class="st-stage" id="stStage"></div>
+      <div class="st-panel" id="stPanel"></div>
+      <nav class="st-tabs" aria-label="Outils">
+        <button type="button" data-tab="tshirt"><span aria-hidden="true">👕</span>T-shirt</button>
+        <button type="button" data-tab="text"><span aria-hidden="true">Aa</span>Texte</button>
+        <button type="button" data-tab="motifs"><span aria-hidden="true">✦</span>Motifs</button>
+        <button type="button" data-tab="photo"><span aria-hidden="true">▣</span>Photo</button>
+        <button type="button" class="st-done" data-st="recap">Terminer</button>
+      </nav>
+    </div>
+
+    <div class="st-editor st-recap" id="stRecap" hidden role="dialog" aria-modal="true" aria-label="Récapitulatif de ma création">
+      <header class="st-top">
+        <button type="button" class="st-ico" data-st="back" aria-label="Revenir à l'éditeur">←</button>
+        <b class="st-recap-title">Ma création</b>
+        <span></span>
+      </header>
+      <div class="st-recap-body" id="stRecapBody"></div>
+    </div>
