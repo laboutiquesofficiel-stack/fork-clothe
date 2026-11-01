@@ -782,9 +782,9 @@
         logoColor: "#0e2a3f",
         front: [],
         back: [
-          { t: "motif", id: "soleil", color: "#f2b632", x: 140, y: 110, w: 170, r: 0 },
-          { t: "motif", id: "vagues", color: "#1b8fa3", x: 140, y: 225, w: 200, r: 0 },
-          { t: "text", text: "LA RADE", font: "anton", color: "#0e2a3f", x: 140, y: 312, s: 52, r: 0 },
+          { t: "motif", id: "soleil", color: "#f2b632", x: 140, y: 80, w: 140, r: 0 },
+          { t: "motif", id: "vagues", color: "#1b8fa3", x: 140, y: 182, w: 180, r: 0 },
+          { t: "text", text: "LA RADE", font: "anton", color: "#0e2a3f", x: 140, y: 292, s: 50, r: 0 },
         ],
       },
     },
@@ -813,7 +813,7 @@
         </article>`,
       ).join("");
     const hero = $("#stHeroArt");
-    if (hero) hero.innerHTML = L.renderSide(EXAMPLES[1].design, "back", { settings: cfg });
+    if (hero && !hero.firstElementChild) hero.innerHTML = `<img class="st-poster" src="/studio/affiche-studio.svg" alt="Personnalise ton t-shirt : FORK Custom Studio, Christmas Edition" width="800" height="1000">`;
     const xm = $("#stXmasArt");
     if (xm) xm.innerHTML = L.renderSide(EXAMPLES[0].design, "back", { settings: cfg });
     $$("[data-tier-price]").forEach((el) => (el.textContent = cfg.prices ? euros(cfg.prices[el.dataset.tierPrice]) : "—"));

@@ -136,3 +136,5 @@ body.st-open { overflow: hidden; }
 .st-sw-mini { display: inline-block; width: 14px; height: 14px; vertical-align: -2px; border-width: 1px; }
 .st-svg .fk-ink-light { mix-blend-mode: multiply; }
 .st-svg .fk-ink-dark { opacity: .96; }
+.st-hero-art .st-poster { width: min(100%, 440px); height: auto; border-radius: 6px; box-shadow: 0 20px 40px rgba(0, 0, 0, .35); }
+@media (max-width: 820px) { .st-hero-art .st-poster { width: min(86%, 360px); } }
