@@ -449,13 +449,6 @@ h1, h2, h3, h4 { margin: 0; text-transform: uppercase; font-weight: 900; letter-
 .by-fork { background: var(--ink); color: var(--white); padding: 1px 6px; font-size: .72rem; letter-spacing: .06em; text-transform: uppercase; }
 
 /* Bloc « FORK Custom Studio » de l'accueil (visible quand le Studio est ouvert) */
-.studio-promo { display: grid; grid-template-columns: 1.2fr 1fr; background: var(--rade); color: var(--white); }
-.studio-promo-txt { padding: clamp(28px, 5vw, 64px) clamp(16px, 4vw, 56px); display: grid; align-content: center; gap: 14px; }
-.studio-promo-txt h2 { font-size: clamp(2rem, 5vw, 3.6rem); }
-.studio-promo-txt p { margin: 0; color: rgba(255, 255, 255, .85); max-width: 520px; }
-.studio-promo-txt .up { color: #f2b632; }
-.studio-promo-img img { width: 100%; height: 100%; max-height: 520px; object-fit: cover; }
-@media (max-width: 760px) { .studio-promo { grid-template-columns: 1fr; } .studio-promo-img { order: -1; } .studio-promo-img img { max-height: 320px; } }
 
 /* Bientôt : prochaine pièce (sans prix, sans achat) */
 .soon { background: var(--soft); }
@@ -468,3 +461,39 @@ h1, h2, h3, h4 { margin: 0; text-transform: uppercase; font-weight: 900; letter-
 .soon-imgs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .soon-imgs img { display: block; width: 100%; height: auto; aspect-ratio: 3 / 4; object-fit: cover; }
 @media (max-width: 760px) { .soon-in { grid-template-columns: 1fr; } .soon-imgs { order: -1; } }
+
+/* À propos : l'histoire présentée comme un livre ouvert */
+.book-sec { background: var(--soft); padding-block: clamp(40px, 6vw, 84px); }
+.book-sec .wrap { display: grid; gap: 22px; }
+.book-head { display: grid; gap: 8px; text-align: center; }
+.book-head h2 { font-size: clamp(1.8rem, 4vw, 3rem); }
+.book { --paper: #fffdf7; --paper-edge: #e9e0cd; display: grid; grid-template-columns: 1fr 1fr; max-width: 1080px; width: 100%; margin-inline: auto; box-shadow: 0 24px 50px -28px rgba(40, 30, 10, .45), 0 2px 0 var(--paper-edge); }
+.book-page { position: relative; background: var(--paper); padding: clamp(26px, 4vw, 56px) clamp(20px, 3.6vw, 52px) 54px; display: grid; gap: 14px; align-content: start; font-family: Georgia, "Times New Roman", serif; font-size: 1.02rem; line-height: 1.62; color: #221f1a; min-width: 0; }
+.book-left { background-image: linear-gradient(to left, rgba(0, 0, 0, .10), rgba(0, 0, 0, 0) 9%); }
+.book-right { background-image: linear-gradient(to right, rgba(0, 0, 0, .10), rgba(0, 0, 0, 0) 9%); }
+.book-page p { margin: 0; text-align: justify; hyphens: auto; }
+.book-run { font-family: var(--font); text-transform: uppercase; letter-spacing: .18em; font-size: .66rem; color: var(--muted); }
+.book-title { font-family: Georgia, "Times New Roman", serif; text-transform: none; font-weight: 700; font-size: clamp(1.7rem, 3.4vw, 2.5rem); line-height: 1.08; letter-spacing: -.01em; }
+.book-lead { font-style: italic; color: #4a443b; }
+.book-h { font-family: var(--font); font-size: .74rem; letter-spacing: .16em; color: var(--red); margin-top: 6px; }
+.book-drop::first-letter { float: left; font-size: 3.6em; line-height: .86; padding: 6px 8px 0 0; font-weight: 700; color: var(--red); }
+.book-quote { margin: 8px 0 0; padding: 16px 0 0; border-top: 1px solid var(--paper-edge); }
+.book-quote p { font-size: 1.22rem; font-style: italic; text-align: left; line-height: 1.4; }
+.book-quote cite { display: block; margin-top: 8px; font-family: var(--font); font-style: normal; text-transform: uppercase; letter-spacing: .14em; font-size: .66rem; color: var(--muted); }
+.book-folio { position: absolute; bottom: 20px; font-family: var(--font); font-size: .72rem; color: var(--muted); }
+.book-left .book-folio { left: clamp(20px, 3.6vw, 52px); }
+.book-right .book-folio { right: clamp(20px, 3.6vw, 52px); }
+.book-facts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); max-width: 1080px; width: 100%; margin: 0 auto; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.book-facts div { padding: 14px 10px; text-align: center; }
+.book-facts div + div { border-left: 1px solid var(--line); }
+.book-facts dt { text-transform: uppercase; letter-spacing: .14em; font-size: .66rem; font-weight: 700; color: var(--red); }
+.book-facts dd { margin: 4px 0 0; font-weight: 700; }
+.book-cta { display: flex; justify-content: center; }
+@media (max-width: 760px) {
+  .book { grid-template-columns: 1fr; }
+  .book-left, .book-right { background-image: none; }
+  .book-right { border-top: 1px dashed var(--paper-edge); }
+  .book-facts { grid-template-columns: 1fr 1fr; }
+  .book-facts div:nth-child(3) { border-left: 0; }
+  .book-facts div:nth-child(n+3) { border-top: 1px solid var(--line); }
+}

@@ -24,3 +24,10 @@
   [headers.values]
     X-Robots-Tag = "noindex, nofollow"
     Cache-Control = "no-store"
+
+# FORK Custom Studio retiré (nov. 2026) : les anciennes adresses renvoient à l'accueil.
+[[redirects]]
+  from = "/studio/*"
+  to = "/"
+  status = 301
+  force = true

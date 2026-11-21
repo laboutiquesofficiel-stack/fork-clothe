@@ -42,7 +42,7 @@
     {
       id: "authentique",
       type: "T-shirt",
-      keywords: ["rugby", "rct", "ballon", "ovale", "degun", "match", "blanc", "rouge", "noir", "vibe"],
+      keywords: ["rugby", "ballon", "ovale", "degun", "match", "blanc", "rouge", "noir", "vibe"],
       sku: "fork-authentique",
       name: "L'Authentique",
       color: "Rouge & noir",
