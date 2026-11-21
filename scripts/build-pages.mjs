@@ -164,35 +164,7 @@ ${newsBlock}
 }
 
 // --- Page introuvable -----------------------------------------------------
-// --- FORK Custom Studio (/studio/) ------------------------------------------
-{
-  const studioMain = readFileSync(join(ROOT, "scripts", "studio-main.html"), "utf8");
-  mkdirSync(join(PUB, "studio"), { recursive: true });
-  writeFileSync(
-    join(PUB, "studio", "index.html"),
-    `<!doctype html>
-<html lang="fr">
-<head>
-${SHARED_HEAD}
-  <link rel="stylesheet" href="assets/css/studio.css">
-  <script src="assets/js/studio-lib.js" defer></script>
-  <script src="assets/js/studio.js" defer></script>
-  <title>FORK Custom Studio · Crée ton t-shirt FORK personnalisé</title>
-  <meta name="description" content="FORK Custom Studio : crée ton propre t-shirt FORK avec tes textes, des motifs de Noël et de Toulon ou ta photo. Édition de Noël, fabriqué à La Farlède.">
-  <link rel="canonical" href="${SITE}/studio/">
-  <meta property="og:type" content="website">
-  <meta property="og:site_name" content="FORK">
-  <meta property="og:locale" content="fr_FR">
-  <meta property="og:url" content="${SITE}/studio/">
-  <meta property="og:title" content="FORK Custom Studio · Ton t-shirt. Ton univers.">
-  <meta property="og:description" content="Crée ton propre t-shirt FORK pour Noël : textes, motifs, ta photo. Le logo FORK reste, tu choisis sa couleur.">
-  <meta property="og:image" content="${SITE}/og-image.jpg">
-  <meta name="twitter:card" content="summary_large_image">
-</head>
-<body data-page="studio">${header}  <main>
-${studioMain}  </main>${tail}`,
-  );
-}
+// FORK Custom Studio retiré du site (nov. 2026) : /studio/ redirige vers l'accueil (netlify.toml).
 
 writeFileSync(
   join(PUB, "404.html"),

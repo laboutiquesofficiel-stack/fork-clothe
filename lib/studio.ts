@@ -84,8 +84,9 @@ export async function saveStudioSettings(input: unknown): Promise<StudioSettings
 
 const parisDay = () => new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Paris", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
 /** Le Studio prend-il des commandes aujourd'hui ? */
-export function studioOpen(s: StudioSettings): boolean {
-  return s.enabled && parisDay() <= s.deadline;
+export function studioOpen(_s: StudioSettings): boolean {
+  // FORK Custom Studio retiré du site (nov. 2026) : plus aucune commande de création.
+  return false;
 }
 
 // --- Création ----------------------------------------------------------------
