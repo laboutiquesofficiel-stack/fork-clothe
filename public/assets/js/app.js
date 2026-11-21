@@ -281,21 +281,48 @@
   // ---------------------------------------------------------------------------
   // Catalogue et filtres
   // ---------------------------------------------------------------------------
-  let filter = "all";
+  // Pages /homme/ et /femme/ : le filtre est fixé par la page (data-filter sur <body>).
+  const norm = (v) => String(v ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  const searchText = (p) => norm([p.name, p.color, p.category === "femme" ? "femme" : "homme", p.description, ...(p.keywords ?? [])].join(" "));
+  let filter = ["homme", "femme"].includes(document.body.dataset.filter) ? document.body.dataset.filter : "all";
   function setFilter(next) {
     filter = next;
-    $$(".tab").forEach((t) => t.setAttribute("aria-selected", String(t.dataset.tab === next)));
+    $$("button.tab").forEach((t) => t.setAttribute("aria-selected", String(t.dataset.tab === next)));
     renderGrid();
   }
+  // Barre de recherche de la page Collection (et ?q= dans l'adresse).
+  const pageSearch = document.getElementById("pageSearch");
+  function gridTerms() {
+    if (!pageSearch) return [];
+    return norm(pageSearch.value.trim()).split(/\s+/).filter(Boolean);
+  }
   function renderGrid() {
-    if (!$("#productGrid")) return;
-    const list = PRODUCTS.filter((p) => {
+    const grid = $("#productGrid");
+    if (!grid) return;
+    const terms = gridTerms();
+    let list = PRODUCTS.filter((p) => {
       if (filter === "out") return !p.available;
       if (filter === "homme" || filter === "femme") return p.category === filter;
       return true;
-    }).sort((a, b) => Number(b.available) - Number(a.available));
+    })
+      .filter((p) => !terms.length || terms.every((t) => searchText(p).includes(t)))
+      .sort((a, b) => Number(b.available) - Number(a.available));
+    const limit = Number(grid.dataset.limit) || 0;
+    if (limit) list = list.filter((p) => p.available).slice(0, limit);
+    const hint = $("#gridHint");
+    if (hint) {
+      hint.textContent = terms.length
+        ? list.length
+          ? `${list.length} article${list.length > 1 ? "s" : ""} pour « ${pageSearch.value.trim()} »`
+          : ""
+        : `${list.length} article${list.length > 1 ? "s" : ""}`;
+    }
+    if (terms.length && !list.length) {
+      grid.innerHTML = `<div class="grid-empty"><p><b>Aucun article ne correspond à « ${esc(pageSearch.value.trim())} ».</b></p><p class="muted">Essaie un autre mot : une couleur, un nom de t-shirt, « rugby », « femme »…</p></div>`;
+      return;
+    }
 
-    $("#productGrid").innerHTML = list
+    grid.innerHTML = list
       .map((p) => {
         const badge = !p.available ? `<span class="pbadge out">Épuisé</span>` : p.isNew ? `<span class="pbadge">Nouveau</span>` : "";
         const back = p.images[1] ? `<img class="back" src="${esc(p.images[1].src)}" alt="" loading="lazy">` : "";
@@ -309,7 +336,26 @@
       })
       .join("");
   }
-  $$(".tab").forEach((t) => t.addEventListener("click", () => setFilter(t.dataset.tab)));
+  $$("button.tab").forEach((t) => t.addEventListener("click", () => setFilter(t.dataset.tab)));
+  if (pageSearch) {
+    const q = new URLSearchParams(location.search).get("q");
+    if (q) pageSearch.value = q.slice(0, 80);
+    pageSearch.addEventListener("input", () => renderGrid());
+    pageSearch.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && pageSearch.value) {
+        e.stopPropagation();
+        pageSearch.value = "";
+        renderGrid();
+      }
+    });
+  }
+  // Menu : la rubrique en cours est soulignée.
+  {
+    const here = location.pathname.replace(/index\.html$/, "");
+    $$(".mainnav a, .mnav-links a").forEach((a) => {
+      if (a.getAttribute("href") === here) a.setAttribute("aria-current", "page");
+    });
+  }
   document.addEventListener("click", (e) => {
     const link = e.target.closest("[data-filter]");
     if (link) {
@@ -327,7 +373,6 @@
   // ---------------------------------------------------------------------------
   // Recherche : suggestions à chaque lettre tapée (sans accents ni majuscules)
   // ---------------------------------------------------------------------------
-  const norm = (v) => String(v ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
   const searchIndex = PRODUCTS.map((p) => ({
     p,
     name: norm(`t-shirt ${p.name}`),
@@ -362,7 +407,9 @@
     if (e.key === "Enter") {
       e.preventDefault();
       const first = $("#searchResults .sresult");
-      if (first) openProduct(first.dataset.product);
+      const q = $("#searchInput").value.trim();
+      if (q && $$("#searchResults .sresult").length > 1) location.href = `/collection/?q=${encodeURIComponent(q)}`;
+      else if (first) openProduct(first.dataset.product);
     }
   });
   $("#searchOpen").addEventListener("click", () => {
@@ -980,10 +1027,10 @@
     const freeMin = shop.freeShippingMin;
     if (count === 1 && (two > 0 || freeMin === 2)) {
       const save = two > 0 ? Math.round(((unitCents(cart.find((l) => !isGiftLine(l))) * 2) * two) / 100) : 0;
-      return `<div class="pack-nudge"><b>Ajoute un 2e t-shirt${save ? ` et économise ${euros(save)}` : ""}${freeMin === 2 ? " + la livraison" : ""}</b><span>Pack 2 t-shirts : ${two > 0 ? `-${two} %` : ""}${two > 0 && freeMin === 2 ? " et " : ""}${freeMin === 2 ? "livraison offerte" : ""}. Un pour toi, un à offrir.</span><a class="link" href="#produits" data-close>Choisir un 2e t-shirt</a></div>`;
+      return `<div class="pack-nudge"><b>Ajoute un 2e t-shirt${save ? ` et économise ${euros(save)}` : ""}${freeMin === 2 ? " + la livraison" : ""}</b><span>Pack 2 t-shirts : ${two > 0 ? `-${two} %` : ""}${two > 0 && freeMin === 2 ? " et " : ""}${freeMin === 2 ? "livraison offerte" : ""}. Un pour toi, un à offrir.</span><a class="link" href="/collection/">Choisir un 2e t-shirt</a></div>`;
     }
     if (count === 2 && three > two) {
-      return `<div class="pack-nudge on"><b>✔ Pack 2 t-shirts activé${two ? ` : -${two} %` : ""}</b><span>Ajoute un 3e t-shirt : -${three} % sur les trois.</span><a class="link" href="#produits" data-close>Ajouter un 3e t-shirt</a></div>`;
+      return `<div class="pack-nudge on"><b>✔ Pack 2 t-shirts activé${two ? ` : -${two} %` : ""}</b><span>Ajoute un 3e t-shirt : -${three} % sur les trois.</span><a class="link" href="/collection/">Ajouter un 3e t-shirt</a></div>`;
     }
     const pct = packPercentFor(count);
     if (pct > 0 || freeShippingFor(count))
@@ -1025,7 +1072,7 @@
     const body = $("#cartBody");
     const foot = $("#cartFoot");
     if (!cart.length) {
-      body.innerHTML = `<div class="empty"><h4>C'est un peu vide ici</h4><p class="muted">La collection FORK t'attend.</p><a class="btn" href="#produits" data-close>Voir la collection</a></div>`;
+      body.innerHTML = `<div class="empty"><h4>C'est un peu vide ici</h4><p class="muted">La collection FORK t'attend.</p><a class="btn" href="/collection/">Voir la collection</a></div>`;
       foot.innerHTML = "";
       return;
     }
@@ -1552,7 +1599,7 @@
     }
     const orders = Array.isArray(data.orders) ? data.orders : [];
     if (!orders.length) {
-      body.innerHTML = `<div class="empty"><h4>Vous n'avez pas encore de commande.</h4><a class="btn" href="#produits" data-close>Voir la collection</a></div>`;
+      body.innerHTML = `<div class="empty"><h4>Vous n'avez pas encore de commande.</h4><a class="btn" href="/collection/">Voir la collection</a></div>`;
       return;
     }
     body.innerHTML = orders
@@ -1858,7 +1905,7 @@
       $$("[data-pop-close]", box).forEach((b) =>
         b.addEventListener("click", () => {
           box.hidden = true;
-          if (b.classList.contains("btn") && $("#produits")) $("#produits").scrollIntoView();
+          if (b.classList.contains("btn")) location.href = "/collection/";
         }),
       );
     });

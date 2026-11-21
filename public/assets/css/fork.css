@@ -497,3 +497,57 @@ h1, h2, h3, h4 { margin: 0; text-transform: uppercase; font-weight: 900; letter-
   .book-facts div:nth-child(3) { border-left: 0; }
   .book-facts div:nth-child(n+3) { border-top: 1px solid var(--line); }
 }
+
+/* ---- Site en plusieurs pages (nov. 2026) ---- */
+.mainnav a[aria-current="page"] { border-color: var(--ink); }
+.mnav-links a[aria-current="page"] { color: var(--volet); }
+.page-head { background: var(--soft); padding-block: 8px clamp(28px, 4vw, 48px); }
+.page-head .wrap { display: grid; gap: 12px; justify-items: start; }
+.page-head .crumbs { padding-top: 10px; }
+.page-head h1 { font-size: clamp(2.2rem, 5.6vw, 4.2rem); margin: 4px 0 0; }
+.page-head p { margin: 0; max-width: 62ch; }
+.page-search-bar { background: var(--bg); border-bottom: 1px solid var(--line); padding-block: 14px; }
+.page-search { display: flex; align-items: center; gap: 12px; width: 100%; border: 2px solid var(--ink); background: var(--white); padding: 0 18px; min-height: 58px; }
+.page-search svg { width: 22px; height: 22px; flex: none; }
+.page-search input { flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; font: inherit; font-size: 1.05rem; padding-block: 14px; }
+.page-search:focus-within { border-color: var(--volet); }
+a.tab { display: inline-flex; align-items: center; }
+.grid-empty { grid-column: 1 / -1; padding: 32px 0; display: grid; gap: 4px; }
+.grid-empty p { margin: 0; }
+.home-links { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.home-link { display: grid; gap: 8px; align-content: start; text-align: left; padding: 26px 24px; border: 1px solid var(--ink); background: var(--white); font: inherit; color: inherit; cursor: pointer; min-height: 160px; transition: background .2s, color .2s; }
+.home-link b { font-size: 1.25rem; line-height: 1.2; }
+.home-link .link { margin-top: auto; }
+.home-link:hover { background: var(--ink); color: var(--white); }
+.home-link.gift { background: #6a22d6; color: #fff; border-color: #6a22d6; }
+.home-link.gift b { color: #ffe034; }
+.home-link.gift:hover { background: #1d0f3a; border-color: #1d0f3a; }
+@media (max-width: 800px) { .home-links { grid-template-columns: 1fr; } .home-link { min-height: 0; } }
+.crumbs.light { color: #cfcfcf; padding-top: 0; }
+.match-hero h1 { font-size: clamp(2rem, 4.6vw, 3.4rem); margin: 0; }
+.match-hero .split-img { max-height: 640px; }
+.match-photos { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.match-photos figure { margin: 0; display: grid; gap: 8px; }
+.match-photos img { width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; display: block; background: var(--soft); }
+.match-photos figcaption { font-size: .85rem; color: var(--muted); }
+.steps-list { list-style: none; counter-reset: st; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.steps-list li { counter-increment: st; display: grid; gap: 8px; align-content: start; padding: 22px; background: var(--soft); }
+.steps-list li::before { content: counter(st); display: grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; background: var(--red); color: var(--white); font-weight: 800; }
+.steps-list b { font-size: 1.05rem; }
+.steps-list span { color: var(--muted); }
+.match-steps { padding-top: 0; }
+#produits.sec { padding-top: clamp(24px, 3vw, 36px); }
+.match-where { display: grid; grid-template-columns: 1.3fr 1fr; gap: 24px; align-items: stretch; }
+.match-where > div { display: grid; gap: 12px; align-content: start; }
+.match-where h2 { font-size: clamp(1.6rem, 3.4vw, 2.5rem); margin: 0; }
+.match-where p { margin: 0; }
+.match-cta { display: grid; gap: 10px; align-content: center; padding: 28px; background: var(--ink); color: var(--white); }
+.match-cta b { font-size: 1.4rem; }
+.match-cta .up { color: #ff6b7d; }
+@media (max-width: 760px) { .match-photos, .steps-list, .match-where { grid-template-columns: 1fr; } }
+.help-contact { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; padding-bottom: 0; }
+.help-card { display: grid; gap: 6px; padding: 22px; border: 1px solid var(--line); background: var(--white); }
+.help-card b { font-size: 1.05rem; word-break: break-word; }
+.help-card:hover { border-color: var(--ink); }
+@media (max-width: 760px) { .help-contact { grid-template-columns: 1fr; } }
+.book-sec h1 { font-size: clamp(2rem, 5vw, 3.6rem); margin: 0; }
