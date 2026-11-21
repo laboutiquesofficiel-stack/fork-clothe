@@ -462,91 +462,38 @@ h1, h2, h3, h4 { margin: 0; text-transform: uppercase; font-weight: 900; letter-
 .soon-imgs img { display: block; width: 100%; height: auto; aspect-ratio: 3 / 4; object-fit: cover; }
 @media (max-width: 760px) { .soon-in { grid-template-columns: 1fr; } .soon-imgs { order: -1; } }
 
-/* À propos : l'histoire de FORK sous forme de livre (couverture, pages, quatrième de couverture) */
-.book-sec { background: var(--soft); padding-block: clamp(40px, 6vw, 84px); overflow: hidden; }
+/* À propos : l'histoire présentée comme un livre ouvert */
+.book-sec { background: var(--soft); padding-block: clamp(40px, 6vw, 84px); }
 .book-sec .wrap { display: grid; gap: 22px; }
-.book-head { display: grid; gap: 8px; text-align: center; justify-items: center; }
+.book-head { display: grid; gap: 8px; text-align: center; }
 .book-head h2 { font-size: clamp(1.8rem, 4vw, 3rem); }
-.book-head p { margin: 0; }
+.book { --paper: #fffdf7; --paper-edge: #e9e0cd; display: grid; grid-template-columns: 1fr 1fr; max-width: 1080px; width: 100%; margin-inline: auto; box-shadow: 0 24px 50px -28px rgba(40, 30, 10, .45), 0 2px 0 var(--paper-edge); }
+.book-page { position: relative; background: var(--paper); padding: clamp(26px, 4vw, 56px) clamp(20px, 3.6vw, 52px) 54px; display: grid; gap: 14px; align-content: start; font-family: Georgia, "Times New Roman", serif; font-size: 1.02rem; line-height: 1.62; color: #221f1a; min-width: 0; }
+.book-left { background-image: linear-gradient(to left, rgba(0, 0, 0, .10), rgba(0, 0, 0, 0) 9%); }
+.book-right { background-image: linear-gradient(to right, rgba(0, 0, 0, .10), rgba(0, 0, 0, 0) 9%); }
+.book-page p { margin: 0; text-align: justify; hyphens: auto; }
+.book-run { font-family: var(--font); text-transform: uppercase; letter-spacing: .18em; font-size: .66rem; color: var(--muted); }
+.book-title { font-family: Georgia, "Times New Roman", serif; text-transform: none; font-weight: 700; font-size: clamp(1.7rem, 3.4vw, 2.5rem); line-height: 1.08; letter-spacing: -.01em; }
+.book-lead { font-style: italic; color: #4a443b; }
+.book-h { font-family: var(--font); font-size: .74rem; letter-spacing: .16em; color: var(--red); margin-top: 6px; }
+.book-drop::first-letter { float: left; font-size: 3.6em; line-height: .86; padding: 6px 8px 0 0; font-weight: 700; color: var(--red); }
+.book-quote { margin: 8px 0 0; padding: 16px 0 0; border-top: 1px solid var(--paper-edge); }
+.book-quote p { font-size: 1.22rem; font-style: italic; text-align: left; line-height: 1.4; }
+.book-quote cite { display: block; margin-top: 8px; font-family: var(--font); font-style: normal; text-transform: uppercase; letter-spacing: .14em; font-size: .66rem; color: var(--muted); }
+.book-folio { position: absolute; bottom: 20px; font-family: var(--font); font-size: .72rem; color: var(--muted); }
+.book-left .book-folio { left: clamp(20px, 3.6vw, 52px); }
+.book-right .book-folio { right: clamp(20px, 3.6vw, 52px); }
+.book-facts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); max-width: 1080px; width: 100%; margin: 0 auto; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.book-facts div { padding: 14px 10px; text-align: center; }
+.book-facts div + div { border-left: 1px solid var(--line); }
+.book-facts dt { text-transform: uppercase; letter-spacing: .14em; font-size: .66rem; font-weight: 700; color: var(--red); }
+.book-facts dd { margin: 4px 0 0; font-weight: 700; }
 .book-cta { display: flex; justify-content: center; }
-
-.bk { --paper: #fffdf7; --paper-edge: #e6dcc6; --cover: #0e2a3f; --cover-2: #123754; --gold: #f2c14e; display: grid; gap: 16px; justify-items: center; }
-.bk-stage { position: relative; width: min(100%, 1000px); display: grid; justify-items: center; perspective: 1800px; min-height: 0; }
-
-/* Pages et couvertures : même format de page (≈ A5) */
-.bk-cover, .bk-page { width: min(100%, 480px); aspect-ratio: 5 / 7; }
-.bk-cover { position: relative; display: grid; border-radius: 3px 10px 10px 3px; overflow: hidden; color: #fff; text-align: left; background: linear-gradient(135deg, var(--cover-2), var(--cover)); box-shadow: 0 30px 60px -30px rgba(10, 20, 30, .7), 0 2px 0 #08192a, inset 0 0 0 1px rgba(255,255,255,.06); transform-origin: left center; transition: transform .7s cubic-bezier(.3,.6,.2,1), opacity .5s; }
-.bk-front { cursor: pointer; }
-.bk-front:hover { transform: rotateY(-8deg); }
-.bk-spine-shade { position: absolute; inset: 0 auto 0 0; width: 26px; background: linear-gradient(to right, rgba(0,0,0,.45), rgba(0,0,0,0)); }
-.bk-cover-in { position: relative; display: grid; align-content: space-between; gap: 14px; padding: clamp(24px, 6%, 40px) clamp(22px, 7%, 42px) clamp(22px, 6%, 36px) clamp(34px, 9%, 54px); height: 100%; }
-.bk-kicker { text-transform: uppercase; letter-spacing: .22em; font-size: .68rem; font-weight: 700; color: var(--gold); }
-.bk-art { width: 100%; height: auto; }
-.bk-art-faron { fill: rgba(255,255,255,.12); stroke: #fff; stroke-width: 2.2; stroke-linejoin: round; }
-.bk-art-sun { fill: var(--red); opacity: .9; }
-.bk-art-cable, .bk-art-line { stroke: #fff; stroke-width: 1.2; fill: none; }
-.bk-art-cab { fill: var(--gold); }
-.bk-art-sea { stroke: rgba(255,255,255,.55); stroke-width: 1.6; fill: none; }
-.bk-cover-title { font-family: Georgia, "Times New Roman", serif; font-weight: 700; font-size: clamp(1.9rem, 6vw, 2.8rem); line-height: 1.02; letter-spacing: -.01em; text-wrap: balance; }
-.bk-cover-sub { font-family: Georgia, "Times New Roman", serif; font-style: italic; font-size: 1.05rem; color: rgba(255,255,255,.85); }
-.bk-cover-logo { width: 110px; height: auto; opacity: .95; }
-.bk-cover-cta { text-transform: uppercase; letter-spacing: .14em; font-size: .7rem; font-weight: 700; color: var(--gold); }
-
-/* Livre ouvert */
-.bk-spread { display: none; grid-template-columns: 1fr 1fr; width: min(100%, 960px); box-shadow: 0 30px 60px -32px rgba(40, 30, 10, .55), 0 2px 0 var(--paper-edge); }
-.bk-page { display: none; position: relative; width: 100%; background: var(--paper); padding: clamp(22px, 5%, 46px) clamp(20px, 6%, 48px) 48px; gap: 12px; align-content: start; font-family: Georgia, "Times New Roman", serif; font-size: clamp(1rem, 1.45vw, 1.14rem); line-height: 1.62; color: #221f1a; cursor: zoom-in; overflow: hidden; min-width: 0; }
-.bk-page.is-shown { display: grid; animation: bkTurn .45s ease both; }
-.bk-page.is-left { background-image: linear-gradient(to left, rgba(0,0,0,.10), rgba(0,0,0,0) 10%); }
-.bk-page.is-right { background-image: linear-gradient(to right, rgba(0,0,0,.10), rgba(0,0,0,0) 10%); }
-.bk-page:focus-visible { outline: 2px solid var(--red); outline-offset: -4px; }
-.bk-page p { margin: 0; text-align: justify; hyphens: auto; }
-.bk-run { font-family: var(--font); text-transform: uppercase; letter-spacing: .18em; font-size: .62rem; color: var(--muted); }
-.bk-title { font-family: Georgia, "Times New Roman", serif; text-transform: none; font-weight: 700; font-size: clamp(1.5rem, 3vw, 2.2rem); line-height: 1.08; letter-spacing: -.01em; }
-.bk-lead { font-style: italic; color: #4a443b; }
-.bk-h { font-family: var(--font); font-size: .72rem; letter-spacing: .16em; color: var(--red); margin-top: 4px; }
-.bk-drop::first-letter { float: left; font-size: 3.4em; line-height: .86; padding: 6px 8px 0 0; font-weight: 700; color: var(--red); }
-.bk-quote { margin: 6px 0 0; padding-top: 14px; border-top: 1px solid var(--paper-edge); }
-.bk-quote p { font-size: 1.15em; font-style: italic; text-align: left; line-height: 1.4; }
-.bk-quote cite { display: block; margin-top: 8px; font-family: var(--font); font-style: normal; text-transform: uppercase; letter-spacing: .14em; font-size: .62rem; color: var(--muted); }
-.bk-folio { position: absolute; bottom: 18px; font-family: var(--font); font-size: .72rem; color: var(--muted); }
-.bk-page.is-left .bk-folio { left: clamp(20px, 6%, 48px); }
-.bk-page.is-right .bk-folio, .bk-page.is-single .bk-folio { right: clamp(20px, 6%, 48px); }
-@keyframes bkTurn { from { opacity: 0; transform: rotateY(-12deg) translateX(-8px); } to { opacity: 1; transform: none; } }
-
-/* Quatrième de couverture */
-.bk-back { display: none; background: linear-gradient(225deg, var(--cover-2), var(--cover)); border-radius: 10px 3px 3px 10px; }
-.bk-back .bk-cover-in { padding-left: clamp(22px, 7%, 42px); padding-right: clamp(34px, 9%, 54px); align-content: start; gap: 18px; }
-.bk-blurb { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: clamp(1rem, 2.6vw, 1.15rem); line-height: 1.55; color: rgba(255,255,255,.92); }
-.bk-facts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 16px; margin: 0; }
-.bk-facts dt { text-transform: uppercase; letter-spacing: .16em; font-size: .62rem; font-weight: 700; color: var(--gold); }
-.bk-facts dd { margin: 2px 0 0; font-weight: 700; }
-.bk-barcode { display: block; width: 130px; height: 46px; background: #fff; padding: 6px; margin-top: auto; }
-.bk-barcode span { display: block; height: 100%; background: repeating-linear-gradient(90deg, #111 0 2px, #fff 2px 3px, #111 3px 4px, #fff 4px 7px, #111 7px 10px, #fff 10px 11px); }
-.bk-back-url { font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; color: rgba(255,255,255,.7); }
-
-/* États */
-.bk[data-state="open"] .bk-front, .bk[data-state="back"] .bk-front { display: none; }
-.bk[data-state="open"] .bk-spread { display: grid; }
-.bk[data-state="back"] .bk-back { display: grid; animation: bkTurn .5s ease both; }
-.bk.is-opening .bk-front { transform: rotateY(-110deg); opacity: 0; }
-.bk-ctrl { display: flex; align-items: center; gap: 14px; }
-.bk-ctrl .btn { min-width: 56px; padding-inline: 18px; }
-.bk-ctrl .btn:disabled { opacity: .35; cursor: default; }
-.bk-count { min-width: 150px; text-align: center; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; font-size: .74rem; font-variant-numeric: tabular-nums; }
-.bk-actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
-.bk[data-state="closed"] [data-book-close] { display: none; }
-.bk[data-state="open"] .bk-actions [data-book-open], .bk[data-state="back"] .bk-actions [data-book-back] { display: none; }
-
-/* Page agrandie */
-.bk-zoom { border: 0; padding: 0; background: transparent; max-width: min(92vw, 640px); width: 100%; max-height: 92vh; }
-.bk-zoom::backdrop { background: rgba(10, 14, 20, .72); }
-.bk-zoom-page { background: #fffdf7; padding: clamp(24px, 6vw, 48px); display: grid; gap: 14px; font-family: Georgia, "Times New Roman", serif; font-size: 1.12rem; line-height: 1.65; color: #221f1a; max-height: 92vh; overflow: auto; }
-.bk-zoom-page p { margin: 0; }
-.bk-zoom-page .bk-folio { position: static; }
-.bk-zoom-close { position: absolute; top: 8px; right: 10px; width: 40px; height: 40px; font-size: 1.6rem; line-height: 1; color: #221f1a; background: #fffdf7; border-radius: 50%; z-index: 1; }
-
 @media (max-width: 760px) {
-  .bk-spread { grid-template-columns: 1fr; width: min(100%, 480px); }
-  .bk-page.is-left, .bk-page.is-right { background-image: none; }
+  .book { grid-template-columns: 1fr; }
+  .book-left, .book-right { background-image: none; }
+  .book-right { border-top: 1px dashed var(--paper-edge); }
+  .book-facts { grid-template-columns: 1fr 1fr; }
+  .book-facts div:nth-child(3) { border-left: 0; }
+  .book-facts div:nth-child(n+3) { border-top: 1px solid var(--line); }
 }
-@media (prefers-reduced-motion: reduce) { .bk-page.is-shown, .bk[data-state="back"] .bk-back { animation: none; } .bk-cover { transition: none; } }
