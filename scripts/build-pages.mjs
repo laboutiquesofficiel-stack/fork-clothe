@@ -271,7 +271,7 @@ ${SHARED_HEAD}
   <meta property="og:image" content="${SITE}/og-image.jpg">
   <meta name="twitter:card" content="summary_large_image">
 </head>
-<body data-page="${pg.slug}"${pg.filter ? ` data-filter="${pg.filter}"` : ""}>${header}  <main>
+<body data-page="${pg.slug}"${pg.filter ? ` data-grid-filter="${pg.filter}"` : ""}>${header}  <main>
 ${pg.body}
 ${pg.slug === "aide" || pg.slug === "a-propos" ? "" : `\n${newsBlock}\n`}  </main>${tail}`;
   mkdirSync(join(PUB, pg.slug), { recursive: true });

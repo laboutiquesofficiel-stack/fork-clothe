@@ -281,10 +281,10 @@
   // ---------------------------------------------------------------------------
   // Catalogue et filtres
   // ---------------------------------------------------------------------------
-  // Pages /homme/ et /femme/ : le filtre est fixé par la page (data-filter sur <body>).
+  // Pages /homme/ et /femme/ : le filtre est fixé par la page (data-grid-filter sur <body>).
   const norm = (v) => String(v ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
   const searchText = (p) => norm([p.name, p.color, p.category === "femme" ? "femme" : "homme", p.description, ...(p.keywords ?? [])].join(" "));
-  let filter = ["homme", "femme"].includes(document.body.dataset.filter) ? document.body.dataset.filter : "all";
+  let filter = ["homme", "femme"].includes(document.body.dataset.gridFilter) ? document.body.dataset.gridFilter : "all";
   function setFilter(next) {
     filter = next;
     $$("button.tab").forEach((t) => t.setAttribute("aria-selected", String(t.dataset.tab === next)));
