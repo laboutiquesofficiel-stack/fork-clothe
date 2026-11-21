@@ -251,7 +251,7 @@ async function sendGiftCard(code: string, item: OrderItem, buyerName: string, to
 ${message}
 <p style="margin:20px 0;text-align:center"><span style="display:inline-block;border:2px dashed #111;padding:14px 20px;font-size:22px;font-weight:900;letter-spacing:2px">${code}</span></p>
 <p style="font-size:14px;line-height:1.6">Choisis ton t-shirt, puis saisis ce code au moment de la commande, dans « Code promo ou carte cadeau ». Le montant est déduit, et ce qui reste sur la carte reste utilisable plus tard.</p>
-<p style="margin:20px 0"><a href="https://fork-clothe.com/?src=carte-cadeau#produits" style="display:inline-block;background:#111;color:#fff;text-decoration:none;padding:14px 24px;font-weight:bold;text-transform:uppercase;font-size:13px;letter-spacing:1px">Choisir mon t-shirt</a></p>
+<p style="margin:20px 0"><a href="https://fork-clothe.com/collection/?src=carte-cadeau" style="display:inline-block;background:#111;color:#fff;text-decoration:none;padding:14px 24px;font-weight:bold;text-transform:uppercase;font-size:13px;letter-spacing:1px">Choisir mon t-shirt</a></p>
 <p style="font-size:12px;line-height:1.6;color:#6b6b6b">Valable jusqu'au ${until}.</p>`,
     ),
     text: `${g.toName ? `${g.toName}, ` : ""}${from} t'offre une carte cadeau FORK de ${formatEuros(item.unitPriceCents)}.\n${g.message ? `\n« ${g.message} »\n` : ""}\nTon code : ${code}\nÀ saisir au moment de la commande sur https://fork-clothe.com (champ « Code promo ou carte cadeau »).\nValable jusqu'au ${until}.\n\nFORK · Toulon`,

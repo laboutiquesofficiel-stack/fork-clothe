@@ -109,7 +109,7 @@ for (const p of forSale) {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Collection", item: `${SITE}/` },
+      { "@type": "ListItem", position: 1, name: "Collection", item: `${SITE}/collection/` },
       { "@type": "ListItem", position: 2, name: `T-shirt ${p.name}`, item: pageUrl(p) },
     ],
   };
@@ -137,7 +137,7 @@ ${SHARED_HEAD}
 </head>
 <body data-product-page="${esc(p.id)}">${header}  <main>
     <div class="wrap">
-      <nav class="crumbs" aria-label="Fil d'Ariane"><a href="./#produits">Collection</a><span aria-hidden="true">›</span><span>T-shirt ${esc(p.name)}</span></nav>
+      <nav class="crumbs" aria-label="Fil d'Ariane"><a href="collection/">Collection</a><span aria-hidden="true">›</span><span>T-shirt ${esc(p.name)}</span></nav>
       <div class="sheet page-sheet" id="pageSheet">
         <div class="gallery">${p.images.map((img, i) => `<img src="${esc(img.src)}" alt="${esc(img.alt)}"${i ? ' loading="lazy"' : ""}>`).join("")}</div>
         <div class="sheet-info page-static">
@@ -151,7 +151,7 @@ ${SHARED_HEAD}
     </div>
 
     <section class="sec wrap" aria-labelledby="othersTitle">
-      <div class="sec-head"><h2 id="othersTitle">Les autres t-shirts</h2><a class="link" href="./#produits">Toute la collection</a></div>
+      <div class="sec-head"><h2 id="othersTitle">Les autres t-shirts</h2><a class="link" href="collection/">Toute la collection</a></div>
       <div class="others">
         ${others.map(card).join("\n        ")}
       </div>
@@ -180,7 +180,7 @@ ${SHARED_HEAD}
       <span class="big">404</span>
       <h1>Cette page s'est perdue dans la rade</h1>
       <p class="muted">L'adresse est peut-être mal tapée, ou la page n'existe plus. Pas de panique, la collection est toujours là.</p>
-      <div class="actions"><a class="btn" href="./#produits">Voir la collection</a><a class="btn out" href="./">Retour à l'accueil</a></div>
+      <div class="actions"><a class="btn" href="collection/">Voir la collection</a><a class="btn out" href="./">Retour à l'accueil</a></div>
     </section>
     <section class="sec wrap" aria-label="T-shirts">
       <div class="others">
@@ -190,9 +190,98 @@ ${SHARED_HEAD}
   </main>${tail}`,
 );
 
+// --- Pages de rubrique (une page indépendante par entrée du menu) --------
+// Contenu dans pages/*.html ; en-tête, pied de page et tiroirs repris de l'accueil.
+const PAGES_DIR = join(ROOT, "pages");
+const part = (name) => readFileSync(join(PAGES_DIR, name), "utf8").replace(/\n$/, "");
+const TRUST = part("_trust.html");
+const FAQ = part("_faq.html");
+const collectionPage = (filter, h1, crumb, intro) =>
+  part("_collection.html")
+    .replaceAll("{{H1}}", h1)
+    .replaceAll("{{CRUMB}}", crumb)
+    .replaceAll("{{INTRO}}", intro)
+    .replaceAll("{{SEL_ALL}}", String(filter === "all"))
+    .replaceAll("{{SEL_HOMME}}", String(filter === "homme"))
+    .replaceAll("{{SEL_FEMME}}", String(filter === "femme"))
+    .replaceAll("{{TRUST}}", TRUST);
+const SECTION_PAGES = [
+  {
+    slug: "collection",
+    filter: "all",
+    title: "La collection · T-shirts FORK de Toulon",
+    description: "Tous les t-shirts FORK : séries limitées pensées à Toulon, 100 % coton 220 g. Recherche par modèle, couleur ou mot-clé.",
+    body: collectionPage("all", "La collection", "La collection", "Tous nos t-shirts, pensés à Toulon et imprimés à Toulon. Séries limitées, 100 % coton 220 g."),
+  },
+  {
+    slug: "homme",
+    filter: "homme",
+    title: "T-shirts homme · FORK Toulon",
+    description: "Les t-shirts FORK pour homme : séries limitées inspirées de Toulon, du rugby et de la Provence. 100 % coton 220 g.",
+    body: collectionPage("homme", "T-shirts homme", "Homme", "Les t-shirts FORK coupe homme, inspirés de Toulon, du rugby et de la Provence."),
+  },
+  {
+    slug: "femme",
+    filter: "femme",
+    title: "T-shirts femme · FORK Toulon",
+    description: "Les t-shirts FORK pour femme : séries limitées inspirées de Toulon et de la Provence. 100 % coton 220 g.",
+    body: collectionPage("femme", "T-shirts femme", "Femme", "Les t-shirts FORK coupe femme, inspirés de Toulon et de la Provence."),
+  },
+  {
+    slug: "jour-de-match",
+    title: "Jour de match · Le stand FORK à la Guinguette de Mayol",
+    description: "Les jours de match à domicile, retrouve le stand FORK à la Guinguette de Mayol, à Toulon : essayer, acheter ou récupérer ta commande.",
+    body: part("jour-de-match.html"),
+  },
+  {
+    slug: "vos-moments",
+    title: "Vos moments · Les photos FORK de la communauté",
+    description: "Vos photos avec votre t-shirt FORK, de Toulon à l'autre bout du monde. Partage la tienne !",
+    body: part("vos-moments.html"),
+  },
+  {
+    slug: "a-propos",
+    title: "À propos · L'histoire de FORK, marque de Toulon",
+    description: "L'histoire de FORK : une marque née à Toulon, dessinée par Matisse Pialat, imprimée à Toulon. Faire porter Toulon au monde entier.",
+    body: part("a-propos.html"),
+  },
+  {
+    slug: "aide",
+    title: "Aide et FAQ · FORK",
+    description: "Livraison, tailles, retours, carte cadeau, pack 2 t-shirts : toutes les réponses, et nos contacts WhatsApp, e-mail et Instagram.",
+    body: part("aide.html").replaceAll("{{FAQ}}", FAQ).replaceAll("{{TRUST}}", TRUST),
+  },
+];
+for (const pg of SECTION_PAGES) {
+  if (pg.body.includes("{{")) throw new Error(`Gabarit incomplet : ${pg.slug}`);
+  const url = `${SITE}/${pg.slug}/`;
+  const html = `<!doctype html>
+<html lang="fr">
+<head>
+${SHARED_HEAD}
+  <title>${esc(pg.title)}</title>
+  <meta name="description" content="${esc(pg.description)}">
+  <link rel="canonical" href="${url}">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="FORK">
+  <meta property="og:locale" content="fr_FR">
+  <meta property="og:url" content="${url}">
+  <meta property="og:title" content="${esc(pg.title)}">
+  <meta property="og:description" content="${esc(pg.description)}">
+  <meta property="og:image" content="${SITE}/og-image.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+</head>
+<body data-page="${pg.slug}"${pg.filter ? ` data-grid-filter="${pg.filter}"` : ""}>${header}  <main>
+${pg.body}
+${pg.slug === "aide" || pg.slug === "a-propos" ? "" : `\n${newsBlock}\n`}  </main>${tail}`;
+  mkdirSync(join(PUB, pg.slug), { recursive: true });
+  writeFileSync(join(PUB, pg.slug, "index.html"), html);
+}
+
 // --- Plan du site ---------------------------------------------------------
 const urls = [
   { loc: `${SITE}/`, freq: "weekly", prio: "1.0" },
+  ...SECTION_PAGES.map((pg) => ({ loc: `${SITE}/${pg.slug}/`, freq: "weekly", prio: ["collection", "homme", "femme"].includes(pg.slug) ? "0.9" : "0.6" })),
   ...forSale.map((p) => ({ loc: pageUrl(p), freq: "weekly", prio: "0.9" })),
   { loc: `${SITE}/cgv.html`, freq: "yearly", prio: "0.3" },
   { loc: `${SITE}/mentions-legales.html`, freq: "yearly", prio: "0.2" },
@@ -276,7 +365,7 @@ export const CATALOGUE: CatalogueItem[] = ${JSON.stringify(
 `,
 );
 
-console.log(`${forSale.length} pages t-shirt, 404, sitemap (${urls.length} adresses), flux Merchant (${items.length} articles)`);
+console.log(`${forSale.length} pages t-shirt, ${SECTION_PAGES.length} pages de rubrique, 404, sitemap (${urls.length} adresses), flux Merchant (${items.length} articles)`);
 
 // --- Studio : identifiants des motifs et polices autorisés côté serveur ----
 {

@@ -1,0 +1,34 @@
+    <section class="page-head">
+      <div class="wrap">
+        <nav class="crumbs" aria-label="Fil d'Ariane"><a href="/">Accueil</a><span aria-hidden="true">›</span><span>{{CRUMB}}</span></nav>
+        <h1>{{H1}}</h1>
+        <p class="muted">{{INTRO}}</p>
+      </div>
+    </section>
+
+    <div class="page-search-bar">
+      <div class="wrap">
+        <label class="page-search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input type="search" id="pageSearch" placeholder="Rechercher un t-shirt, une couleur, un mot…" autocomplete="off" enterkeyhint="search" aria-label="Rechercher dans la collection" aria-controls="productGrid">
+        </label>
+      </div>
+    </div>
+
+    <section class="sec wrap" id="produits" aria-label="Produits">
+      <div class="sec-head">
+        <nav class="tabs" aria-label="Filtrer les produits">
+          <a class="tab" href="/collection/" aria-selected="{{SEL_ALL}}">Tout</a>
+          <a class="tab" href="/homme/" aria-selected="{{SEL_HOMME}}">Homme</a>
+          <a class="tab" href="/femme/" aria-selected="{{SEL_FEMME}}">Femme</a>
+        </nav>
+        <p class="hint" id="gridHint" aria-live="polite"></p>
+      </div>
+      <div class="pgrid" id="productGrid"></div>
+      <div class="pack-band">
+        <div><b>Pack 2 t-shirts : <span data-pack-percent>-10 %</span> et livraison offerte</b><span>Un pour toi, un à offrir. La remise s'applique toute seule dans le panier.</span></div>
+        <button type="button" class="btn out" data-giftcard>Offrir une carte cadeau</button>
+      </div>
+    </section>
+
+{{TRUST}}

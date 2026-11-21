@@ -51,7 +51,7 @@
           <span class="txt">Instagram</span>
         </a>
       </div>
-      <a href="#top" class="brand" aria-label="FORK, accueil">
+      <a href="/" class="brand" aria-label="FORK, accueil">
         <img src="logo.png" alt="" width="46" height="46">
         <span>FORK</span>
       </a>
@@ -68,13 +68,13 @@
       </div>
     </div>
     <nav class="mainnav" aria-label="Navigation principale">
-      <a href="#produits" data-filter="all">La collection</a>
-      <a href="#produits" data-filter="homme">Homme</a>
-      <a href="#produits" data-filter="femme">Femme</a>
-      <a href="#moments">Vos moments</a>
-      <a href="#match">Jour de match</a>
-      <a href="#histoire">À propos</a>
-      <a href="#faq">Aide</a>
+      <a href="/collection/">La collection</a>
+      <a href="/homme/">Homme</a>
+      <a href="/femme/">Femme</a>
+      <a href="/vos-moments/">Vos moments</a>
+      <a href="/jour-de-match/">Jour de match</a>
+      <a href="/a-propos/">À propos</a>
+      <a href="/aide/">Aide</a>
     </nav>
   </header>
 
@@ -84,8 +84,8 @@
         <h1>La vibe de Toulon dans ton dressing</h1>
         <p>T-shirts pensés à Toulon, en séries limitées. 100 % coton.</p>
         <div class="hero-ctas">
-          <a class="btn light" href="#produits">Découvrir la collection</a>
-          <a class="btn out light-out" href="#histoire">Notre histoire</a>
+          <a class="btn light" href="/collection/">Découvrir la collection</a>
+          <a class="btn out light-out" href="/a-propos/">Notre histoire</a>
         </div>
       </div>
       <div class="hero-img">
@@ -94,29 +94,24 @@
       </div>
     </section>
 
-
     <section class="sec wrap" aria-label="Catégories">
       <div class="cats">
-        <a class="cat" href="#produits" data-filter="homme"><div class="cat-img"><img src="assets/products/authentique/authentique-dos-rugby.jpg" alt="T-shirt FORK homme porté de dos, ballon de rugby en main au bord de la mer" loading="lazy" width="1369" height="2048"></div><span>T-shirts homme</span></a>
-        <a class="cat" href="#produits" data-filter="femme"><div class="cat-img"><img src="assets/products/lou-faron/lou-faron-face-calanque.jpg" alt="T-shirt FORK Lou Faron léopard porté au-dessus de la calanque" loading="lazy" width="1369" height="2048"></div><span>T-shirts femme</span></a>
-        <a class="cat" href="#match"><div class="cat-img"><img src="cover-jour-de-match.svg" alt="Rayures rouge et noir et ballon de rugby" loading="lazy" width="800" height="1000"></div><span>Jour de match</span></a>
-        <a class="cat" href="#histoire"><div class="cat-img"><img src="cover-histoire.svg" alt="Motif du logo FORK" loading="lazy" width="800" height="1000"></div><span>L'histoire FORK</span></a>
+        <a class="cat" href="/homme/"><div class="cat-img"><img src="assets/products/authentique/authentique-dos-rugby.jpg" alt="T-shirt FORK homme porté de dos, ballon de rugby en main au bord de la mer" loading="lazy" width="1369" height="2048"></div><span>T-shirts homme</span></a>
+        <a class="cat" href="/femme/"><div class="cat-img"><img src="assets/products/lou-faron/lou-faron-face-calanque.jpg" alt="T-shirt FORK Lou Faron léopard porté au-dessus de la calanque" loading="lazy" width="1369" height="2048"></div><span>T-shirts femme</span></a>
+        <a class="cat" href="/jour-de-match/"><div class="cat-img"><img src="cover-jour-de-match.svg" alt="Rayures rouge et noir et ballon de rugby" loading="lazy" width="800" height="1000"></div><span>Jour de match</span></a>
+        <a class="cat" href="/a-propos/"><div class="cat-img"><img src="cover-histoire.svg" alt="Motif du logo FORK" loading="lazy" width="800" height="1000"></div><span>L'histoire FORK</span></a>
       </div>
     </section>
 
-    <section class="sec wrap" id="produits">
+    <section class="sec wrap" id="produits" aria-labelledby="topTitle">
       <div class="sec-head">
-        <h2>La collection</h2>
-        <div class="tabs" role="tablist" aria-label="Filtrer les produits">
-          <button class="tab" role="tab" data-tab="all" aria-selected="true">Tout</button>
-          <button class="tab" role="tab" data-tab="homme" aria-selected="false">Homme</button>
-          <button class="tab" role="tab" data-tab="femme" aria-selected="false">Femme</button>
-        </div>
+        <h2 id="topTitle">Les incontournables</h2>
+        <a class="link" href="/collection/">Toute la collection →</a>
       </div>
-      <div class="pgrid" id="productGrid"></div>
+      <div class="pgrid" id="productGrid" data-limit="4"></div>
       <div class="pack-band">
         <div><b>Pack 2 t-shirts : <span data-pack-percent>-10 %</span> et livraison offerte</b><span>Un pour toi, un à offrir. La remise s'applique toute seule dans le panier.</span></div>
-        <button type="button" class="btn out" data-giftcard>Offrir une carte cadeau</button>
+        <a class="btn" href="/collection/">Voir toute la collection</a>
       </div>
     </section>
 
@@ -144,72 +139,10 @@
       <img src="assets/ambiance/nageuse.jpg" alt="Nageuse dans la rade" loading="lazy" width="1000" height="1496">
     </section>
 
-    <section class="sec wrap" id="moments" aria-labelledby="momentsTitle">
-      <div class="sec-head">
-        <div>
-          <p class="up">Partout avec FORK</p>
-          <h2 id="momentsTitle">Vos moments</h2>
-          <p class="muted moments-intro">À la plage, au stade, au sommet du Faron ou à l'autre bout du monde : montre-nous où tu portes ton t-shirt FORK.</p>
-        </div>
-        <button type="button" class="btn" data-moment-share>Partager mon moment</button>
-      </div>
-      <div class="moments-grid" id="momentsGrid" aria-live="polite"></div>
-      <div class="moments-more"><button type="button" class="btn out" id="momentsMore" hidden>Voir plus de moments</button></div>
-    </section>
-
-
-    <section class="split dark" id="match">
-      <div class="split-img"><img src="cover-jour-de-match.svg" alt="Rayures rouge et noir et ballon de rugby" loading="lazy" width="800" height="1000"></div>
-      <div class="split-txt">
-        <span class="up">Jour de match</span>
-        <h2>Retrouve-nous à la Guinguette de Mayol</h2>
-        <p>Les jours de match à domicile, FORK installe son stand à la Guinguette de Mayol avec la collection du moment. Viens essayer, récupérer ta commande ou parler rugby.</p>
-        <div class="venue">
-          <b>La Guinguette de Mayol</b>
-          <span>Centre commercial Mayol, allée de Besagne, 83000 Toulon</span>
-          <a class="link" href="https://www.google.com/maps/search/?api=1&amp;query=La+Guinguette+de+Mayol+All%C3%A9e+de+Besagne+83000+Toulon" target="_blank" rel="noopener">Itinéraire</a>
-        </div>
-        <a class="btn light" href="https://www.instagram.com/fork__off/" target="_blank" rel="noopener">Suis-nous sur Instagram</a>
-      </div>
-    </section>
-
-    <section class="book-sec" id="histoire" aria-labelledby="bookTitle">
-      <div class="wrap">
-        <div class="book-head">
-          <span class="up danger">À propos · Portrait</span>
-          <h2 id="bookTitle">L'histoire de FORK</h2>
-        </div>
-        <div class="book">
-          <article class="book-page book-left">
-            <span class="book-run">FORK · L'histoire de la marque</span>
-            <h3 class="book-title">Faire porter Toulon au monde entier.</h3>
-            <p class="book-lead">À dix-neuf ans, Matisse Pialat signe des vêtements qui racontent sa ville. Son ambition : que l'on porte un jour Toulon comme on porte New York.</p>
-            <h4 class="book-h">Une fourche pour commencer</h4>
-            <p class="book-drop">Tout commence il y a cinq ans, sur un vélo. Matisse, alors coureur cycliste de haut niveau, imagine avec son cousin une ligne d'équipements, puis de t-shirts, pour le cyclisme. Le nom s'impose de lui-même : FORK, la fourche en anglais, cette pièce qui guide le vélo. Le sport a cédé la place à la mode ; le nom, lui, est resté.</p>
-            <p>Le logo naît de deux formes géométriques étirées jusqu'à trouver leur équilibre. Matisse en garde précieusement le secret. Chacun y lit ce qu'il veut : des vagues, deux gouttes d'eau, ou les silhouettes du Faron et du Coudon.</p>
-            <h4 class="book-h">Reprendre les rênes</h4>
-            <p>À dix-huit ans, lorsque son cousin choisit la voie de l'immobilier, Matisse reprend seul les rênes de la marque. Premier design : un ballon de rugby, frappé d'une devise que chaque Toulonnais comprend : « Chez nous à Toulon, on craint degun ».</p>
-            <span class="book-folio">1</span>
-          </article>
-          <article class="book-page book-right">
-            <span class="book-run">fork-clothe.com · Toulon</span>
-            <h4 class="book-h">Une ville au cœur</h4>
-            <p>Né à Toulon, Matisse ne s'imagine pas vivre ailleurs. Enfant, il rêvait d'en devenir le maire pour la redessiner. Aujourd'hui, c'est par le vêtement qu'il veut l'embellir et la faire rayonner, d'abord en France, puis bien au-delà.</p>
-            <p>Il dessine lui-même chaque création, en duo avec un designer autrefois installé à Toulon, désormais à Lyon. Les t-shirts, en coton 100&nbsp;% de 220&nbsp;grammes, sont imprimés à Toulon, à quelques pas de la rade.</p>
-            <h4 class="book-h">À la rencontre des Toulonnais</h4>
-            <p>Pas encore de boutique : c'est FORK qui vient à vous. On la trouve aux Halles de Toulon, sur les marchés, à la guinguette de Mayol les jours de match, chez des bars et commerces partenaires de la vieille ville, et sur chaque événement de la région. La marque crée aussi ses propres rendez-vous, comme la FORK Padel Cup. Et toute l'année, sur fork-clothe.com.</p>
-            <blockquote class="book-quote"><p>« Partout dans le monde, on porte New York. Je veux qu'un jour, on porte Toulon de la même façon. »</p><cite>Matisse Pialat, fondateur de FORK</cite></blockquote>
-            <span class="book-folio">2</span>
-          </article>
-        </div>
-        <dl class="book-facts">
-          <div><dt>Née</dt><dd>à Toulon</dd></div>
-          <div><dt>Dessinée</dt><dd>par Matisse Pialat</dd></div>
-          <div><dt>Imprimée</dt><dd>à Toulon</dd></div>
-          <div><dt>Matière</dt><dd>100 % coton, 220 g</dd></div>
-        </dl>
-        <div class="book-cta"><a class="btn out" href="#produits">Voir la collection</a></div>
-      </div>
+    <section class="sec wrap home-links" aria-label="À découvrir">
+      <a class="home-link" href="/jour-de-match/"><span class="up">Jour de match</span><b>Le stand FORK à la Guinguette de Mayol</b><span class="link">Découvrir →</span></a>
+      <a class="home-link" href="/vos-moments/"><span class="up">Vos moments</span><b>Vos photos avec votre t-shirt FORK</b><span class="link">Voir les photos →</span></a>
+      <button type="button" class="home-link gift" data-giftcard><span class="up">Carte cadeau</span><b>Un bout de Toulon à offrir</b><span class="link">Offrir →</span></button>
     </section>
 
     <section class="news" id="newsletter" aria-labelledby="newsTitle">
@@ -239,20 +172,6 @@
         <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg><b>Compte client</b><span>Commandes et suivi au même endroit</span></div>
       </div>
     </div>
-
-    <section class="sec wrap" id="faq">
-      <div class="sec-head"><h2>Questions fréquentes</h2></div>
-      <div class="faq">
-        <details><summary>Quels sont les délais et frais de livraison ?</summary><p>Les commandes sont expédiées en Colissimo avec suivi, en France métropolitaine, sous 48 h après la validation du paiement ; le délai de transport dépend ensuite de La Poste. La livraison est offerte dès 2 t-shirts, ou à moins de 10 km du centre de Toulon. Sinon, elle coûte 7,64 €. Le montant exact est calculé à partir de ton adresse et affiché avant le paiement.</p></details>
-        <details><summary>Quelle taille choisir ?</summary><p>Nos t-shirts existent en S, M, L, XL, XXL et 3XL selon les modèles (les tailles disponibles sont indiquées sur chaque fiche). Mesures à plat (largeur d'aisselle à aisselle × longueur) : S 46 × 71 cm, M 50 × 73 cm, L 55 × 76 cm, XL 59 × 76 cm, XXL 63 × 79 cm, 3XL 65 × 82 cm. Le tableau est aussi sur chaque fiche. Un doute ? Écris-nous sur WhatsApp au 07 66 75 18 40, on te conseille.</p></details>
-        <details><summary>Dois-je créer un compte pour commander ?</summary><p>Non. Tu peux commander sans compte. Si tu te connectes plus tard avec Google en utilisant la même adresse e-mail, ta commande apparaît automatiquement dans « Mes commandes ».</p></details>
-        <details><summary>Comment suivre mon colis ?</summary><p>Dès l'expédition, tu reçois un e-mail avec le numéro de suivi et le bouton « Suivre mon colis ». Le suivi est aussi visible dans ton compte, rubrique « Mes commandes ».</p></details>
-        <details><summary>Puis-je retourner un article ?</summary><p>Oui. Tu as 14 jours à compter de la réception de ta commande pour changer d'avis, sans avoir à te justifier. Préviens-nous par e-mail à <a href="mailto:forkofficiel@gmail.com">forkofficiel@gmail.com</a>, puis renvoie les articles non portés et dans leur état d'origine dans les 14 jours, à : Pialat Matisse – FORK, 147 avenue Guichon de Grandpont, 83200 Toulon. Les frais de renvoi sont à ta charge. On te rembourse la totalité des sommes versées, y compris la livraison initiale au tarif standard, au plus tard 14 jours après ta demande (le remboursement peut attendre la réception du colis ou la preuve de son envoi). Si l'article est défectueux ou si l'erreur vient de nous, les frais sont pour nous. Tous les détails sont dans nos <a href="cgv.html">CGV</a>.</p></details>
-        <details><summary>Comment fonctionne la carte cadeau ?</summary><p>Tu choisis un montant (30, 50 ou 60 €) et tu ajoutes un petit mot si tu veux. Après le paiement, la carte est envoyée par e-mail à la personne de ton choix, ou à toi pour que tu la transfères ou l'imprimes. Elle est valable un an et s'utilise en une ou plusieurs fois sur fork-clothe.com : il suffit de saisir son code au moment de la commande. Pratique quand on ne connaît pas la taille !</p></details>
-        <details><summary>Comment profiter du pack 2 t-shirts ?</summary><p>Mets au moins 2 t-shirts dans ton panier (modèles et tailles au choix) : la remise du pack et la livraison offerte s'appliquent toutes seules. Le pack ne se cumule pas avec un code promo : c'est la remise la plus avantageuse qui compte.</p></details>
-        <details><summary>Puis-je modifier ou annuler ma commande ?</summary><p>Oui, tant que le colis n'a pas été expédié. Écris-nous sur WhatsApp au 07 66 75 18 40 avec ton numéro de commande.</p></details>
-      </div>
-    </section>
   </main>
 
   <footer class="site-footer">
@@ -262,9 +181,9 @@
           <div class="flogo"><img src="logo.png" alt="" width="56" height="56">FORK</div>
           <p class="muted">La vibe de Toulon dans ton dressing.</p>
         </div>
-        <div><h4>Boutique</h4><ul><li><a href="#produits" data-filter="all">La collection</a></li><li><a href="#produits" data-filter="homme">Homme</a></li><li><a href="#produits" data-filter="femme">Femme</a></li><li><button type="button" data-giftcard>Carte cadeau</button></li></ul></div>
-        <div><h4>FORK</h4><ul><li><a href="#histoire">Notre histoire</a></li><li><a href="#match">Jour de match</a></li><li><button type="button" data-open-account>Mon compte</button></li></ul></div>
-        <div><h4>Aide</h4><ul><li><a href="#faq">FAQ</a></li><li><a href="https://wa.me/33766751840" target="_blank" rel="noopener">WhatsApp · 07 66 75 18 40</a></li><li><a href="mailto:forkofficiel@gmail.com">E-mail · forkofficiel@gmail.com</a></li><li><a href="https://www.instagram.com/fork__off/" target="_blank" rel="noopener">Instagram · @fork__off</a></li></ul></div>
+        <div><h4>Boutique</h4><ul><li><a href="/collection/">La collection</a></li><li><a href="/homme/">Homme</a></li><li><a href="/femme/">Femme</a></li><li><button type="button" data-giftcard>Carte cadeau</button></li></ul></div>
+        <div><h4>FORK</h4><ul><li><a href="/a-propos/">Notre histoire</a></li><li><a href="/jour-de-match/">Jour de match</a></li><li><a href="/vos-moments/">Vos moments</a></li><li><button type="button" data-open-account>Mon compte</button></li></ul></div>
+        <div><h4>Aide</h4><ul><li><a href="/aide/">Aide et FAQ</a></li><li><a href="https://wa.me/33766751840" target="_blank" rel="noopener">WhatsApp · 07 66 75 18 40</a></li><li><a href="mailto:forkofficiel@gmail.com">E-mail · forkofficiel@gmail.com</a></li><li><a href="https://www.instagram.com/fork__off/" target="_blank" rel="noopener">Instagram · @fork__off</a></li></ul></div>
       </div>
       <div class="fbottom"><span>© <span id="year">2026</span> FORK · fork-clothe.com</span><span class="flegal"><a href="mentions-legales.html">Mentions légales</a> · <a href="cgv.html">CGV</a> · <a href="confidentialite.html">Confidentialité</a></span></div>
     </div>
@@ -276,13 +195,15 @@
     <div class="dhead"><h3>Menu</h3><button class="x" data-close aria-label="Fermer le menu">✕</button></div>
     <div class="dbody">
       <nav class="mnav-links">
-        <a href="#produits" data-filter="all">La collection</a>
-        <a href="#produits" data-filter="homme">Homme</a>
-        <a href="#produits" data-filter="femme">Femme</a>
-        <a href="#moments">Vos moments</a>
-          <a href="#histoire">À propos</a>
+        <a href="/">Accueil</a>
+        <a href="/collection/">La collection</a>
+        <a href="/homme/">Homme</a>
+        <a href="/femme/">Femme</a>
+        <a href="/vos-moments/">Vos moments</a>
+        <a href="/jour-de-match/">Jour de match</a>
+        <a href="/a-propos/">À propos</a>
         <button type="button" data-giftcard>Carte cadeau</button>
-        <a href="#faq">Aide</a>
+        <a href="/aide/">Aide</a>
         <button type="button" data-open-account>Mon compte</button>
         <a href="https://www.instagram.com/fork__off/" target="_blank" rel="noopener">Instagram · @fork__off</a>
       </nav>
