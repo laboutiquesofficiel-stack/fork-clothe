@@ -9,8 +9,14 @@
   <link rel="icon" href="/favicon-192.png" type="image/png" sizes="192x192">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <meta name="theme-color" content="#0e2a3f">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="FORK">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <link rel="stylesheet" href="assets/css/fork.css">
   <script src="assets/js/app.js" defer></script>
+  <script src="assets/js/install.js" defer></script>
   <title>La collection · T-shirts FORK de Toulon</title>
   <meta name="description" content="Tous les t-shirts FORK : séries limitées pensées à Toulon, 100 % coton 220 g. Recherche par modèle, couleur ou mot-clé.">
   <link rel="canonical" href="https://fork-clothe.com/collection/">
@@ -146,13 +152,36 @@
         </div>
         <div><h4>Boutique</h4><ul><li><a href="/collection/">La collection</a></li><li><a href="/homme/">Homme</a></li><li><a href="/femme/">Femme</a></li><li><button type="button" data-giftcard>Carte cadeau</button></li></ul></div>
         <div><h4>FORK</h4><ul><li><a href="/a-propos/">Notre histoire</a></li><li><a href="/jour-de-match/">Jour de match</a></li><li><a href="/vos-moments/">Vos moments</a></li><li><button type="button" data-open-account>Mon compte</button></li></ul></div>
-        <div><h4>Aide</h4><ul><li><a href="/aide/">Aide et FAQ</a></li><li><a href="https://wa.me/33766751840" target="_blank" rel="noopener">WhatsApp · 07 66 75 18 40</a></li><li><a href="mailto:forkofficiel@gmail.com">E-mail · forkofficiel@gmail.com</a></li><li><a href="https://www.instagram.com/fork__off/" target="_blank" rel="noopener">Instagram · @fork__off</a></li></ul></div>
+        <div><h4>Aide</h4><ul><li><a href="/aide/">Aide et FAQ</a></li><li><button type="button" data-app-install>Installer l'appli</button></li><li><a href="https://wa.me/33766751840" target="_blank" rel="noopener">WhatsApp · 07 66 75 18 40</a></li><li><a href="mailto:forkofficiel@gmail.com">E-mail · forkofficiel@gmail.com</a></li><li><a href="https://www.instagram.com/fork__off/" target="_blank" rel="noopener">Instagram · @fork__off</a></li></ul></div>
       </div>
       <div class="fbottom"><span>© <span id="year">2026</span> FORK · fork-clothe.com</span><span class="flegal"><a href="mentions-legales.html">Mentions légales</a> · <a href="cgv.html">CGV</a> · <a href="confidentialite.html">Confidentialité</a></span></div>
     </div>
   </footer>
 
   <div class="overlay" id="overlay" hidden></div>
+
+  <div class="app-sheet" id="appSheet" hidden>
+    <div class="app-sheet-back" data-app-close></div>
+    <div class="app-sheet-box" role="dialog" aria-modal="true" aria-labelledby="appSheetTitle">
+      <h2 id="appSheetTitle"><img src="app-icon-192.png" alt="" width="34" height="34"> Installer FORK sur ton téléphone</h2>
+      <div data-app-ios>
+        <p class="muted">Apple n'autorise pas l'installation automatique : 3 gestes dans Safari.</p>
+        <ol class="app-steps">
+          <li><span class="app-step-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#1a73e8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 8 5-5 5 5"/><path d="M5 12v8h14v-8"/></svg></span><div><b>1. Touche « Partager »</b><span>Le carré avec la flèche, en bas de Safari (ou dans le menu « … »).</span></div></li>
+          <li><span class="app-step-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M12 8v8M8 12h8"/></svg></span><div><b>2. « Sur l'écran d'accueil »</b><span>Fais défiler la liste vers le bas pour le trouver.</span></div></li>
+          <li><span class="app-step-ico app-step-add">Ajouter</span><div><b>3. Touche « Ajouter »</b><span>L'icône FORK apparaît sur ton écran d'accueil.</span></div></li>
+        </ol>
+      </div>
+      <div data-app-android hidden>
+        <p class="muted">Sur Android, 2 gestes dans Chrome.</p>
+        <ol class="app-steps">
+          <li><span class="app-step-ico"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></span><div><b>1. Touche le menu « ⋮ »</b><span>Les trois petits points, en haut à droite de Chrome.</span></div></li>
+          <li><span class="app-step-ico app-step-add">+</span><div><b>2. « Ajouter à l'écran d'accueil »</b><span>Puis « Installer » : l'icône FORK apparaît avec tes applis.</span></div></li>
+        </ol>
+      </div>
+      <button type="button" class="btn app-sheet-ok" data-app-close>Compris</button>
+    </div>
+  </div>
 
   <aside class="drawer left" id="menuDrawer" hidden aria-label="Menu">
     <div class="dhead"><h3>Menu</h3><button class="x" data-close aria-label="Fermer le menu">✕</button></div>
@@ -166,6 +195,7 @@
         <a href="/jour-de-match/">Jour de match</a>
         <a href="/a-propos/">À propos</a>
         <button type="button" data-giftcard>Carte cadeau</button>
+        <button type="button" data-app-install>Installer l'appli</button>
         <a href="/aide/">Aide</a>
         <button type="button" data-open-account>Mon compte</button>
         <a href="https://www.instagram.com/fork__off/" target="_blank" rel="noopener">Instagram · @fork__off</a>

@@ -47,8 +47,14 @@ const SHARED_HEAD = `  <meta charset="utf-8">
   <link rel="icon" href="/favicon-192.png" type="image/png" sizes="192x192">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <meta name="theme-color" content="#0e2a3f">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="FORK">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <link rel="stylesheet" href="assets/css/fork.css">
-  <script src="assets/js/app.js" defer></script>`;
+  <script src="assets/js/app.js" defer></script>
+  <script src="assets/js/install.js" defer></script>`;
 
 const RETURN_POLICY = {
   "@type": "MerchantReturnPolicy",

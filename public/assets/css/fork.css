@@ -551,3 +551,34 @@ a.tab { display: inline-flex; align-items: center; }
 .help-card:hover { border-color: var(--ink); }
 @media (max-width: 760px) { .help-contact { grid-template-columns: 1fr; } }
 .book-sec h1 { font-size: clamp(2rem, 5vw, 3.6rem); margin: 0; }
+
+/* ---- Installer l'appli (nov. 2026) ---- */
+.app-banner { display: flex; align-items: center; gap: 14px; margin-block: 12px; padding: 14px 14px 14px 16px; border: 1px solid var(--line); background: var(--white); }
+.app-banner[hidden] { display: none; }
+.app-banner-icon img { display: block; width: 48px; height: 48px; border-radius: 12px; }
+.app-banner-txt { flex: 1; min-width: 0; display: grid; gap: 2px; }
+.app-banner-txt b { font-size: 1.02rem; }
+.app-banner-txt span { color: var(--muted); font-size: .9rem; line-height: 1.35; }
+.app-banner .btn { flex: none; }
+.app-banner-x { flex: none; width: 36px; height: 36px; border: 0; background: transparent; font-size: 1.6rem; line-height: 1; color: var(--muted); cursor: pointer; }
+@media (max-width: 520px) { .app-banner-icon { display: none; } .app-banner .btn { padding-inline: 16px; } }
+.app-sheet { position: fixed; inset: 0; z-index: 80; display: flex; align-items: flex-end; justify-content: center; }
+.app-sheet[hidden] { display: none; }
+.app-sheet-back { position: absolute; inset: 0; background: rgba(10, 14, 20, .55); opacity: 0; transition: opacity .2s; }
+.app-sheet-box { position: relative; width: 100%; max-width: 560px; max-height: 92vh; overflow: auto; background: var(--white); border-radius: 22px 22px 0 0; padding: 26px 22px calc(22px + env(safe-area-inset-bottom)); transform: translateY(100%); transition: transform .22s ease-out; }
+.app-sheet.open .app-sheet-back { opacity: 1; }
+.app-sheet.open .app-sheet-box { transform: none; }
+@media (min-width: 700px) { .app-sheet { align-items: center; } .app-sheet-box { border-radius: 22px; } }
+.app-sheet h2 { display: flex; align-items: center; gap: 10px; margin: 0 0 8px; font-size: 1.35rem; }
+.app-sheet h2 img { border-radius: 8px; }
+.app-sheet .muted { margin: 0 0 14px; }
+.app-steps { list-style: none; margin: 0 0 18px; padding: 0; }
+.app-steps li { display: flex; gap: 16px; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--line); }
+.app-steps li div { display: grid; gap: 3px; }
+.app-steps li span:not(.app-step-ico) { color: var(--muted); font-size: .95rem; }
+.app-step-ico { flex: none; display: grid; place-items: center; width: 64px; height: 64px; border-radius: 16px; background: var(--soft); }
+.app-step-ico svg { width: 30px; height: 30px; }
+.app-step-add { color: #1a73e8; font-weight: 800; font-size: .95rem; }
+.app-sheet-ok { width: 100%; justify-content: center; }
+body.app-sheet-open { overflow: hidden; }
+.site-footer li button[data-app-install], .mnav-links button[data-app-install] { font: inherit; }
