@@ -60,14 +60,17 @@
     return;
   }
   // Bandeau : visible sur téléphone et tablette, sauf s'il a été masqué.
-  if (banner && !store.get() && (isIOS || isAndroid || window.matchMedia("(max-width: 900px)").matches)) banner.hidden = false;
+  // Masqué avec la croix : le bandeau revient au bout de 7 jours.
+  const hiddenAt = Number(store.get());
+  const recentlyHidden = store.get() === "installed" || (hiddenAt && Date.now() - hiddenAt < 7 * 864e5);
+  if (banner && !recentlyHidden && (isIOS || isAndroid || window.matchMedia("(max-width: 900px)").matches)) banner.hidden = false;
 
   document.addEventListener("click", (e) => {
     const t = e.target;
     if (!(t instanceof Element)) return;
     if (t.closest("[data-app-install]")) { e.preventDefault(); install(); }
     else if (t.closest("[data-app-close]")) closeSheet();
-    else if (t.closest("[data-app-dismiss]")) { if (banner) banner.hidden = true; store.set("1"); }
+    else if (t.closest("[data-app-dismiss]")) { if (banner) banner.hidden = true; store.set(String(Date.now())); }
   });
   document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeSheet(); });
 })();
