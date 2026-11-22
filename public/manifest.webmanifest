@@ -1,0 +1,15 @@
+{
+  "name": "FORK · Toulon",
+  "short_name": "FORK",
+  "description": "La marque de vêtements de Toulon : t-shirts en séries limitées.",
+  "lang": "fr",
+  "start_url": "/?src=appli",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0e2a3f",
+  "theme_color": "#0e2a3f",
+  "icons": [
+    { "src": "/app-icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/app-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
