@@ -401,7 +401,7 @@ export default async (request: Request) => {
 
       return {
         sku,
-        name: product.name,
+        name: sku.startsWith("fork-sweat-") ? `Sweat ${product.name}` : product.name,
         color: product.color,
         size,
         quantity,
@@ -420,8 +420,8 @@ export default async (request: Request) => {
         return Response.json(
           {
             error: left <= 0
-              ? `Le t-shirt ${item.name} en taille ${item.size} vient d'être épuisé. Retire-le du panier pour continuer.`
-              : `Il ne reste que ${left} t-shirt${left > 1 ? "s" : ""} ${item.name} en taille ${item.size}. Ajuste la quantité dans ton panier.`,
+              ? `${item.sku.startsWith("fork-sweat-") ? "Le" : "Le t-shirt"} ${item.name} en taille ${item.size} vient d'être épuisé. Retire-le du panier pour continuer.`
+              : `Il ne reste que ${left} ${item.sku.startsWith("fork-sweat-") ? "exemplaire" : "t-shirt"}${left > 1 ? "s" : ""} ${item.name} en taille ${item.size}. Ajuste la quantité dans ton panier.`,
           },
           { status: 409 },
         );
