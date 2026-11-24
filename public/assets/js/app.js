@@ -184,8 +184,8 @@
       keywords: ["sweat", "capuche", "hoodie", "fada", "coeur", "amour", "creme", "femme"],
       description: "Être fada de quelqu'un, c'est l'aimer à la toulonnaise : fort et sans retenue. Devant, le logo FORK et « fada de toi », avec un cœur à la place du point du i. Dans le dos, le grand cœur FORK et TOULON.",
       images: [
-        { src: "assets/products/fada-de-toi/fada-de-toi-maquette-face.jpg", alt: "Sweat à capuche crème Fada de toi, vue de face" },
-        { src: "assets/products/fada-de-toi/fada-de-toi-maquette-dos.jpg", alt: "Dos du sweat Fada de toi : grand cœur FORK et TOULON" },
+        { src: "assets/products/fada-de-toi/fada-de-toi-face.jpg", alt: "Sweat Fada de toi crème porté de face : FORK et « fada de toi » avec un cœur" },
+        { src: "assets/products/fada-de-toi/fada-de-toi-dos.jpg", alt: "Dos du sweat Fada de toi : grand cœur FORK et TOULON" },
       ],
     },
   ];

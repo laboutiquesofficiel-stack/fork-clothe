@@ -140,7 +140,7 @@ export const CATALOGUE: CatalogueItem[] = [
       "XL"
     ],
     "available": true,
-    "image": "https://fork-clothe.com/assets/products/fada-de-toi/fada-de-toi-maquette-face.jpg",
+    "image": "https://fork-clothe.com/assets/products/fada-de-toi/fada-de-toi-face.jpg",
     "url": "https://fork-clothe.com/sweat/fada-de-toi/"
   }
 ];
