@@ -128,9 +128,6 @@
       description: "Il y a des étés qui ne s'oublient pas. Les fins de journée au Mourillon, le sel sur la peau, et cette personne qu'on a embrassée face à la mer. Matisse a dessiné ce sweat pour celles qui gardent un peu d'été sur elles, même en hiver. Devant, FORK avec un haut de maillot à la place du O et « sea & kisses ». Au dos, le maillot rouge et rose et « KISS ME by the sea ».",
       images: [
         { src: "assets/products/kiss-me-by-the-sea/kiss-me-dos-porte.jpg", alt: "Sweat Kiss me by the sea porté de dos : maillot rouge et rose et « KISS ME by the sea »" },
-        { src: "assets/products/kiss-me-by-the-sea/kiss-me-plage-mer.jpg", alt: "Sweat Kiss me by the sea porté, allongée sur un muret face à la mer" },
-        { src: "assets/products/kiss-me-by-the-sea/kiss-me-face-porte.jpg", alt: "Sweat Kiss me by the sea porté de face" },
-        { src: "assets/products/kiss-me-by-the-sea/kiss-me-dos.jpg", alt: "Dos du sweat Kiss me by the sea" },
         { src: "assets/products/kiss-me-by-the-sea/kiss-me-face.jpg", alt: "Devant du sweat Kiss me by the sea : FORK et « sea & kisses »" },
       ],
     },
@@ -151,6 +148,25 @@
       images: [
         { src: "assets/products/so-spicy/so-spicy-dos.jpg", alt: "Dos du sweat So Spicy vert sauge : piments, FORK et « NOT YOUR BASIC FOOD »" },
         { src: "assets/products/so-spicy/so-spicy-face.jpg", alt: "Sweat So Spicy vert sauge porté de face" },
+      ],
+    },
+    {
+      id: "peuchere",
+      type: "Sweat",
+      sku: "fork-sweat-peuchere",
+      name: "Peuchère",
+      color: "Noir · logo bleu électrique",
+      category: "mixte",
+      priceCents: 4500,
+      sizes: ["S", "M", "L", "XL"],
+      available: true,
+      isNew: true,
+      aiVisuals: true,
+      keywords: ["sweat", "capuche", "hoodie", "peuchere", "tarpin", "pitchoun", "gabian", "cagnard", "mourillon", "faron", "darse", "pointu", "sablettes", "tamaris", "boulegue", "zou", "oh fan", "mots", "noir", "bleu", "electrique", "mixte"],
+      description: "Peuchère, tarpin, pitchoun, gabian, cagnard, boulègue, zou… Les mots qu'on entend à Toulon depuis toujours, sur les marchés, au port ou à la plage. Matisse les a réunis dans le dos de ce sweat, avec les lieux de chez nous : le Mourillon, le Faron, la Darse, les Sablettes, Tamaris. Et par-dessus, un grand « OH FAN ! ». Devant, le logo FORK en bleu électrique.",
+      images: [
+        { src: "assets/products/peuchere/peuchere-dos.jpg", alt: "Dos du sweat Peuchère noir : mur de mots du Sud et « OH FAN ! »" },
+        { src: "assets/products/peuchere/peuchere-face.jpg", alt: "Sweat Peuchère noir porté de face, logo FORK bleu électrique" },
       ],
     },
     {

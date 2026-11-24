@@ -52,6 +52,7 @@ const catalogue: Record<string, Product> = {
   // Sweats à capuche (exclusivité du site, imprimés à Toulon) : même catalogue que public/assets/js/app.js.
   "fork-sweat-kiss-me": { name: "Kiss me by the sea", color: "Écru", sizes: ["S", "M", "L", "XL"], priceCents: 4500 },
   "fork-sweat-so-spicy": { name: "So Spicy", color: "Vert sauge", sizes: ["S", "M", "L", "XL"], priceCents: 4500 },
+  "fork-sweat-peuchere": { name: "Peuchère", color: "Noir · logo bleu électrique", sizes: ["S", "M", "L", "XL"], priceCents: 4500 },
   "fork-sweat-fada-de-toi": { name: "Fada de toi", color: "Crème", sizes: ["S", "M", "L", "XL"], priceCents: 4500 },
 };
 

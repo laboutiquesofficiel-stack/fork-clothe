@@ -110,6 +110,23 @@ export const CATALOGUE: CatalogueItem[] = [
     "url": "https://fork-clothe.com/sweat/so-spicy/"
   },
   {
+    "sku": "fork-sweat-peuchere",
+    "id": "peuchere",
+    "type": "Sweat",
+    "name": "Peuchère",
+    "color": "Noir · logo bleu électrique",
+    "priceCents": 4500,
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "available": true,
+    "image": "https://fork-clothe.com/assets/products/peuchere/peuchere-dos.jpg",
+    "url": "https://fork-clothe.com/sweat/peuchere/"
+  },
+  {
     "sku": "fork-sweat-fada-de-toi",
     "id": "fada-de-toi",
     "type": "Sweat",
