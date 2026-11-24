@@ -74,5 +74,73 @@ export const CATALOGUE: CatalogueItem[] = [
     "available": true,
     "image": "https://fork-clothe.com/assets/products/les-boutades/les-boutades-face-calanque.jpg",
     "url": "https://fork-clothe.com/t-shirt/les-boutades/"
+  },
+  {
+    "sku": "fork-sweat-kiss-me",
+    "id": "kiss-me-by-the-sea",
+    "type": "Sweat",
+    "name": "Kiss me by the sea",
+    "color": "Écru",
+    "priceCents": 4500,
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "available": true,
+    "image": "https://fork-clothe.com/assets/products/kiss-me-by-the-sea/kiss-me-dos-porte.jpg",
+    "url": "https://fork-clothe.com/sweat/kiss-me-by-the-sea/"
+  },
+  {
+    "sku": "fork-sweat-les-monuments",
+    "id": "les-monuments",
+    "type": "Sweat",
+    "name": "Les Monuments",
+    "color": "Lavande",
+    "priceCents": 4500,
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "available": true,
+    "image": "https://fork-clothe.com/assets/products/les-monuments/les-monuments-dos.jpg",
+    "url": "https://fork-clothe.com/sweat/les-monuments/"
+  },
+  {
+    "sku": "fork-sweat-so-spicy",
+    "id": "so-spicy",
+    "type": "Sweat",
+    "name": "So Spicy",
+    "color": "Vert sauge",
+    "priceCents": 4500,
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "available": true,
+    "image": "https://fork-clothe.com/assets/products/so-spicy/so-spicy-dos.jpg",
+    "url": "https://fork-clothe.com/sweat/so-spicy/"
+  },
+  {
+    "sku": "fork-sweat-fada-de-toi",
+    "id": "fada-de-toi",
+    "type": "Sweat",
+    "name": "Fada de toi",
+    "color": "Crème",
+    "priceCents": 4500,
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "available": true,
+    "image": "https://fork-clothe.com/assets/products/fada-de-toi/fada-de-toi-maquette-face.jpg",
+    "url": "https://fork-clothe.com/sweat/fada-de-toi/"
   }
 ];

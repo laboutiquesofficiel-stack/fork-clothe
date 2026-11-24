@@ -111,14 +111,99 @@
         { src: "assets/products/les-boutades/les-boutades-clocher.jpg", alt: "Le clocher de la chapelle face à la mer" },
       ],
     },
+    // --- Sweats à capuche (exclusivité du site, imprimés à Toulon) ---
+    {
+      id: "kiss-me-by-the-sea",
+      type: "Sweat",
+      sku: "fork-sweat-kiss-me",
+      name: "Kiss me by the sea",
+      color: "Écru",
+      category: "femme",
+      priceCents: 4500,
+      sizes: ["S", "M", "L", "XL"],
+      available: true,
+      isNew: true,
+      aiVisuals: true,
+      keywords: ["sweat", "capuche", "hoodie", "maillot", "bikini", "kiss", "mer", "plage", "mourillon", "ete", "femme", "ecru"],
+      description: "Il y a des étés qui ne s'oublient pas. Les fins de journée au Mourillon, le sel sur la peau, et cette personne qu'on a embrassée face à la mer. Matisse a dessiné ce sweat pour celles qui gardent un peu d'été sur elles, même en hiver. Devant, FORK avec un haut de maillot à la place du O et « sea & kisses ». Au dos, le maillot rouge et rose et « KISS ME by the sea ».",
+      images: [
+        { src: "assets/products/kiss-me-by-the-sea/kiss-me-dos-porte.jpg", alt: "Sweat Kiss me by the sea porté de dos : maillot rouge et rose et « KISS ME by the sea »" },
+        { src: "assets/products/kiss-me-by-the-sea/kiss-me-plage-mer.jpg", alt: "Sweat Kiss me by the sea porté, allongée sur un muret face à la mer" },
+        { src: "assets/products/kiss-me-by-the-sea/kiss-me-face-porte.jpg", alt: "Sweat Kiss me by the sea porté de face" },
+        { src: "assets/products/kiss-me-by-the-sea/kiss-me-dos.jpg", alt: "Dos du sweat Kiss me by the sea" },
+        { src: "assets/products/kiss-me-by-the-sea/kiss-me-face.jpg", alt: "Devant du sweat Kiss me by the sea : FORK et « sea & kisses »" },
+      ],
+    },
+    {
+      id: "les-monuments",
+      type: "Sweat",
+      sku: "fork-sweat-les-monuments",
+      name: "Les Monuments",
+      color: "Lavande",
+      category: "mixte",
+      priceCents: 4500,
+      sizes: ["S", "M", "L", "XL"],
+      available: true,
+      isNew: true,
+      aiVisuals: true,
+      keywords: ["sweat", "capuche", "hoodie", "monuments", "genie", "cuverville", "opera", "dauphins", "tour royale", "faron", "telepherique", "lavande", "mixte"],
+      description: "On passe devant tous les jours sans les regarder : le Génie qui montre la mer, l'Opéra, la fontaine des Trois Dauphins et son arbre, la Tour Royale, le téléphérique du Faron. Né à Toulon, Matisse a voulu les mettre sur un sweat, en grand et en couleurs. Parce que New York a son « NY », et que Toulon mérite aussi d'être porté. Devant, les cinq monuments au-dessus de TOULON. Au dos, les mêmes en géant.",
+      images: [
+        { src: "assets/products/les-monuments/les-monuments-dos.jpg", alt: "Dos du sweat Les Monuments lavande : le Génie, l'Opéra, les Trois Dauphins, la Tour Royale et le téléphérique autour de TOULON" },
+        { src: "assets/products/les-monuments/les-monuments-face.jpg", alt: "Sweat Les Monuments lavande porté de face" },
+      ],
+    },
+    {
+      id: "so-spicy",
+      type: "Sweat",
+      sku: "fork-sweat-so-spicy",
+      name: "So Spicy",
+      color: "Vert sauge",
+      category: "mixte",
+      priceCents: 4500,
+      sizes: ["S", "M", "L", "XL"],
+      available: true,
+      isNew: true,
+      aiVisuals: true,
+      keywords: ["sweat", "capuche", "hoodie", "piment", "spicy", "not your basic food", "vert", "sauge", "mixte"],
+      description: "Le Sud, ce n'est pas fade. C'est du caractère, du soleil et un peu de piquant dans tout ce qu'on fait. FORK a commencé avec une fourche de vélo et une envie : faire des vêtements qui ont du goût. Ce sweat est pour ceux qui n'ont rien de basique. Devant, le logo FORK et son piment. Au dos, « SO SPICY » et « NOT YOUR BASIC FOOD ».",
+      images: [
+        { src: "assets/products/so-spicy/so-spicy-dos.jpg", alt: "Dos du sweat So Spicy vert sauge : piments, FORK et « NOT YOUR BASIC FOOD »" },
+        { src: "assets/products/so-spicy/so-spicy-face.jpg", alt: "Sweat So Spicy vert sauge porté de face" },
+      ],
+    },
+    {
+      id: "fada-de-toi",
+      type: "Sweat",
+      sku: "fork-sweat-fada-de-toi",
+      name: "Fada de toi",
+      color: "Crème",
+      category: "femme",
+      priceCents: 4500,
+      sizes: ["S", "M", "L", "XL"],
+      available: true,
+      isNew: true,
+      aiVisuals: true,
+      keywords: ["sweat", "capuche", "hoodie", "fada", "coeur", "amour", "creme", "femme"],
+      description: "Être fada de quelqu'un, c'est l'aimer à la toulonnaise : fort et sans retenue. Devant, le logo FORK et « fada de toi », avec un cœur à la place du point du i. Dans le dos, le grand cœur FORK et TOULON.",
+      images: [
+        { src: "assets/products/fada-de-toi/fada-de-toi-maquette-face.jpg", alt: "Sweat à capuche crème Fada de toi, vue de face" },
+        { src: "assets/products/fada-de-toi/fada-de-toi-maquette-dos.jpg", alt: "Dos du sweat Fada de toi : grand cœur FORK et TOULON" },
+      ],
+    },
   ];
   const bySku = new Map(PRODUCTS.filter((p) => p.sku).map((p) => [p.sku, p]));
   // Page dédiée d'un t-shirt (/t-shirt/<id>/) : la fiche s'affiche dans la page au lieu du tiroir.
   const PAGE_PRODUCT = document.body.dataset.productPage || null;
   // Mesures des t-shirts (à plat, en cm) : [largeur aisselle à aisselle, longueur].
   const SIZE_CHART = { S: [46, 71], M: [50, 73], L: [55, 76], XL: [59, 76], XXL: [63, 79], "3XL": [65, 82] };
-  const productPath = (id) => `/t-shirt/${encodeURIComponent(id)}/`;
   const byId = new Map(PRODUCTS.map((p) => [p.id, p]));
+  // Type d'article : t-shirt (par défaut) ou sweat à capuche (pages /sweat/<id>/).
+  const kindOf = (p) => (p && p.type) || "T-shirt";
+  const isSweat = (p) => kindOf(p) === "Sweat";
+  const fullName = (p) => `${kindOf(p)} ${p.name}`;
+  const genderLabel = (p) => (p.category === "femme" ? "Femme" : p.category === "mixte" ? "Mixte" : "Homme");
+  const productPath = (id) => `/${isSweat(byId.get(id)) ? "sweat" : "t-shirt"}/${encodeURIComponent(id)}/`;
   const MAX_QTY = 20;
 
   // Carte cadeau : vendue en ligne, envoyée par e-mail (pas de stock, pas de livraison).
@@ -284,7 +369,7 @@
   // Pages /homme/ et /femme/ : le filtre est fixé par la page (data-grid-filter sur <body>).
   const norm = (v) => String(v ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
   const searchText = (p) => norm([p.name, p.color, p.category === "femme" ? "femme" : "homme", p.description, ...(p.keywords ?? [])].join(" "));
-  let filter = ["homme", "femme"].includes(document.body.dataset.gridFilter) ? document.body.dataset.gridFilter : "all";
+  let filter = ["homme", "femme", "sweat"].includes(document.body.dataset.gridFilter) ? document.body.dataset.gridFilter : "all";
   function setFilter(next) {
     filter = next;
     $$("button.tab").forEach((t) => t.setAttribute("aria-selected", String(t.dataset.tab === next)));
@@ -301,6 +386,9 @@
     if (!grid) return;
     const terms = gridTerms();
     let list = PRODUCTS.filter((p) => {
+      // Page /sweats/ : uniquement les sweats ; ailleurs, uniquement les t-shirts.
+      if (filter === "sweat") return isSweat(p);
+      if (isSweat(p)) return false;
       if (filter === "out") return !p.available;
       if (filter === "homme" || filter === "femme") return p.category === filter;
       return true;
@@ -328,8 +416,8 @@
         const back = p.images[1] ? `<img class="back" src="${esc(p.images[1].src)}" alt="" loading="lazy">` : "";
         return `<a class="pcard" href="${esc(productPath(p.id))}" data-product="${esc(p.id)}" aria-label="${esc(`${p.name} ${p.color}, ${euros(p.priceCents)}${p.available ? "" : ", épuisé"}`)}">
           <div class="pimg">${badge}<img src="${esc(p.images[0].src)}" alt="${esc(p.images[0].alt)}" loading="lazy">${back}</div>
-          <span class="pname">T-shirt ${esc(p.name)}</span>
-          <span class="pmeta">${esc(p.color)} · ${p.category === "femme" ? "Femme" : "Homme"}</span>
+          <span class="pname">${esc(fullName(p))}</span>
+          <span class="pmeta">${esc(p.color)} · ${genderLabel(p)}</span>
           ${ratingLine(p.sku)}
           <span class="price">${p.available ? euros(p.priceCents) : `<s>${euros(p.priceCents)}</s> · Épuisé`}</span>
         </a>`;
@@ -375,7 +463,7 @@
   // ---------------------------------------------------------------------------
   const searchIndex = PRODUCTS.map((p) => ({
     p,
-    name: norm(`t-shirt ${p.name}`),
+    name: norm(fullName(p)),
     text: norm([p.name, p.color, p.category === "femme" ? "femme" : "homme", p.description, ...(p.keywords ?? [])].join(" ")),
   }));
   function renderSearch() {
@@ -397,7 +485,7 @@
       .map(
         (p) => `<button type="button" class="sresult" data-product="${esc(p.id)}">
           <img src="${esc(p.images[0].src)}" alt="" loading="lazy">
-          <span><b>T-shirt ${esc(p.name)}</b><span class="pmeta">${esc(p.color)} · ${p.category === "femme" ? "Femme" : "Homme"}</span><span>${p.available ? euros(p.priceCents) : "Épuisé"}</span></span>
+          <span><b>${esc(fullName(p))}</b><span class="pmeta">${esc(p.color)} · ${genderLabel(p)}</span><span>${p.available ? euros(p.priceCents) : "Épuisé"}</span></span>
         </button>`,
       )
       .join("");
@@ -713,7 +801,7 @@
     const p = byId.get(id);
     if (!p) return;
     const url = `${window.location.origin}${productPath(p.id)}`;
-    const data = { title: `T-shirt ${p.name} · FORK`, text: `Le t-shirt ${p.name} de FORK, la vibe de Toulon 🔥`, url };
+    const data = { title: `${fullName(p)} · FORK`, text: `Le ${kindOf(p).toLowerCase()} ${p.name} de FORK, la vibe de Toulon 🔥`, url };
     if (navigator.share) {
       try {
         await navigator.share(data);
@@ -790,7 +878,13 @@
     if (product.sku) loadReviews(product.sku);
   }
   /** Encart pack + 3 lignes de réassurance sous le bouton d'achat. */
-  function productPerks() {
+  function productPerks(p) {
+    if (isSweat(p))
+      return `<ul class="perks">
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M8 3 4 6l2 4 2-1v12h8V9l2 1 2-4-4-3a4 4 0 0 1-8 0Z"/></svg>Exclu site internet, imprimé à Toulon</li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7z"/><circle cx="7" cy="18" r="1.6"/><circle cx="17" cy="18" r="1.6"/></svg>Expédié sous 3 jours ouvrés, Colissimo suivi</li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 12a8 8 0 1 0 3-6.2"/><path d="M4 4v4h4"/></svg>Retour possible sous 14 jours</li>
+    </ul>`;
     const two = shop.pack.twoPercent;
     const free = shop.freeShippingMin === 2;
     const pack =
@@ -814,11 +908,11 @@
       <div class="gallery" id="gallery">${p.images.map((img, i) => `<img src="${esc(img.src)}" alt="${esc(img.alt)}" ${i ? 'loading="lazy"' : ""} data-index="${i}">`).join("")}</div>
       <div class="sheet-info">
         <div class="thumbs">${p.images.map((img, i) => `<button type="button" data-thumb="${i}" aria-label="Photo ${i + 1}" aria-current="${i === 0}"><img src="${esc(img.src)}" alt="" loading="lazy"></button>`).join("")}</div>
-        ${p.aiVisuals ? `<p class="hint ai-note">Visuels générés par IA en attendant notre shooting photo. L'impression est fidèle au t-shirt réel.</p>` : ""}
+        ${p.aiVisuals ? `<p class="hint ai-note">Visuels générés par IA en attendant notre shooting photo. L'impression est fidèle au ${kindOf(p).toLowerCase()} réel.</p>` : ""}
         <div>
           ${p.available ? (p.isNew ? '<span class="pill info">Nouveau</span>' : "") : '<span class="pill err">Épuisé</span>'}
-          <${H}>T-shirt ${esc(p.name)}</${H}>
-          <p class="pmeta">${esc(p.color)} · ${p.category === "femme" ? "Femme" : "Homme"}</p>
+          <${H}>${esc(fullName(p))}</${H}>
+          <p class="pmeta">${esc(p.color)} · ${genderLabel(p)}</p>
           ${p.sku && reviewSummary[p.sku]?.count ? `<a href="#reviewsBox" class="rating-link" data-scroll-reviews>${ratingLine(p.sku, true)}</a>` : ""}
         </div>
         <div class="price-row"><p class="price">${euros(p.priceCents)}</p><button type="button" class="share" data-share="${esc(p.id)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3v13M7 8l5-5 5 5"/><path d="M5 12v8h14v-8"/></svg>Partager</button></div>
@@ -842,20 +936,20 @@
               <button type="button" class="btn full" id="addToCart" ${canBuy ? "" : "disabled"}>${sheet.size ? `Ajouter au panier · ${euros(p.priceCents * sheet.qty)}` : "Choisis ta taille"}</button>`
             : `<p class="notice">Ce modèle est épuisé pour le moment. Suis-nous sur Instagram pour être au courant de son retour.</p>`
         }
-        ${p.available ? productPerks() : ""}
+        ${p.available ? productPerks(p) : ""}
         <p class="hint">${shop.freeShippingMin > 0 ? `Livraison offerte dès ${shop.freeShippingMin} t-shirts ou à moins de 10 km de Toulon, sinon 7,64 €.` : "Livraison offerte à moins de 10 km de Toulon, 7,64 € au-delà."} Le montant exact est calculé avant le paiement.</p>
         <div class="pinfo">
-          <details><summary>Matière</summary><p>100 % coton, 220 g/m².</p></details>
-          <details><summary>Guide des tailles</summary>
+          ${isSweat(p) ? "" : `<details><summary>Matière</summary><p>100 % coton, 220 g/m².</p></details>`}
+          ${isSweat(p) ? `<details><summary>Guide des tailles</summary><p class="hint">Sweat à capuche, coupe classique : prends ta taille habituelle. Un doute ? Écris-nous sur WhatsApp au 07 66 75 18 40.</p></details>` : `<details><summary>Guide des tailles</summary>
             <p>Mesures du t-shirt posé à plat, en centimètres :</p>
             <div class="table-scroll"><table class="size-table"><thead><tr><th>Taille</th><th>Largeur</th><th>Longueur</th></tr></thead><tbody>${p.sizes
               .filter((sz) => SIZE_CHART[sz])
               .map((sz) => `<tr><th>${esc(sz)}</th><td>${SIZE_CHART[sz][0]} cm</td><td>${SIZE_CHART[sz][1]} cm</td></tr>`)
               .join("")}</tbody></table></div>
             <p class="hint">Largeur : d'une aisselle à l'autre, juste sous les manches. Longueur : du haut de l'épaule, à côté du col, jusqu'en bas du t-shirt. Pour choisir, compare avec un t-shirt que tu aimes porter. Un doute ? Écris-nous sur WhatsApp au 07 66 75 18 40.</p>
-          </details>
+          </details>`}
           <details><summary>Entretien</summary>
-            <p class="hint">Conseils généraux pour garder ton t-shirt et son impression plus longtemps :</p>
+            <p class="hint">Conseils généraux pour garder ton ${kindOf(p).toLowerCase()} et son impression plus longtemps :</p>
             <ul><li>Lavage à l'envers, à 30 °C.</li><li>Avec des couleurs similaires.</li><li>Éviter le sèche-linge.</li><li>Ne pas repasser directement sur l'impression.</li><li>Pas de produits blanchissants.</li></ul>
           </details>
         </div>
@@ -971,7 +1065,9 @@
       ? { name: "Carte cadeau", meta: `${l.size} € · ${l.gift?.toEmail ? `pour ${l.gift.toName || l.gift.toEmail}` : "envoyée à ton e-mail"}`, img: GIFT_IMG }
       : { name: bySku.get(l.sku).name, meta: `${bySku.get(l.sku).color} · Taille ${l.size}`, img: bySku.get(l.sku).images[0].src };
   const subtotalCents = () => cart.reduce((sum, l) => sum + unitCents(l) * l.qty, 0);
-  const tshirtCount = (lines = cart) => lines.filter((l) => !isGiftLine(l) && !isStudioLine(l)).reduce((n, l) => n + l.qty, 0);
+  // Sweats : hors pack et hors codes promo (réservés aux t-shirts).
+  const isSweatLine = (l) => isSweat(bySku.get(l.sku));
+  const tshirtCount = (lines = cart) => lines.filter((l) => !isGiftLine(l) && !isStudioLine(l) && !isSweatLine(l)).reduce((n, l) => n + l.qty, 0);
   const parcelCount = (lines = cart) => lines.filter((l) => !isGiftLine(l)).reduce((n, l) => n + l.qty, 0);
   const hasStudio = (lines = cart) => lines.some(isStudioLine);
   const hasPhysical = (lines = cart) => lines.some((l) => !isGiftLine(l));
@@ -985,7 +1081,7 @@
   /** Aperçu du prix, calculé comme le serveur (qui refait le calcul à la commande). */
   function pricePreview(feeCents) {
     const count = tshirtCount();
-    const tshirtCents = cart.filter((l) => !isGiftLine(l) && !isStudioLine(l)).reduce((n, l) => n + unitCents(l) * l.qty, 0);
+    const tshirtCents = cart.filter((l) => !isGiftLine(l) && !isStudioLine(l) && !isSweatLine(l)).reduce((n, l) => n + unitCents(l) * l.qty, 0);
     const parcels = parcelCount();
     const subtotal = subtotalCents();
     const pack = packPercentFor(count);

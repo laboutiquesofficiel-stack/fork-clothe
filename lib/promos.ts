@@ -91,8 +91,9 @@ export function priceCart(
   deliveryFeeCents: number,
   code: CodeCheck | null,
 ): Pricing {
-  // Remises (pack, code) : t-shirts classiques uniquement, jamais les créations du Studio ni les cartes cadeaux.
-  const tshirts = items.filter((i) => !i.giftCard && !i.studio);
+  // Remises (pack, code) : t-shirts classiques uniquement, jamais les sweats, les créations du Studio ni les cartes cadeaux.
+  // Les sweats (SKU fork-sweat-…) sont aussi exclus : prix fixe, hors pack.
+  const tshirts = items.filter((i) => !i.giftCard && !i.studio && !i.sku.startsWith("fork-sweat-"));
   const tshirtCount = tshirts.reduce((n, i) => n + i.quantity, 0);
   // Livraison offerte : tout ce qui part par colis (t-shirts et créations du Studio).
   const physicalCount = items.filter((i) => !i.giftCard).reduce((n, i) => n + i.quantity, 0);

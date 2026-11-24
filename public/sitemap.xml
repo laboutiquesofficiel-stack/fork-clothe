@@ -4,6 +4,7 @@
   <url><loc>https://fork-clothe.com/collection/</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
   <url><loc>https://fork-clothe.com/homme/</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
   <url><loc>https://fork-clothe.com/femme/</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://fork-clothe.com/sweats/</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
   <url><loc>https://fork-clothe.com/jour-de-match/</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
   <url><loc>https://fork-clothe.com/vos-moments/</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
   <url><loc>https://fork-clothe.com/a-propos/</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
@@ -12,6 +13,10 @@
   <url><loc>https://fork-clothe.com/t-shirt/authentique/</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
   <url><loc>https://fork-clothe.com/t-shirt/lou-faron/</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
   <url><loc>https://fork-clothe.com/t-shirt/les-boutades/</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://fork-clothe.com/sweat/kiss-me-by-the-sea/</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://fork-clothe.com/sweat/les-monuments/</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://fork-clothe.com/sweat/so-spicy/</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://fork-clothe.com/sweat/fada-de-toi/</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
   <url><loc>https://fork-clothe.com/cgv.html</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
   <url><loc>https://fork-clothe.com/mentions-legales.html</loc><changefreq>yearly</changefreq><priority>0.2</priority></url>
   <url><loc>https://fork-clothe.com/confidentialite.html</loc><changefreq>yearly</changefreq><priority>0.2</priority></url>
