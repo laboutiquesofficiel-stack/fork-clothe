@@ -582,3 +582,20 @@ a.tab { display: inline-flex; align-items: center; }
 .app-sheet-ok { width: 100%; justify-content: center; }
 body.app-sheet-open { overflow: hidden; }
 .site-footer li button[data-app-install], .mnav-links button[data-app-install] { font: inherit; }
+
+/* Bannière « Les sweats FORK » de l'accueil (lien vers /sweats/) */
+.sweat-banner .sb-link { position: relative; display: block; color: var(--white); text-decoration: none; overflow: hidden; background: var(--rade); }
+.sweat-banner img { display: block; width: 100%; height: clamp(380px, 48vw, 640px); object-fit: cover; object-position: 50% 45%; }
+.sweat-banner .sb-link::before { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(15, 20, 30, .55), rgba(15, 20, 30, .2) 38%, rgba(15, 20, 30, 0) 55%); pointer-events: none; }
+.sweat-banner .sb-txt { position: absolute; top: clamp(24px, 6vw, 72px); left: clamp(16px, 6vw, 96px); display: grid; gap: 10px; justify-items: start; max-width: 520px; }
+.sweat-banner .sb-kicker { font-size: .74rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; }
+.sweat-banner h2 { margin: 0; font-size: clamp(2.3rem, 5.6vw, 4.6rem); line-height: .95; text-transform: uppercase; }
+.sweat-banner p { margin: 0; font-size: 1.05rem; }
+.sweat-banner .btn { margin-top: 6px; }
+.sweat-banner .sb-link:hover .btn.light { background: var(--volet); color: var(--white); border-color: var(--volet); }
+@media (max-width: 760px) {
+  .sweat-banner img { height: 560px; object-position: 70% 50%; }
+  .sweat-banner .sb-link::before { background: linear-gradient(180deg, rgba(10, 30, 60, .45), rgba(10, 30, 60, 0) 45%); }
+  .sweat-banner .sb-txt { top: 28px; bottom: 32px; left: 16px; right: 16px; display: flex; flex-direction: column; align-items: flex-start; }
+  .sweat-banner .btn { margin-top: auto; }
+}

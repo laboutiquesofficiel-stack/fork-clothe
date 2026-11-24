@@ -24,7 +24,12 @@ const forSale = PRODUCTS.filter((p) => p.sku);
 const esc = (v) => String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const euros = (c) => `${(c / 100).toFixed(2).replace(".", ",")} €`;
 const abs = (src) => `${SITE}/${src.replace(/^\//, "")}`;
-const pageUrl = (p) => `${SITE}/t-shirt/${p.id}/`;
+const kindOf = (p) => p.type || "T-shirt";
+const isSweat = (p) => kindOf(p) === "Sweat";
+const dirOf = (p) => (isSweat(p) ? "sweat" : "t-shirt");
+const fullName = (p) => `${kindOf(p)} ${p.name}`;
+const genderLabel = (p) => (p.category === "femme" ? "Femme" : p.category === "mixte" ? "Mixte" : "Homme");
+const pageUrl = (p) => `${SITE}/${dirOf(p)}/${p.id}/`;
 const plain = (s) => String(s).replace(/\s*☀\s*/g, " ").trim();
 const ld = (obj) => `<script type="application/ld+json">${JSON.stringify(obj).replace(/</g, "\\u003c")}</script>`;
 
@@ -76,28 +81,29 @@ const SHIPPING = {
 };
 
 function card(p) {
-  return `<a class="pcard" href="t-shirt/${esc(p.id)}/" data-product="${esc(p.id)}">
+  return `<a class="pcard" href="${dirOf(p)}/${esc(p.id)}/" data-product="${esc(p.id)}">
           <div class="pimg">${p.isNew && p.available ? '<span class="pbadge">Nouveau</span>' : ""}<img src="${esc(p.images[0].src)}" alt="${esc(p.images[0].alt)}" loading="lazy"></div>
-          <span class="pname">T-shirt ${esc(p.name)}</span>
-          <span class="pmeta">${esc(p.color)} · ${p.category === "femme" ? "Femme" : "Homme"}</span>
+          <span class="pname">${esc(fullName(p))}</span>
+          <span class="pmeta">${esc(p.color)} · ${genderLabel(p)}</span>
           <span class="price">${euros(p.priceCents)}</span>
         </a>`;
 }
 
 // --- Pages t-shirt --------------------------------------------------------
 rmSync(join(PUB, "t-shirt"), { recursive: true, force: true });
+rmSync(join(PUB, "sweat"), { recursive: true, force: true });
 for (const p of forSale) {
-  const title = `T-shirt ${p.name} ${p.color.toLowerCase()} · FORK Toulon`;
+  const title = `${fullName(p)} ${p.color.toLowerCase()} · FORK Toulon`;
   const description = `${plain(p.description)} ${euros(p.priceCents)}, tailles ${p.sizes.join(", ")}.`.slice(0, 300);
   const productLd = {
     "@context": "https://schema.org",
     "@type": "Product",
-    name: `T-shirt ${p.name}`,
+    name: fullName(p),
     description: plain(p.description),
     image: p.images.map((i) => abs(i.src)),
     sku: p.sku,
     color: p.color,
-    material: "100 % coton",
+    ...(isSweat(p) ? {} : { material: "100 % coton" }),
     brand: { "@type": "Brand", name: "FORK" },
     offers: {
       "@type": "Offer",
@@ -115,11 +121,13 @@ for (const p of forSale) {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Collection", item: `${SITE}/collection/` },
-      { "@type": "ListItem", position: 2, name: `T-shirt ${p.name}`, item: pageUrl(p) },
+      isSweat(p)
+        ? { "@type": "ListItem", position: 1, name: "Les sweats", item: `${SITE}/sweats/` }
+        : { "@type": "ListItem", position: 1, name: "Collection", item: `${SITE}/collection/` },
+      { "@type": "ListItem", position: 2, name: fullName(p), item: pageUrl(p) },
     ],
   };
-  const others = forSale.filter((o) => o.id !== p.id);
+  const others = forSale.filter((o) => o.id !== p.id && isSweat(o) === isSweat(p));
   const html = `<!doctype html>
 <html lang="fr">
 <head>
@@ -131,7 +139,7 @@ ${SHARED_HEAD}
   <meta property="og:site_name" content="FORK">
   <meta property="og:locale" content="fr_FR">
   <meta property="og:url" content="${pageUrl(p)}">
-  <meta property="og:title" content="T-shirt ${esc(p.name)} · FORK">
+  <meta property="og:title" content="${esc(fullName(p))} · FORK">
   <meta property="og:description" content="${esc(plain(p.description))}">
   <meta property="og:image" content="${abs(p.images[0].src)}">
   <meta property="og:image:alt" content="${esc(p.images[0].alt)}">
@@ -143,21 +151,21 @@ ${SHARED_HEAD}
 </head>
 <body data-product-page="${esc(p.id)}">${header}  <main>
     <div class="wrap">
-      <nav class="crumbs" aria-label="Fil d'Ariane"><a href="collection/">Collection</a><span aria-hidden="true">›</span><span>T-shirt ${esc(p.name)}</span></nav>
+      <nav class="crumbs" aria-label="Fil d'Ariane">${isSweat(p) ? '<a href="sweats/">Les sweats</a>' : '<a href="collection/">Collection</a>'}<span aria-hidden="true">›</span><span>${esc(fullName(p))}</span></nav>
       <div class="sheet page-sheet" id="pageSheet">
         <div class="gallery">${p.images.map((img, i) => `<img src="${esc(img.src)}" alt="${esc(img.alt)}"${i ? ' loading="lazy"' : ""}>`).join("")}</div>
         <div class="sheet-info page-static">
-          <h1>T-shirt ${esc(p.name)}</h1>
-          <p class="pmeta">${esc(p.color)} · ${p.category === "femme" ? "Femme" : "Homme"}</p>
+          <h1>${esc(fullName(p))}</h1>
+          <p class="pmeta">${esc(p.color)} · ${genderLabel(p)}</p>
           <p class="price">${euros(p.priceCents)}</p>
           <p class="muted">${esc(p.description)}</p>
-          <p>Tailles : ${p.sizes.map(esc).join(", ")}. 100 % coton, 220 g/m².</p>
+          <p>Tailles : ${p.sizes.map(esc).join(", ")}.${isSweat(p) ? " Exclu site internet, imprimé à Toulon : expédié sous 3 jours ouvrés." : " 100 % coton, 220 g/m²."}</p>
         </div>
       </div>
     </div>
 
     <section class="sec wrap" aria-labelledby="othersTitle">
-      <div class="sec-head"><h2 id="othersTitle">Les autres t-shirts</h2><a class="link" href="collection/">Toute la collection</a></div>
+      <div class="sec-head"><h2 id="othersTitle">${isSweat(p) ? "Les autres sweats" : "Les autres t-shirts"}</h2>${isSweat(p) ? '<a class="link" href="sweats/">Tous les sweats</a>' : '<a class="link" href="collection/">Toute la collection</a>'}</div>
       <div class="others">
         ${others.map(card).join("\n        ")}
       </div>
@@ -165,8 +173,8 @@ ${SHARED_HEAD}
 
 ${newsBlock}
   </main>${tail}`;
-  mkdirSync(join(PUB, "t-shirt", p.id), { recursive: true });
-  writeFileSync(join(PUB, "t-shirt", p.id, "index.html"), html);
+  mkdirSync(join(PUB, dirOf(p), p.id), { recursive: true });
+  writeFileSync(join(PUB, dirOf(p), p.id, "index.html"), html);
 }
 
 // --- Page introuvable -----------------------------------------------------
@@ -190,7 +198,7 @@ ${SHARED_HEAD}
     </section>
     <section class="sec wrap" aria-label="T-shirts">
       <div class="others">
-        ${forSale.map(card).join("\n        ")}
+        ${forSale.filter((p) => !isSweat(p)).map(card).join("\n        ")}
       </div>
     </section>
   </main>${tail}`,
@@ -232,6 +240,13 @@ const SECTION_PAGES = [
     title: "T-shirts femme · FORK Toulon",
     description: "Les t-shirts FORK pour femme : séries limitées inspirées de Toulon et de la Provence. 100 % coton 220 g.",
     body: collectionPage("femme", "T-shirts femme", "Femme", "Les t-shirts FORK coupe femme, inspirés de Toulon et de la Provence."),
+  },
+  {
+    slug: "sweats",
+    filter: "sweat",
+    title: "Les sweats FORK · Exclu site internet",
+    description: "Les sweats à capuche FORK, imprimés à Toulon : Kiss me by the sea, So Spicy, Peuchère, Fada de toi. 45 €, exclu site internet.",
+    body: part("sweats.html"),
   },
   {
     slug: "jour-de-match",
@@ -287,7 +302,7 @@ ${pg.slug === "aide" || pg.slug === "a-propos" ? "" : `\n${newsBlock}\n`}  </mai
 // --- Plan du site ---------------------------------------------------------
 const urls = [
   { loc: `${SITE}/`, freq: "weekly", prio: "1.0" },
-  ...SECTION_PAGES.map((pg) => ({ loc: `${SITE}/${pg.slug}/`, freq: "weekly", prio: ["collection", "homme", "femme"].includes(pg.slug) ? "0.9" : "0.6" })),
+  ...SECTION_PAGES.map((pg) => ({ loc: `${SITE}/${pg.slug}/`, freq: "weekly", prio: ["collection", "homme", "femme", "sweats"].includes(pg.slug) ? "0.9" : "0.6" })),
   ...forSale.map((p) => ({ loc: pageUrl(p), freq: "weekly", prio: "0.9" })),
   { loc: `${SITE}/cgv.html`, freq: "yearly", prio: "0.3" },
   { loc: `${SITE}/mentions-legales.html`, freq: "yearly", prio: "0.2" },
@@ -371,7 +386,7 @@ export const CATALOGUE: CatalogueItem[] = ${JSON.stringify(
 `,
 );
 
-console.log(`${forSale.length} pages t-shirt, ${SECTION_PAGES.length} pages de rubrique, 404, sitemap (${urls.length} adresses), flux Merchant (${items.length} articles)`);
+console.log(`${forSale.length} pages produit, ${SECTION_PAGES.length} pages de rubrique, 404, sitemap (${urls.length} adresses), flux Merchant (${items.length} articles)`);
 
 // --- Studio : identifiants des motifs et polices autorisés côté serveur ----
 {

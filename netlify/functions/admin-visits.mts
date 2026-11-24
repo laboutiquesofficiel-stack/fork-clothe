@@ -32,7 +32,7 @@ const PAGE_LABELS: Record<string, string> = {
   "/confidentialite.html": "Confidentialité",
   "/404": "Page introuvable",
 };
-for (const p of CATALOGUE) PAGE_LABELS[`/t-shirt/${p.id}/`] = `${p.type} ${p.name}`;
+for (const p of CATALOGUE) PAGE_LABELS[new URL(p.url).pathname] = `${p.type} ${p.name}`;
 const labelOf = (path: string) => PAGE_LABELS[path] ?? PAGE_LABELS[path.replace(/\/?$/, "/")] ?? path;
 
 export default async (request: Request) => {

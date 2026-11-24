@@ -30,7 +30,7 @@ function publicItem(m: { id: number; firstName: string; place: string | null; pr
     id: m.id,
     firstName: m.firstName,
     place: m.place,
-    product: p ? { sku: p.sku, name: `${p.type} ${p.name}`, url: `/t-shirt/${p.id}/` } : null,
+    product: p ? { sku: p.sku, name: `${p.type} ${p.name}`, url: new URL(p.url).pathname } : null,
     date: m.publishedAt ?? m.createdAt,
     photo: `/api/moment-photo?id=${m.id}`,
     byShop: m.byShop,
