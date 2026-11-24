@@ -245,7 +245,7 @@ const SECTION_PAGES = [
     slug: "sweats",
     filter: "sweat",
     title: "Les sweats FORK · Exclu site internet",
-    description: "Les sweats à capuche FORK, imprimés à Toulon : Kiss me by the sea, Les Monuments, So Spicy, Fada de toi. 45 €, exclu site internet.",
+    description: "Les sweats à capuche FORK, imprimés à Toulon : Kiss me by the sea, So Spicy, Fada de toi. 45 €, exclu site internet.",
     body: part("sweats.html"),
   },
   {

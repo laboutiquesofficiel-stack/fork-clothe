@@ -93,23 +93,6 @@ export const CATALOGUE: CatalogueItem[] = [
     "url": "https://fork-clothe.com/sweat/kiss-me-by-the-sea/"
   },
   {
-    "sku": "fork-sweat-les-monuments",
-    "id": "les-monuments",
-    "type": "Sweat",
-    "name": "Les Monuments",
-    "color": "Lavande",
-    "priceCents": 4500,
-    "sizes": [
-      "S",
-      "M",
-      "L",
-      "XL"
-    ],
-    "available": true,
-    "image": "https://fork-clothe.com/assets/products/les-monuments/les-monuments-dos.jpg",
-    "url": "https://fork-clothe.com/sweat/les-monuments/"
-  },
-  {
     "sku": "fork-sweat-so-spicy",
     "id": "so-spicy",
     "type": "Sweat",
