@@ -71,7 +71,7 @@
       color: "Léopard",
       category: "femme",
       priceCents: 3000,
-      sizes: ["S", "M", "L"],
+      sizes: ["XS", "S", "M", "L"],
       available: true,
       isNew: false,
       description: "Le Faron revisité en léopard, avec son téléphérique rouge et son altitude : 584 m. Devant, le logo FORK en motif léopard. Une pièce forte, imprimée sur un t-shirt blanc.",
