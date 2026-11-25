@@ -48,6 +48,7 @@ export const CATALOGUE: CatalogueItem[] = [
     "color": "Léopard",
     "priceCents": 3000,
     "sizes": [
+      "XS",
       "S",
       "M",
       "L"

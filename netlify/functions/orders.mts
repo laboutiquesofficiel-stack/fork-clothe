@@ -40,7 +40,7 @@ const catalogue: Record<string, Product> = {
   "fork-lou-faron": {
     name: "Lou Faron",
     color: "Léopard",
-    sizes: ["S", "M", "L"],
+    sizes: ["XS", "S", "M", "L"],
     priceCents: 3000,
   },
   "fork-les-boutades": {
