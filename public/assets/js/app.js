@@ -365,7 +365,7 @@
   // ---------------------------------------------------------------------------
   // Pages /homme/ et /femme/ : le filtre est fixé par la page (data-grid-filter sur <body>).
   const norm = (v) => String(v ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-  const searchText = (p) => norm([p.name, p.color, p.category === "femme" ? "femme" : "homme", p.description, ...(p.keywords ?? [])].join(" "));
+  const searchText = (p) => norm([p.name, p.color, p.category === "femme" ? "femme" : p.category === "mixte" ? "homme femme mixte" : "homme", p.description, ...(p.keywords ?? [])].join(" "));
   let filter = ["homme", "femme", "sweat"].includes(document.body.dataset.gridFilter) ? document.body.dataset.gridFilter : "all";
   function setFilter(next) {
     filter = next;
@@ -383,11 +383,12 @@
     if (!grid) return;
     const terms = gridTerms();
     let list = PRODUCTS.filter((p) => {
-      // Page /sweats/ : uniquement les sweats ; ailleurs, uniquement les t-shirts.
+      // /sweats/ : uniquement les sweats. Accueil (grille limitée) : uniquement les t-shirts.
+      // Collection, Homme, Femme : t-shirts + sweats ; un sweat « mixte » va dans Homme et dans Femme.
       if (filter === "sweat") return isSweat(p);
-      if (isSweat(p)) return false;
+      if (isSweat(p) && Number(grid.dataset.limit)) return false;
       if (filter === "out") return !p.available;
-      if (filter === "homme" || filter === "femme") return p.category === filter;
+      if (filter === "homme" || filter === "femme") return p.category === filter || p.category === "mixte";
       return true;
     })
       .filter((p) => !terms.length || terms.every((t) => searchText(p).includes(t)))
